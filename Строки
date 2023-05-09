@@ -1,1 +1,61 @@
 
+<script>
+//Конкатинация
+let hia = "Привет",
+name = "Костя";
+console.log(hia+" "+name);
+console.log (hia.concat(" "+name));
+
+//Получение подстрок из строк
+let text = hia+" "+name;
+
+//Выдиляем тнкс между 7 и 12 сииволами
+console.log(text.slice(7,12));
+//Между 7 и окончанием
+console.log(text.slice(7));
+//Выборка с конца
+console.log(text.slice(0,-5));
+
+//Выбираем текст с начала и шесть символов
+console.log(text.substr(0,6));
+//Выбираем символи с ночала и доконца
+console.log(text.slice(0));
+
+//Разделение строки
+//Раздилительным элементом является пробел
+let texts = text.split(" ");
+console.log("Первое предложение - "+texts[0]);
+
+//Поиск по строке
+//Ишим в предложении слово Костя и указываем ево подожение или если нет то -1, регист имеет значение
+console.log("Слово Костя находится на - "+text.indexOf("Костя")+" позиции");
+//Выдает последний индекс нужного слова
+console.log(text.lastIndexOf(" "));
+//Выбираем используя регулярное выражение
+let namber = text+" мой телефон 050222813";
+let nom = /[0-9]/;
+let nambers = namber.match(nom);
+console.log(nambers[0]);
+
+//Работа с регистром
+console.log("Все в верхнем регистре "+text.toUpperCase());
+console.log("Все в нижне  регистре "+text.toLowerCase());
+
+//ЗЕРКАЛЬНОЕ ОТОБРАЖЕГИЕ ТЕКСТА
+let s = text;
+function reverse(s) { 
+var o = ''; 
+for (var i = s.length - 1; i >= 0; i--) 
+o += s[i]; 
+return o; }
+console.log(reverse(s))
+
+//Интерпоояция
+let value = 5;
+let textInfo = " сумма чисел "; 
+let summa = '$(value) $(textInfo) $(value+value)';
+console.log(summa);
+
+</script>
+
+
