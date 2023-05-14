@@ -1,0 +1,114 @@
+<p>Первый способ загрузки, загрузка с диска</p>
+<canvas id="onepracticLoad"></canvas>
+
+<p>Второй способ загрузки, загрузка с диска </p>
+<canvas id="tuopracticLoad"></canvas>
+
+<p>Третий способ загрузки, с возможность выбора в папке</p>
+<img id="imgLoad" src="" alt="" style="display: none;">
+<canvas id="threepracticLoad"></canvas>
+<input id="input" type="file"></input>
+
+<p>Четвертый способ загрузки, с IMG</p>
+<p>КАРТИНКА</p>
+<img id="imgPreload" src="./kiza.jpeg" alt="">
+
+<p>ХОЛСТ</p>
+<canvas id="fourpracticLoad"></canvas>
+
+<p>Пятый способ загрузка информации с canvas - Канвас с четвертого примера</p>
+<canvas id="canvasLoad"></canvas>
+
+<p>Шестой способ, с canvas - Канвас с четвертого примера</p>
+<canvas id="canvasLoadСanvas"></canvas>
+
+<p>Седьмой способ, через создание тега img</p>
+<canvas id="createImg"></canvas>
+<script>
+   let  onepracticLoad = document.getElementById("onepracticLoad"),
+        ctxOne = onepracticLoad.getContext("2d"),
+        tuopracticLoad = document.getElementById("tuopracticLoad"),
+        ctxTuo = tuopracticLoad.getContext("2d"),
+        img = new Image();
+        img.src = "./kiza.jpeg";
+//Первый способ
+img.onload = function (){
+    onepracticLoad.width =  img.width;
+    onepracticLoad.height = img.height;
+    ctxOne.drawImage(img, 0, 0);
+}
+
+//Второй способ
+img.addEventListener("load", function () {
+    tuopracticLoad.width =  img.width;
+    tuopracticLoad.height = img.height;
+    ctxTuo.drawImage(img, 0, 0);
+})
+
+//Третий способ, загрузка 
+let threepracticLoad = document.getElementById("threepracticLoad"),
+    ctxThee = threepracticLoad.getContext("2d"),
+    imgLoad = document.getElementById("imgLoad");
+
+document.getElementById('input').addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      var img = document.getElementById('imgLoad');
+      img.src = URL.createObjectURL(this.files[0]);
+      img.onload = loadimg;
+    }
+  });    
+
+function loadimg(){
+    threepracticLoad.width =  imgLoad.width;
+    threepracticLoad.height = imgLoad.height;
+    ctxThee.drawImage(imgLoad, 0, 0);
+    }
+
+//Четвертый способ загрузка с картинки
+let fourpracticLoad = document.getElementById("fourpracticLoad"),
+    ctxFour = fourpracticLoad.getContext("2d"),
+    imgPreload = document.getElementById("imgPreload");
+
+imgPreload.addEventListener("load", function () {
+    fourpracticLoad.width =  imgPreload.width;
+    fourpracticLoad.height = imgPreload.height;
+    ctxFour.drawImage(imgPreload, 0, 0);    
+})
+
+//Пятый способ, копирования информации с холста ??????
+//Выбираем четвертый холст
+//Предзагрузку не делаем, изначальная картинка загрузилась
+let canvasLoad = document.getElementById("canvasLoad"),
+    ctxCanvas = canvasLoad.getContext("2d");
+
+imgPreload.addEventListener("load", function () {   
+    canvasLoad.width =  imgPreload.width;
+    canvasLoad.height = imgPreload.height;
+    //Захват холста (получение данных с холста), объект ImageData
+let imageData = ctxFour.getImageData(0, 0, imgPreload.width, imgPreload.height);
+    //Рисует данные из заданного ImageData объекта на холст
+    ctxCanvas.putImageData(imageData, 0, 0);
+    })
+//Шестой способ, загрузка с холста 
+//Выбираем четвертый холст
+//Предзагрузку не делаем, изначальная картинка загрузилась
+let canvasLoadСanvas = document.getElementById("canvasLoadСanvas"),
+    ctxCanvase = canvasLoadСanvas.getContext("2d");
+
+imgPreload.addEventListener("load", function () {   
+    canvasLoadСanvas.width =  imgPreload.width;
+    canvasLoadСanvas.height = imgPreload.height;
+    ctxCanvase.drawImage(fourpracticLoad, 0, 0);
+    })
+
+//Седьмой способ, через создание тега img
+let createImg = document.getElementById("createImg")
+    ctxImg = createImg.getContext("2d"),
+    create = document.createElement("img");
+    create.src = "./kiza.jpeg";
+    create.addEventListener("load", function() {
+        createImg.width = create.width;
+        createImg.height = create.height;
+        ctxImg.drawImage(create, 0, 0);
+       });
+</script>

@@ -1,0 +1,107 @@
+<style>
+    #canvas{
+        border: 1px solid #000;
+    }
+    .click{
+        display: block;
+        position: absolute;
+        left: 0;
+        width: 41%;
+    }
+    .help{
+        display: block;
+        position: absolute;
+        right: 0;
+        width: 59%;
+    }
+    span{
+        color: red;
+    }
+</style>
+<canvas id="canvas"></canvas>
+<img src="./canvas_drawimage.jpg" alt="">
+<div class="click">
+    <button id="three">drawlmage() с тремя аргументами</button><br>
+    <button id="five">drawlmage() с пятью аргументами</button><br>
+    <button id="nine">drawlmage() с девятью аргументами</button><br><br>
+    <button id="saveImg">Сохранить</button>
+</div>
+<div class="help">
+  <p>- drawImage(image, dx, dy)</p>
+  <p>- drawImage(image, dx, dy, dWidth, dHeight)
+    <span>С помощью указаных параметров можно выполнить
+     масштабирование указанного изображеения</span> 
+  </p>
+  <p>- drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+    <span>С помощью указаных параметров можно указать какой фрагмент 
+    исходного изображения должен быть
+    вырезан для последующей отрисовки (его координаты и размеры).</span> 
+  </p>  
+</div>
+
+<script>
+    let canvas = document.getElementById("canvas"),
+        ctx = canvas.getContext("2d"),
+        img = document.createElement("img");
+        img.src = "./kiza.jpeg";
+img.addEventListener("load", function(){
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+    document.getElementById("three").addEventListener("click", function () {
+        ctx.reset()
+        ctx.drawImage(img, 0, 0);
+        //drawImage(image, dx, dy)
+        //dx Координата оси X на целевом холсте, в которой следует поместить верхний левый угол исходного изображения image.
+        //dy Координата оси Y на целевом холсте для размещения верхнего левого угла исходного изображения image.        
+    })    
+    document.getElementById("five").addEventListener("click", function () {
+        ctx.reset()
+        ctx.drawImage(img, -59, -44, 559, 419); 
+        //drawImage(image, dx, dy, dWidth, dHeight)
+        //dx Координата оси X на целевом холсте, в которой следует поместить верхний левый угол исходного изображения image.
+        //dy Координата оси Y на целевом холсте для размещения верхнего левого угла исходного изображения image.        
+        //dWidth - Ширина для рисования imageна целевом холсте. Это позволяет масштабировать нарисованное изображение.
+        // Если не указано, изображение не масштабируется по ширине при отрисовке. Обратите внимание, что этот аргумент не 
+        // включен в синтаксис с тремя аргументами.
+        //dHeight - тоже самое, но только для высота
+    })  
+    document.getElementById("nine").addEventListener("click", function () {
+        ctx.reset()
+        ctx.drawImage(img, 150, 10, 260, 200, 0, 0, 500, 375); 
+        //drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+        //НЕОБЯЗАТЕЛЬНЫЕ
+        //sx Координата по оси X верхнего левого угла подпрямоугольника источника imageдля рисования в контексте назначения.
+        //sy Координата по оси Y верхнего левого угла вложенного прямоугольника источника imageдля рисования в контексте назначения. 
+        //sWidth Ширина вложенного прямоугольника источника imageдля рисования в контексте назначения. 
+        // не указано, используется весь прямоугольник от координат, указанных sxи syдо нижнего правого угла изображения.
+        //sHeight тоже самое, но только для высота
+        //ОБЯЗАТЕЛЬНЫЕ
+        //dx Координата оси X на целевом холсте, в которой следует поместить верхний левый угол исходного изображения image.
+        //dy Координата оси Y на целевом холсте для размещения верхнего левого угла исходного изображения image.        
+        //dWidth - Ширина для рисования imageна целевом холсте. Это позволяет масштабировать нарисованное изображение.
+        // Если не указано, изображение не масштабируется по ширине при отрисовке. Обратите внимание, что этот аргумент не 
+        // включен в синтаксис с тремя аргументами.
+        //dHeight - тоже самое, но только для высота
+
+    })
+
+})
+//Сохранение
+let saveImg = document.getElementById("saveImg");
+saveImg.addEventListener("click", function () {
+    if (navigator.userAgent.indexOf("Chrome") != -1) {
+        let width = canvas.width,
+            height =canvas.height;
+        let string = canvas.toDataURL("image/jpeg",1),
+        iframe = "<iframe width='"+width+"px' height='"+height+"px' src='" + string + "'></iframe>",
+        x = window.open();
+        x.document.open();
+        x.document.write(iframe);
+        x.document.close();
+    } else {
+    //не работает в Chrome
+       window.open(canvas.toDataURL("image/jpeg",1)); 
+    }
+},false)
+</script>
