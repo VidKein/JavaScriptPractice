@@ -12,4 +12,215 @@
 </html>
 <script>
 
+
+//Первый способ создания мамсива
+let mas = new Array(1,2,3,4);
+console.log(mas);
+//создаем массив с зарезервированным количеством ячеек
+let mas2 = new Array (4);
+console.log(mas2.length);
+//Второй способ создания массива, используя литеара массива
+let color =["red","green"];
+console.log("Массив "+color,"Количество "+color.length);
+//пустой
+let color2 = [];
+
+//-----------
+
+// Строки будут разбиты на массив из отдельных символов 
+alert(Array.from("Matt")); 
+// ["M", "a", "t", "t"] 
+
+// Set и Map могут быть преобразованы в новый экземпляр массива с помощью from() 
+const m = new Map().set(1, 2)  .set(3, 4);
+const s = new Set().add(1)  .add(2)  .add(3)  .add(4);
+alert(Array.from(m));
+// [[1, 2], [3, 4]]
+alert(Array.from(s)); 
+// [1, 2, 3, 4] 
+// Array.from() выполняет поверхностное копирование существующего массива 
+const a1 = [1, 2, 3, 4];
+const a2 = Array.from(a1);
+alert(a1); 
+// [1, 2, 3, 4] 
+alert(a1 === a2); 
+// false 
+// Может быть использован любой итерируемый объект 
+const iter = {  *[Symbol.iterator]() {  yield 1;
+ yield 2;
+ yield 3;
+ yield 4;
+ } };
+alert(Array.from(iter)); 
+// [1, 2, 3, 4] 
+// Объект arguments теперь может быть легко преобразован в массив:
+function getArgsArray() {  return Array.from(arguments);
+} 
+alert(getArgsArray(1, 2, 3, 4)); 
+// [1, 2, 3, 4] 
+// from() будет использовать пользовательский объект с необходимыми свойствами 
+const arrayLikeObject = {  0: 1,  1: 2,  2: 3,  3: 4,  length: 4 };
+alert(Array.from(arrayLikeObject)); 
+// [1, 2, 3, 4]
+
+//Array.of() преобразует список аргументов в массив
+alert(Array.of(1, 2, 3, 4)); 
+// [1, 2, 3, 4] 
+alert(Array.of(undefined)); 
+// [undefined]
+
+//Обработка масива
+
+const a1s = [1, 2, 3, 4];
+const a2s = Array.from(a1s, x => x**2);
+const a3s = Array.from(a1s, function(x) {return x**this.exponent}, {exponent: 2});
+alert(a2s); // [1, 4, 9, 16] 
+alert(a3s); // [1, 4, 9, 16]
+
+//Индексы в массивах
+let colors = ["red", "blue", "green"]; 
+//объявить массив строк 
+alert(colors[0]); 
+// вывести первый элемент 
+colors[2] = "black"; 
+// изменить третий элемент 
+colors[3] = "brown"; 
+// добавить четвертый элемент
+
+//работа с length 
+let lenArr = [1,2,3];
+//удалили второй элемент
+lenArr.length = 2;
+console.log(lenArr);
+//добавили элемент в конец массива
+lenArr[lenArr.length]=5;
+console.log(lenArr);
+//ПРИМЕЧАНИЕ Массивы могут содержать не более 4 294 967 295 элементов, это достаточно для решения почти любых задач. если попытаться добавить в массив еще больше элементов, возникнет исключение. Попытка создать массив с перво-начальным размером, близким к этому максимуму, может вызвать ошибку из-за длительного выполнения сценария.
+
+//Индефикация масства
+let value = [];
+if (Array.isArray(value)) {  
+// какие-то действия с массивом
+console.log("Это массив");
+ }
+//Проверка содержимого массива
+const a = ["foo", "bar", "baz", "qux"];
+// Поскольку эти методы возвращают итераторы, можно перенаправить их содержимое в экземпляры массива с помощью Array.from()
+const aKeys = Array.from(a.keys());
+const aValues = Array.from(a.values());
+const aEntries = Array.from(a.entries());
+alert(aKeys); 
+// [0, 1, 2, 3] 
+alert(aValues); 
+// ["foo", "bar", "baz", "qux"]
+alert(aEntries); 
+// [[0, "foo"], [1, "bar"], [2, "baz"], [3, "qux"]]
+//разделяем индексы и значения
+for (const [idx, element] of a.entries()) {
+    console.log("Индекс "+idx,"Значение "+element);
+}
+
+//Методы копирования и заполнения массивов
+const zeroes = [0, 0, 0, 0, 0];
+
+// Весь массив заполняется пятерками
+zeroes.fill(5);
+alert(zeroes); 
+// [5, 5, 5, 5, 5] 
+zeroes.fill(0); 
+// сброс
+// Заполнение массива начиная с индекса 3 шестерками 
+zeroes.fill(6, 3);
+alert(zeroes); 
+// [0, 0, 0, 6, 6] 
+zeroes.fill(0); 
+// сброс
+
+//работа с масивом как со стеками
+let colorse = new Array();
+// создание массива 
+let count = colorse.push("red", "green"); 
+// включение двух элементов 
+alert(count); 
+// 2 
+count = colorse.push("black"); 
+// включение еще одного элемента
+alert(count); 
+// 3 
+let item = colorse.pop(); 
+// извлечение последнего элемента
+alert(item); 
+// "black" 
+alert(colors.length); 
+// 2
+
+//Методы для работы с массивом как с очередью
+let items = colors.shift(); // извлечение первого элемента 
+alert(items); // "red" 
+alert(colorse.length); 
+// 2
+/*unshift(), обратный методу shift(): 
+он добавляет любое количество элементов в начало массива и возвращает его новую длину*/
+let colorsUns = new Array(); 
+// создание массива 
+let countUns = colorsUns.unshift("red", "green"); 
+// добавление элементов 
+alert(count); 
+// 2 
+countUns = colorsUns.unshift("black"); 
+// добавление еще одного элемента
+alert(countUns); 
+// 3
+//Методы изменения порядка следования элементов
+//Простой метод
+let values = [1, 2, 3, 4, 5];
+values.reverse();
+console.log(values);
+// 5,4,3,2,1
+//Сортировка с сравнениями
+//По умолчанию метод sort() располагает элементы по возрастанию: наименьшее значение первым, а наибольшее последним
+let valuesSort = [0, 1, 5, 10, 15];
+valuesSort.sort();
+console.log(valuesSort); // 0,1,10,15,5
+//функция сравнения
+function compare(value1, value2) {  
+if (value1 < value2) 
+{  return -1;
+ } else if (value1 > value2)
+  {  return 1;
+ } else {return 0;
+ } }
+valuesSort.sort(compare);
+console.log(valuesSort); // 0,1,5,10,15
+//Методы манипулирования элементами
+//Создаем и добовляем в конец масива
+let cole = ["red", "green", "blue"];
+let cole2 = colors.concat("yellow", ["black", "brown"]);
+console.log(cole); 
+console.log(cole2);
+//Метод slice() создает массив с одним или более элементами, уже содержащимися в массиве.
+let col = ["red", "green", "blue", "yellow", "purple"];
+let col2 = colors.slice(1);
+let col3 = colors.slice(1,4);
+alert(col2);
+alert(col3);
+//sleser() используется в основном для вставки элементов в середину массива
+let cola = ["red", "green", "blue"];
+let removed = cola.splice(0,1); 
+// удаление первого элемента alert(colors); 
+// green,blue alert(removed); 
+// red — массив с одним элементом 
+removed = cola.splice(1, 0, "yellow", "orange"); 
+// вставка двух элементов  
+// в позиции 1 
+alert(cola); 
+// green,yellow,orange,blue 
+alert(removed); 
+// пустой массив 
+removed = colors.splice(1, 1, "red", "purple"); 
+// вставка двух значений  
+// и удаление одного alert(colors); 
+// green,red,purple,orange,blue 
+alert(removed); 
+// yellow — массив с одним элементом
 </script>
