@@ -12,4 +12,121 @@
 </html>
 <script>
 
+
+//глобальная переменная
+const  glob ="hello i global peremenna";
+if(true){
+//блочная переменная
+var a ="helloy. a am see";
+//локальная переменная
+let b ="a em not see";
+}
+console.log(glob);
+console.log(a);
+//console.log(b);
+
+ function borh (porcia){
+ console.log(`Для приготовлении  `+porcia+` порции борша нужно:`);
+    function ingred (mera,obem,name){
+    if(porcia >1){
+        console.log(mera*porcia+" "+obem+"--"+name);
+    }else{
+        console.log(mera+" "+obem+"--"+name); 
+    }
+    }
+    ingred(2,"шт","лук чишенныц");
+    ingred(1,"шт","морковь чишенный");
+    ingred(0.5,"кг","свенные кости");
+    ingred(0.7,"кг","картофель чишеннвй");
+    ingred(2,"литра","воды");
+}
+borh(1);
+//вызов функции не работает сверху вниз. ее млжно вызвать в любой части кода
+console.log("Голос из будушего :", future());
+function  future(){
+    return "летаюших машин не будет";
+}
+
+//Запись функции в виде переменных
+const funPerem= function(){
+    console.log("Функция в виде переменной");
+}
+console.log(funPerem());
+
+//Запись функции декларотивная
+function funDecl(){
+    return "Декларотивная функция";
+}
+console.log(funDecl())
+
+//Запись стрелочной функции
+const funStrel = ()=>{
+    return "Сьрелочная функция";
+}
+console.log(funStrel());
+
+//Стек вызова
+function names(name){
+    console.log("Привет "+name);        
+}
+names ("Bill");
+console.log("Пока");
+
+//Необязательная переменная в функции
+function sum(a,b){
+if(b===undefined) return -a;
+else return  a-b;
+}
+console.log(sum(15,4));
+
+//рекурсивная функция добавляем нули если меньше трех цифр в чмсле
+function zeroPad(namber,widh){
+    let strings = String(namber);
+    while(strings.length  < widh){
+        strings = "0"+strings;
+    }
+    return strings 
+}
+function  namberInvert(cor, chekin, pigs){
+   console.log(`${zeroPad(cor,3)} коров`);
+   console.log(`${zeroPad(chekin ,3)} цыплят`);
+   console.log(`${zeroPad(pigs,3)} поросята`);
+}
+namberInvert (5,12,123);
+//Задание 1
+function mathMin(a,b){
+    if(a<b) console.log(a)
+    else  console.log(b)
+}
+//Задание 2
+function isEvan(nam){
+ if((nam & 1)== 0) console.log("Число "+nam+" четное")
+ else console.log("Число "+nam+" не четное");
+}
+isEvan(-2);
+//Задание 3
+//1 вариант
+function countBs(text){
+   var countText = 0;
+   for(let i =0; i<=text.length; i++)
+   {
+    if(text[i] == "B") {countText++;}
+   }
+   console.log("В слове "+text+" - "+countText+" заглавная буква B");
+}
+countBs("Billbo");
+
+//2 вариант
+function countChar(text, chars){
+   var countText = 0;
+   var textChars = text.toLowerCase();
+   for(let i =0; i<=text.length; i++)
+   {
+    if(textChars[i] == chars) {countText++;}
+   }
+   console.log("В слове "+text+" - "+countText+" букв "+ chars);
+}
+countChar("Billbo", "b");
+
+
 </script>
