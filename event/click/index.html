@@ -1,15 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Click</title>
-</head>
-<body>
-    <h2>Click</h2>
-</body>
+<html>
+    <head>
+        <title>Page Title</title>
+    </head>
+    <body>
+        <p id="clickTeg">Щелкните здесь чтобы активировать оброботчик событий</p>
+        <button>Одноразовая кнопка</button>
+    </body>
+    <script>
+    //Поикоепляем события ко всему экрану
+    /*window.addEventListener("click", () => { 
+    console.log("Kтo там?");});*/
+    //Поикрепляем события к тексту
+    let clickTeg = document.getElementById("clickTeg")
+    clickTeg.addEventListener("click", () => { 
+    console.log("Kтo там?");});
+    //Прикрепляем собыьие и удаляем его
+    let button = document.querySelector("button"); 
+    function once() { console.log("Гoтoвo."); 
+button.removeEventListener("click", once); }
+button.addEventListener("click", once);
+//Ращмер экрана
+console.log("Ширина - "+innerWidth +" Высота - "+innerHeight);
+    </script>
 </html>
-<script>
-
-</script>
