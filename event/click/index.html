@@ -8,9 +8,9 @@
         <button>Одноразовая кнопка</button>
     </body>
     <script>
-    //Поикоепляем события ко всему экрану
-    /*window.addEventListener("click", () => { 
-    console.log("Kтo там?");});*/
+    //Прикрепляем события ко всему экрану
+    window.addEventListener("click", () => { 
+    console.log("Kтo там?");});
     //Поикрепляем события к тексту
     let clickTeg = document.getElementById("clickTeg")
     clickTeg.addEventListener("click", () => { 
@@ -18,9 +18,9 @@
     //Прикрепляем собыьие и удаляем его
     let button = document.querySelector("button"); 
     function once() { console.log("Гoтoвo."); 
-button.removeEventListener("click", once); }
-button.addEventListener("click", once);
-//Ращмер экрана
+    button.removeEventListener("click", once); }
+    button.addEventListener("click", once);
+//Размер экрана
 console.log("Ширина - "+innerWidth +" Высота - "+innerHeight);
     </script>
 </html>
