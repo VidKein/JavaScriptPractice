@@ -1,12 +1,20 @@
-<canvas id="canvasEdit" width="2" height="2" style="border: 1px solid #000;">Canvas</canvas>
-<p><button id="colorToggle" class="black">BLACK</button></p>
+<!--Image processing. Start.-->
+<style>
+    button{
+        border: none;
+        background-color: white;
+        cursor: pointer;
+    }
+</style>
+<canvas id="canvasEdit" width="10" height="10" >Canvas</canvas>
+<p>Click on the button to change the color... <button id="colorToggle" class="black">BLACK</button></p>
 <script>
 const canvas = document.getElementById("canvasEdit"), 
     width = canvas.width,
     height = canvas.height,       
     ctx = canvas.getContext("2d");
     /*draw a picture*/
-    ctx.fillRect(1,1,1,1);
+    ctx.fillRect(0,0,10,10);
     /*get data*/
 const imgGetCanvas = ctx.getImageData(0, 0, width, height),
     /*1 variant -*/
@@ -19,29 +27,52 @@ let colorToggle = document.getElementById("colorToggle");
         if (colorToggle.classList.contains("red")) {
             colorToggle.innerHTML = "BLACK";
             colorToggle.className = "black";
+            colorToggle.style.color = "black";
         } else {
             colorToggle.innerHTML = "RED";
             colorToggle.className = "red";
+            colorToggle.style.color = "red";
         }
     for (let y = 0; y < height; y++) {
      for (let x = 0; x < width; x++) {
      let index = (y * width + x) * 4,
-         rgba = pixelsUint8ClampedArray[index+0]+","+pixelsUint8ClampedArray[index+1]+","+pixelsUint8ClampedArray[index+2]+","+pixelsUint8ClampedArray[index+3];
+        r = pixelsUint8ClampedArray[index],//red
+        g = pixelsUint8ClampedArray[index+1],//green
+        b = pixelsUint8ClampedArray[index+2],//blue
+        a = pixelsUint8ClampedArray[index+3],//alfa
+         rgba = r+","+g+","+b+","+a;
         if (rgba == "0,0,0,255") {
-            pixelsUint8ClampedArray[index+0]= 255;
-            pixelsUint8ClampedArray[index+1]= 0;
-            pixelsUint8ClampedArray[index+2]= 0;
-            pixelsUint8ClampedArray[index+3]= 0;
-            console.log(rgba);
+            /*red 255,0,0,255*/
+            pixelsUint8ClampedArray[index]= 255;//red
+            pixelsUint8ClampedArray[index+1]= 0;//green
+            pixelsUint8ClampedArray[index+2]= 0;//blue
+            pixelsUint8ClampedArray[index+3]= 255;//alfa
+            console.log("Color black "+rgba);
         }else{
-            pixelsUint8ClampedArray[index+0]= 0;
-            pixelsUint8ClampedArray[index+1]= 0;
-            pixelsUint8ClampedArray[index+2]= 0;
-            pixelsUint8ClampedArray[index+3]= 255;
-            console.log(rgba);
+            /*black 0,0,0,255*/
+            pixelsUint8ClampedArray[index]= 0;//red
+            pixelsUint8ClampedArray[index+1]= 0;//green
+            pixelsUint8ClampedArray[index+2]= 0;//blue
+            pixelsUint8ClampedArray[index+3]= 255;//alfa
+            console.log("Color red "+rgba);
         }
      }
     }
     ctx.putImageData(imgGetCanvas, 0, 0);
     })
+</script>
+
+<!--Images. Simple transformation.-->
+<canvas id="canvasImagen">Canvas Imagen</canvas>
+<p>Click on the button to change the image... <button id="colorToggleImagen" class="colorToggleImagen">Change</button></p>
+<script>
+    const canvasImagen = document.getElementById("canvasImagen"),
+          img = new Image(),
+          ctxImagen = canvasImagen.getContext("2d");
+          img.onload = function (){
+            canvasImagen.width = img.width;
+            canvasImagen.height = img.height;
+            ctxImagen.drawImage(img, 0, 0);
+          }
+          img.src = "./favicon.png";      
 </script>
