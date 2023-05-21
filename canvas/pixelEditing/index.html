@@ -1,20 +1,18 @@
-<canvas id="canvasEdit" width="4" height="4" style="border: 1px solid #000;">Canvas</canvas>
-<p><button id="colorToggle" class="red">RED</button></p>
+<canvas id="canvasEdit" width="2" height="2" style="border: 1px solid #000;">Canvas</canvas>
+<p><button id="colorToggle" class="black">BLACK</button></p>
 <script>
 const canvas = document.getElementById("canvasEdit"), 
     width = canvas.width,
     height = canvas.height,       
     ctx = canvas.getContext("2d");
     /*draw a picture*/
-    ctx.fillRect(2,2,2,2);
+    ctx.fillRect(1,1,1,1);
     /*get data*/
 const imgGetCanvas = ctx.getImageData(0, 0, width, height),
     /*1 variant -*/
     pixelsUint8ClampedArray = imgGetCanvas.data,
     /*2 variant +*/
     pixelsUint32Array = new Uint32Array(imgGetCanvas.data.buffer);  
-    console.log(pixelsUint8ClampedArray);
-    console.log(pixelsUint32Array);
 /*toggle RED BLACK*/
 let colorToggle = document.getElementById("colorToggle");
     colorToggle.addEventListener("click", function () {
@@ -25,5 +23,25 @@ let colorToggle = document.getElementById("colorToggle");
             colorToggle.innerHTML = "RED";
             colorToggle.className = "red";
         }
+    for (let y = 0; y < height; y++) {
+     for (let x = 0; x < width; x++) {
+     let index = (y * width + x) * 4,
+         rgba = pixelsUint8ClampedArray[index+0]+","+pixelsUint8ClampedArray[index+1]+","+pixelsUint8ClampedArray[index+2]+","+pixelsUint8ClampedArray[index+3];
+        if (rgba == "0,0,0,255") {
+            pixelsUint8ClampedArray[index+0]= 255;
+            pixelsUint8ClampedArray[index+1]= 0;
+            pixelsUint8ClampedArray[index+2]= 0;
+            pixelsUint8ClampedArray[index+3]= 0;
+            console.log(rgba);
+        }else{
+            pixelsUint8ClampedArray[index+0]= 0;
+            pixelsUint8ClampedArray[index+1]= 0;
+            pixelsUint8ClampedArray[index+2]= 0;
+            pixelsUint8ClampedArray[index+3]= 255;
+            console.log(rgba);
+        }
+     }
+    }
+    ctx.putImageData(imgGetCanvas, 0, 0);
     })
 </script>
