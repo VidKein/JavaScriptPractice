@@ -64,7 +64,7 @@ let colorToggle = document.getElementById("colorToggle");
 
 <!--Images. Simple transformation.-->
 <canvas id="canvasImagen">Canvas Imagen</canvas>
-<p>Click on the button to change the image... <button id="colorToggleImagen" class="colorToggleImagen">Change</button></p>
+<p>Click on the button to change the image... <button id="colorToggleImagen" class="colorToggleImagen">Turn</button></p>
 <script>
     const canvasImagen = document.getElementById("canvasImagen"),
           img = new Image(),
@@ -73,6 +73,36 @@ let colorToggle = document.getElementById("colorToggle");
             canvasImagen.width = img.width;
             canvasImagen.height = img.height;
             ctxImagen.drawImage(img, 0, 0);
+            /*get data*/
+            const width = canvasImagen.width,
+                  height = canvasImagen.height,                
+                  imgGetCanvas = ctxImagen.getImageData(0, 0, width, height),
+                  /*2 variant +*/
+                  pixelsUint32Array = new Uint32Array(imgGetCanvas.data.buffer),
+                  src = new Uint32Array(imgGetCanvas.data.buffer),
+                  colorToggleImagen = document.getElementById("colorToggleImagen");
+                 
+            colorToggleImagen.addEventListener("click",function () {
+                colorToggleImagen.classList.toggle("activ");
+                if (colorToggleImagen.className == "colorToggleImagen activ") {
+                    // Rotate 90°
+                    let newWidth = height;
+                    let newHeight = width;
+                    canvasImagen.width = newWidth;
+                    canvasImagen.height = newHeight;
+                    for (let y = 0; y < newHeight; y++) {
+                      for (let x = 0; x < newWidth; x++) {
+                        pixelsUint32Array[y * newWidth + x] = src[(height - x - 1) * width + y];
+                      }
+                    }
+                    ctxImagen.putImageData(imgGetCanvas, 0, 0);
+                    colorToggleImagen.innerHTML = "Turn 90°";
+                } else {
+                    ctxImagen.drawImage(img, 0, 0);
+                    colorToggleImagen.innerHTML = "Turn";
+                }
+            })
           }
-          img.src = "./favicon.png";      
+          img.src = "./favicon.png";
+
 </script>
