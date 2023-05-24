@@ -130,7 +130,11 @@ let imgScale = new Image(),
     scaleImegen = 1;
     value.textContent = scale.value;       
     imgScale.src = "./favicon.png";
-    imgScale.onload = scaleImagen;
+    imgScale.onload = function () {
+        scaleImagen(imgScale,scaleImegen);    
+    }
+    
+
    
   scale.addEventListener("input",function () {
         value.textContent = scale.value;       
@@ -150,7 +154,7 @@ function scaleImagen(img, scale) {
     var origCtx = orig.getContext('2d');
     origCtx.drawImage(img, 0, 0);
     var origPixels = origCtx.getImageData(0, 0, img.width, img.height);
-    
+
     var scaled = document.createElement('canvas');
     scaled.width = widthScaled;
     scaled.height = heightScaled;
