@@ -72,6 +72,7 @@ let colorToggle = document.getElementById("colorToggle");
     const canvasImagen = document.getElementById("canvasImagenRotate"),
           img = new Image(),
           ctxImagen = canvasImagen.getContext("2d");
+          img.src = "./favicon.png";
           img.onload = function (){
             canvasImagen.width = img.width;
             canvasImagen.height = img.height;
@@ -84,7 +85,7 @@ let colorToggle = document.getElementById("colorToggle");
                   pixelsUint32Array = new Uint32Array(imgGetCanvas.data.buffer),
                   src = new Uint32Array(imgGetCanvas.data.buffer),
                   colorToggleImagen = document.getElementById("colorToggleImagen");
-                 
+                
             colorToggleImagen.addEventListener("click",function () {
                 colorToggleImagen.classList.toggle("activ");
                 if (colorToggleImagen.className == "colorToggleImagen activ") {
@@ -101,12 +102,13 @@ let colorToggle = document.getElementById("colorToggle");
                     ctxImagen.putImageData(imgGetCanvas, 0, 0);
                     colorToggleImagen.innerHTML = "Rotate 90°";
                 } else {
+                    canvasImagen.width = width;
+                    canvasImagen.height = height;
                     ctxImagen.drawImage(img, 0, 0);
                     colorToggleImagen.innerHTML = "Rotate 0°";
                 }
             })
           }
-          img.src = "./favicon.png";
 
 </script>
 
@@ -133,8 +135,6 @@ let imgScale = new Image(),
     imgScale.onload = function () {
         scaleImagen(imgScale,scaleImegen);    
     }
-    
-
    
   scale.addEventListener("input",function () {
         value.textContent = scale.value;       
@@ -154,13 +154,13 @@ function scaleImagen(img, scale) {
     var origCtx = orig.getContext('2d');
     origCtx.drawImage(img, 0, 0);
     var origPixels = origCtx.getImageData(0, 0, img.width, img.height);
-
+    
     var scaled = document.createElement('canvas');
     scaled.width = widthScaled;
     scaled.height = heightScaled;
     var scaledCtx = scaled.getContext('2d');
     var scaledPixels = scaledCtx.getImageData( 0, 0, widthScaled, heightScaled );
-
+    
     for( var y = 0; y < heightScaled; y++ ) {
         for( var x = 0; x < widthScaled; x++ ) {
             var index = (Math.floor(y / scale) * img.width + Math.floor(x / scale)) * 4;
@@ -173,5 +173,47 @@ function scaleImagen(img, scale) {
     }
     ctxScale.putImageData(scaledPixels, 0, 0);
 }
+</script>
 
+<canvas id="canvas1"></canvas>
+<canvas id="canvas2">1variant</canvas>
+<canvas id="canvas3">2variant</canvas>
+<script>
+let imgCopy = new Image(),
+    canvasImagenCopy = document.getElementById("canvas1"),
+    ctxImagenCopy = canvasImagenCopy.getContext("2d"),
+    canvasCopy = document.getElementById("canvas2"),
+    ctxCopy = canvasCopy.getContext("2d"),
+    canvasCopyPixel = document.getElementById("canvas3"),
+    ctxCopyPixel = canvasCopyPixel.getContext("2d");
+    imgCopy.src = "./favicon.png";
+    imgCopy.onload = function () {
+        let width = imgCopy.width,
+            height =  imgCopy.height;
+        canvasImagenCopy.width = width;
+        canvasImagenCopy.height = height;
+        ctxImagenCopy.drawImage(imgCopy, 0, 0);
+        let imgGetCopy = ctxImagenCopy.getImageData(0, 0, width, height);
+        /*1variant*/
+        canvasCopy.width = width;
+        canvasCopy.height = height;
+        ctxCopy.putImageData(imgGetCopy, 0, 0);
+        /*2variant*/
+        /*pixel for edit*/
+        let src = new Uint32Array(imgGetCopy.data.buffer),
+        /*blank*/
+            outImg = ctxCopy.createImageData(width, height),
+            dst = new Uint32Array(outImg.data.buffer);
+        canvasCopyPixel.width = width;
+        canvasCopyPixel.height = height;
+        /*build canvas 90 rotate*/
+        let newWidth = height;
+        let newHeight = width;
+        for (let y = 0; y < newHeight; y++) {
+          for (let x = 0; x < newWidth; x++) {
+            dst[y * newWidth + x] = src[(height - x - 1) * width + y];
+          }
+        }
+        ctxCopyPixel.putImageData(outImg, 0, 0);
+    }
 </script>
