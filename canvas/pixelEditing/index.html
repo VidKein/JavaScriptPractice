@@ -82,9 +82,13 @@ let colorToggle = document.getElementById("colorToggle");
                   height = canvasImagen.height,                
                   imgGetCanvas = ctxImagen.getImageData(0, 0, width, height),
                   /*2 variant +*/
-                  pixelsUint32Array = new Uint32Array(imgGetCanvas.data.buffer),
+                  /*pixel for edit*/
                   src = new Uint32Array(imgGetCanvas.data.buffer),
                   colorToggleImagen = document.getElementById("colorToggleImagen");
+
+            /*blank*/
+                outImg = ctxImagen.createImageData(height,width),//!!!!!!
+                dst = new Uint32Array(outImg.data.buffer);
                 
             colorToggleImagen.addEventListener("click",function () {
                 colorToggleImagen.classList.toggle("activ");
@@ -96,11 +100,12 @@ let colorToggle = document.getElementById("colorToggle");
                     canvasImagen.height = newHeight;
                     for (let y = 0; y < newHeight; y++) {
                       for (let x = 0; x < newWidth; x++) {
-                        pixelsUint32Array[y * newWidth + x] = src[(height - x - 1) * width + y];
+                        dst[y * newWidth + x] = src[(height - x - 1) * width + y];
                       }
                     }
-                    ctxImagen.putImageData(imgGetCanvas, 0, 0);
+                    ctxImagen.putImageData(outImg, 0, 0);
                     colorToggleImagen.innerHTML = "Rotate 90°";
+                    
                 } else {
                     canvasImagen.width = width;
                     canvasImagen.height = height;
@@ -123,7 +128,6 @@ let colorToggle = document.getElementById("colorToggle");
     <option value="5"></option>
   </datalist>
 <script>
-
 let imgScale = new Image(),
     scale = document.getElementById("scale"),
     value = document.getElementById("value"),
@@ -174,7 +178,7 @@ function scaleImagen(img, scale) {
     ctxScale.putImageData(scaledPixels, 0, 0);
 }
 </script>
-
+<!--Canvas copy.-->
 <canvas id="canvas1"></canvas>
 <canvas id="canvas2">1variant</canvas>
 <canvas id="canvas3">2variant</canvas>
@@ -202,10 +206,10 @@ let imgCopy = new Image(),
         /*pixel for edit*/
         let src = new Uint32Array(imgGetCopy.data.buffer),
         /*blank*/
-            outImg = ctxCopy.createImageData(width, height),
+            outImg = ctxCopy.createImageData(height,width),//!!!!!!
             dst = new Uint32Array(outImg.data.buffer);
-        canvasCopyPixel.width = width;
-        canvasCopyPixel.height = height;
+        canvasCopyPixel.width = height;
+        canvasCopyPixel.height = width;
         /*build canvas 90 rotate*/
         let newWidth = height;
         let newHeight = width;
@@ -215,5 +219,6 @@ let imgCopy = new Image(),
           }
         }
         ctxCopyPixel.putImageData(outImg, 0, 0);
+        
     }
 </script>
