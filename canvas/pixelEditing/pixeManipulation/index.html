@@ -1,0 +1,282 @@
+<!--Image processing. Start.-->
+<style>
+    h3{
+        text-align: center;
+        margin: 5px; 
+    }
+    button{
+        border: none;
+        background-color: white;
+        cursor: pointer;
+    }
+    p{
+        margin: 5px 0;
+    }
+</style>
+<h3>Pixel manipulation</h3>
+<canvas id="canvasEdit" width="10" height="10" >Canvas</canvas>
+<p>Click on the button to change the color... <button id="colorToggle" class="black">BLACK</button></p>
+<script>
+const canvas = document.getElementById("canvasEdit"), 
+    width = canvas.width,
+    height = canvas.height,       
+    ctx = canvas.getContext("2d");
+    /*draw a picture*/
+    ctx.fillRect(0,0,10,10);
+    /*get data*/
+const imgGetCanvas = ctx.getImageData(0, 0, width, height),
+    /*1 variant -*/
+    pixelsUint8ClampedArray = imgGetCanvas.data,
+    /*2 variant +*/
+    pixelsUint32Array = new Uint32Array(imgGetCanvas.data.buffer);  
+/*toggle RED BLACK*/
+let colorToggle = document.getElementById("colorToggle");
+    colorToggle.addEventListener("click", function () {
+        if (colorToggle.classList.contains("red")) {
+            colorToggle.innerHTML = "BLACK";
+            colorToggle.className = "black";
+            colorToggle.style.color = "black";
+        } else {
+            colorToggle.innerHTML = "RED";
+            colorToggle.className = "red";
+            colorToggle.style.color = "red";
+        }
+    for (let y = 0; y < height; y++) {
+     for (let x = 0; x < width; x++) {
+     let index = (y * width + x) * 4,
+        r = pixelsUint8ClampedArray[index],//red
+        g = pixelsUint8ClampedArray[index+1],//green
+        b = pixelsUint8ClampedArray[index+2],//blue
+        a = pixelsUint8ClampedArray[index+3],//alfa
+         rgba = r+","+g+","+b+","+a;
+        if (rgba == "0,0,0,255") {
+            /*red 255,0,0,255*/
+            pixelsUint8ClampedArray[index]= 255;//red
+            pixelsUint8ClampedArray[index+1]= 0;//green
+            pixelsUint8ClampedArray[index+2]= 0;//blue
+            pixelsUint8ClampedArray[index+3]= 255;//alfa
+            console.log("Color black "+rgba);
+        }else{
+            /*black 0,0,0,255*/
+            pixelsUint8ClampedArray[index]= 0;//red
+            pixelsUint8ClampedArray[index+1]= 0;//green
+            pixelsUint8ClampedArray[index+2]= 0;//blue
+            pixelsUint8ClampedArray[index+3]= 255;//alfa
+            console.log("Color red "+rgba);
+        }
+     }
+    }
+    ctx.putImageData(imgGetCanvas, 0, 0);
+    })
+</script>
+
+<!--Images. Simple transformation.-->
+<canvas id="canvasImagenRotate">Canvas Imagen</canvas>
+<p>Click on the button to change the image... <button id="colorToggleImagen" class="colorToggleImagen">Rotate 0°</button></p>
+<script>
+    const canvasImagen = document.getElementById("canvasImagenRotate"),
+          img = new Image(),
+          ctxImagen = canvasImagen.getContext("2d");
+          img.src = "./favicon.png";
+          img.onload = function (){
+            canvasImagen.width = img.width;
+            canvasImagen.height = img.height;
+            ctxImagen.drawImage(img, 0, 0);
+            /*get data*/
+            const width = canvasImagen.width,
+                  height = canvasImagen.height,                
+                  imgGetCanvas = ctxImagen.getImageData(0, 0, width, height),
+                  /*2 variant +*/
+                  /*pixel for edit*/
+                  src = new Uint32Array(imgGetCanvas.data.buffer),
+                  colorToggleImagen = document.getElementById("colorToggleImagen");
+
+            /*blank*/
+                outImg = ctxImagen.createImageData(height,width),//!!!!!!
+                dst = new Uint32Array(outImg.data.buffer);
+                
+            colorToggleImagen.addEventListener("click",function () {
+                colorToggleImagen.classList.toggle("activ");
+                if (colorToggleImagen.className == "colorToggleImagen activ") {
+                    // Rotate 90°
+                    let newWidth = height;
+                    let newHeight = width;
+                    canvasImagen.width = newWidth;
+                    canvasImagen.height = newHeight;
+                    for (let y = 0; y < newHeight; y++) {
+                      for (let x = 0; x < newWidth; x++) {
+                        dst[y * newWidth + x] = src[(height - x - 1) * width + y];
+                      }
+                    }
+                    ctxImagen.putImageData(outImg, 0, 0);
+                    colorToggleImagen.innerHTML = "Rotate 90°";
+                    
+                } else {
+                    canvasImagen.width = width;
+                    canvasImagen.height = height;
+                    ctxImagen.drawImage(img, 0, 0);
+                    colorToggleImagen.innerHTML = "Rotate 0°";
+                }
+            })
+          }
+
+</script>
+
+<!--Images. Simple scale.-->
+<canvas id="canvasImagenScale"></canvas>
+<p>Choose image scale from 1 to 5... <input type="range" name="scale" id="scale" min="1" max="5" step="1" value="1" list="marker"><output id="value"></output></p>
+<datalist id="marker">
+    <option value="1"></option>
+    <option value="2"></option>
+    <option value="3"></option>
+    <option value="4"></option>
+    <option value="5"></option>
+  </datalist>
+<script>
+let imgScale = new Image(),
+    scale = document.getElementById("scale"),
+    value = document.getElementById("value"),
+    canvasImagenScale = document.getElementById("canvasImagenScale"),
+    ctxScale = canvasImagenScale.getContext("2d"),
+    scaleImegen = 1;
+    value.textContent = scale.value;       
+    imgScale.src = "./favicon.png";
+    imgScale.onload = function () {
+        scaleImagen(imgScale,scaleImegen);    
+    }
+   
+  scale.addEventListener("input",function () {
+        value.textContent = scale.value;       
+        scaleImegen = scale.value;
+        scaleImagen(imgScale,scaleImegen);      
+  })
+
+function scaleImagen(img, scale) {    
+    var widthScaled = img.width * scale;
+    var heightScaled = img.height * scale;
+        canvasImagenScale.width = widthScaled;
+        canvasImagenScale.height = heightScaled;    
+        
+    var orig = document.createElement('canvas');
+    orig.width = img.width;
+    orig.height = img.height;
+    var origCtx = orig.getContext('2d');
+    origCtx.drawImage(img, 0, 0);
+    var origPixels = origCtx.getImageData(0, 0, img.width, img.height);
+    
+    var scaled = document.createElement('canvas');
+    scaled.width = widthScaled;
+    scaled.height = heightScaled;
+    var scaledCtx = scaled.getContext('2d');
+    var scaledPixels = scaledCtx.getImageData( 0, 0, widthScaled, heightScaled );
+    
+    for( var y = 0; y < heightScaled; y++ ) {
+        for( var x = 0; x < widthScaled; x++ ) {
+            var index = (Math.floor(y / scale) * img.width + Math.floor(x / scale)) * 4;
+            var indexScaled = (y * widthScaled + x) * 4;
+            scaledPixels.data[ indexScaled ] = origPixels.data[ index ];
+            scaledPixels.data[ indexScaled+1 ] = origPixels.data[ index+1 ];
+            scaledPixels.data[ indexScaled+2 ] = origPixels.data[ index+2 ];
+            scaledPixels.data[ indexScaled+3 ] = origPixels.data[ index+3 ];
+        }
+    }
+    ctxScale.putImageData(scaledPixels, 0, 0);
+}
+</script>
+<!--Canvas copy.-->
+<p>Canvas copy.</p>
+<canvas id="canvas1"></canvas>
+<canvas id="canvas2">1variant</canvas>
+<canvas id="canvas3">2variant</canvas>
+<script>
+let imgCopy = new Image(),
+    canvasImagenCopy = document.getElementById("canvas1"),
+    ctxImagenCopy = canvasImagenCopy.getContext("2d"),
+    canvasCopy = document.getElementById("canvas2"),
+    ctxCopy = canvasCopy.getContext("2d"),
+    canvasCopyPixel = document.getElementById("canvas3"),
+    ctxCopyPixel = canvasCopyPixel.getContext("2d");
+    imgCopy.src = "./favicon.png";
+    imgCopy.onload = function () {
+        let width = imgCopy.width,
+            height =  imgCopy.height;
+        canvasImagenCopy.width = width;
+        canvasImagenCopy.height = height;
+        ctxImagenCopy.drawImage(imgCopy, 0, 0);
+        let imgGetCopy = ctxImagenCopy.getImageData(0, 0, width, height);
+        /*1variant*/
+        canvasCopy.width = width;
+        canvasCopy.height = height;
+        ctxCopy.putImageData(imgGetCopy, 0, 0);
+        /*2variant*/
+        /*pixel for edit*/
+        let src = new Uint32Array(imgGetCopy.data.buffer),
+        /*blank*/
+            outImg = ctxCopy.createImageData(height,width),//!!!!!!
+            dst = new Uint32Array(outImg.data.buffer);
+        canvasCopyPixel.width = height;
+        canvasCopyPixel.height = width;
+        /*build canvas 90 rotate*/
+        let newWidth = height;
+        let newHeight = width;
+        for (let y = 0; y < newHeight; y++) {
+          for (let x = 0; x < newWidth; x++) {
+            dst[y * newWidth + x] = src[(height - x - 1) * width + y];
+          }
+        }
+        ctxCopyPixel.putImageData(outImg, 0, 0);
+        
+    }
+</script>
+
+<!--Edge detection filter https://html.spec.whatwg.org/multipage/canvas.html#pixel-manipulation-->
+<script>
+var image = new Image();
+   function init() {
+     image.onload = demo;
+     image.src = "kiza.jpeg";
+   }
+   function demo() {
+     var canvas = document.getElementsByTagName('canvas')[6];
+     var context = canvas.getContext('2d');
+     canvas.width = image.width;
+     canvas.height = image.height   
+
+     // draw the image onto the canvas
+     context.drawImage(image, 0, 0);
+     
+     // get the image data to manipulate
+     var input = context.getImageData(0, 0, canvas.width, canvas.height);
+
+     // get an empty slate to put the data into
+     var output = context.createImageData(canvas.width, canvas.height);
+
+     // alias some variables for convenience
+     // In this case input.width and input.height
+     // match canvas.width and canvas.height
+     // but we'll use the former to keep the code generic.
+     var w = input.width, h = input.height;
+     var inputData = input.data;
+     var outputData = output.data;
+
+     // edge detection
+     for (var y = 1; y < h-1; y += 1) {
+       for (var x = 1; x < w-1; x += 1) {
+         for (var c = 0; c < 3; c += 1) {
+           var i = (y*w + x)*4 + c;
+           outputData[i] = 127 + -inputData[i - w*4 - 4] -   inputData[i - w*4] - inputData[i - w*4 + 4] +
+                                 -inputData[i - 4]       + 8*inputData[i]       - inputData[i + 4] +
+                                 -inputData[i + w*4 - 4] -   inputData[i + w*4] - inputData[i + w*4 + 4];
+         }
+         outputData[(y*w + x)*4 + 3] = 255; // alpha
+       }
+     }
+
+     // put the image data back after manipulation
+     context.putImageData(output, 0, 0);
+   }
+</script>
+<body onload="init()">
+    <p>Edge detection filter...<a href="https://html.spec.whatwg.org/multipage/canvas.html#pixel-manipulation">open text</a></p>
+    <canvas></canvas>
+</body>
