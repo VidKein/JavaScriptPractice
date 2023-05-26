@@ -1,0 +1,55 @@
+<style>
+    p{margin: 5px 0;}
+</style>
+
+<canvas id="canvasEdihion"></canvas>
+<div class="card">
+    <p>Brightness</p>
+    <div>
+      <label>
+        <input id="rangeBrightness" type="range" min="-255" max="255" value="0" />
+        <span id="valueBrightness">0</span>
+      </label>
+    </div>
+    <p>Contrast</p>
+    <div>
+      <label>
+        <input id="rangeContrast" type="range" min="-255" max="255" value="0" />
+        <span id="valueContrast">0</span>
+      </label>
+    </div>
+
+<script>
+    let img = new Image();
+        img.src = "./kiza.jpeg";
+        img.onload = update;
+/*Редоктируем canvas*/
+function editCanvas(inImg) {
+  const width = inImg.width,
+        height =inImg.height,
+        src = new Uint32Array(inImg.data.buffer);
+}
+
+/*Выводим картнку + копируем информацию о картинке*/
+function getImageData() {
+  //Создаем поле для Canvas           
+  var canvas = document.getElementById("canvasEdihion");
+  var ctx = canvas.getContext("2d");    
+  canvas.width = img.width;
+  canvas.height = img.height;
+  //выводим конвас
+  ctx.drawImage(img, 0, 0); 
+  //Передаем информацию в функцию для редоктирования картинки    
+  return ctx.getImageData(0, 0, img.width, img.height);  
+}
+
+function updateCanvas() {
+  
+}
+
+/*Старт*/
+function update() {
+  editCanvas(getImageData());
+}
+update();
+</script>
