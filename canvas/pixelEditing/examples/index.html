@@ -1,6 +1,11 @@
 <style>
     p{margin: 2px 0;}
     h3{margin: 2px 0;}
+    .actionManagement{
+      padding: 0;
+      margin: 0;
+      position: absolute;
+    }
     .fotoBlock{
       display: flex;
       flex-direction: row;
@@ -25,6 +30,9 @@
       width: 72px;
     }
 </style>
+<div class="actionManagement">
+  <button id="resetEdit">Reset</button>
+</div>
 <div class="fotoBlock">
   <canvas id="canvasEdihion"></canvas>
 
@@ -45,7 +53,7 @@
 
 <div class="editFoto">
 
-<div class="editFotoPixels">
+<div class="editFotoPixels" id="editFotoPixels">
   <h3>Edit Foto Pixels</h3>
     <p>Brightness</p>
     <div>
@@ -107,20 +115,20 @@
     </div>
 </div>
 
-<div class="Effect">
-  <button type="button" class="accordion">Effects 1</button>
+<div class="effect" id="effect">
+  <button type="button" class="accordion" id="negative">Effects 1</button>
   <div class="effects"><p>Negative effect</p></div>                                
-  <button type="button" class="accordion">Effects 2</button>
+  <button type="button" class="accordion" id="discoloration">Effects 2</button>
   <div class="effects"><p>Discoloration (black and white)</p></div>
-  <button type="button" class="accordion">Effects 3</button>
+  <button type="button" class="accordion" id="rgbCor">Effects 3</button>
   <div class="effects"><p>RGB correction</p></div>
-  <button type="button" class="accordion">Effects 4</button>
+  <button type="button" class="accordion" id="hslCor">Effects 4</button>
   <div class="effects"><p>HSL correction</p></div>
-  <button type="button" class="accordion">Effects 5</button>
+  <button type="button" class="accordion" id="gammaCor">Effects 5</button>
   <div class="effects"><p>Gamma correction</p></div>
-  <button type="button" class="accordion">Effects 6</button>
+  <button type="button" class="accordion" id="blur1">Effects 6</button>
   <div class="effects"><p>Blur 1</p></div>
-  <button type="button" class="accordion">Effects 7</button>
+  <button type="button" class="accordion" id="blur2">Effects 7</button>
   <div class="effects"><p>Blur 2</p></div>
 </div>  
 
@@ -130,30 +138,37 @@
     let img = new Image();
         img.onload = update;
         img.src = "./kiza.jpeg";
-
-/*Данные для редоктирования*/
-let input = document.getElementsByName("range"),
-    rangeBrightness = document.getElementById("rangeBrightness"),
-    rangeContrast = document.getElementById("rangeContrast"),
-    rangeSaturation = document.getElementById("rangeSaturation"),
-    rangeSharp = document.getElementById("rangeSharp");
-    
+   
 /*Редоктируем canvas*/
-function editCanvas(inImagen) {
+function editCanvas(inImagen, clickItem, clickValue) {
   const width = inImagen.width,
         height = inImagen.height,
         src = new Uint32Array(inImagen.data.buffer);
+        console.log(clickItem, clickValue);
   //Изменяем canvas      
   //src - пиксельная информация canvas
   //dst - болванка для проведения изменений
  updateCanvasPixel(width, height , function(dst) {
-      let brightness = parseInt(rangeBrightness.value), 
-          contrast = parseInt(rangeContrast.value)/255,
-          saturation = parseInt(rangeSaturation.value),
+  //сбор параметров для оброботки
+      let brightness = parseInt(document.getElementById("rangeBrightness").value), 
+          contrast = parseInt(document.getElementById("rangeContrast").value)/255,
+          saturation = parseInt(document.getElementById("rangeSaturation").value),
           maxSaturation = (saturation < 0) ? 255 :128,
-          sharp = parseInt(rangeSharp.value); 
-          
-    //
+          mix = (parseInt(document.getElementById("rangeSharp").value))*0.01;
+  //отображение параметров
+      document.getElementById("valueBrightness").innerText = brightness;
+      document.getElementById("valueContrast").innerText = document.getElementById("rangeContrast").value;
+      document.getElementById("valueSaturation").innerText = saturation;
+      document.getElementById("valueSharp").innerText = document.getElementById("rangeSharp").value;
+
+    //Начальная загрузка
+    if (clickItem === undefined) {
+      for (let i = 0; i < dst.length; i++) {
+        dst[i] = src[i];
+      }
+    }      
+    //Contrast, Brightness, Saturation
+    if (clickItem == "rangeBrightness" || clickItem == "rangeContrast" || clickItem == "rangeSaturation") {
     let avgGray = 0;
       for (let i = 0; i < dst.length; i++) {
         let r = src[i] & 0xFF;
@@ -176,7 +191,11 @@ function editCanvas(inImagen) {
         r += brightness;
         g += brightness;
         b += brightness;
-        
+        //Saturation
+        r += (r - avgGray) * saturation / maxSaturation;
+        g += (g - avgGray) * saturation / maxSaturation;
+        b += (b - avgGray) * saturation / maxSaturation;
+
         if (r > 255) r = 255;
         else if (r < 0) r = 0;
         if (g > 255) g = 255;
@@ -185,7 +204,45 @@ function editCanvas(inImagen) {
         else if (b < 0) b = 0;
         
         dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
-      }      
+      }        
+    }      
+    //Sharp
+    if (clickItem =="rangeSharp") {
+      //Все для работы с матрицей
+    let kernel = [[0, -1, 0],//матрица
+                 [-1, 5, -1],
+                 [0, -1, 0]],
+        katet = Math.round(Math.sqrt(kernel.length))+1,//корень 9=3
+        half = (katet * 0.5) | 0,//3*0.5=1.5 отбрасываем значения после запятой
+        offset = 0,//offset - коэффициент
+        div = 1.0;//div - делитель        
+    //обработка пикселей
+    let dstIndex = 0;
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          let r = 0, g = 0, b = 0;
+          for (let sy = 0; sy < katet; sy++) {
+            const yy = Math.min(height - 1, Math.max(0, y + sy - half));
+            for (let sx = 0; sx < katet; sx++) {
+              const xx = Math.min(width - 1, Math.max(0, x + sx - half));
+              let pix = src[yy * width + xx];//обробатываем информацию                     
+              r += ((pix & 0xFF) * kernel[sy][sx]);
+              g += ((((pix) >> 8) & 0xFF) * kernel[sy][sx]);
+              b += ((((pix) >> 16) & 0xFF) * kernel[sy][sx]);
+            }
+          }          
+          red = Math.min(255,Math.max(0, (r*mix)+((src[y * width + x] )&0xFF)*(1-mix) ))&0xFF;
+          green = Math.min(255, Math.max(0, (g*mix)+(((src[y * width + x])>> 8)&0xFF)*(1-mix) ))&0xFF;
+          blue = Math.min(255, Math.max(0, (b*mix)+(((src[y * width + x])>> 16)&0xFF)*(1-mix) ))&0xFF;
+          const alfa = src[y * width + x] & 0xFF000000;//обробатываем информацию
+          dst[dstIndex++] = red | ((green) << 8) | ((blue) << 16) | alfa ;//заполняем изменениями            
+        }
+      }
+    }
+    //Resize
+    if (clickItem =="numWidth" || clickItem =="numHeight") {
+      
+    }
       histogram(dst); //Histogram 
   });
 
@@ -311,16 +368,52 @@ function updateCanvasPixel(width, height, func) {
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d");
- const outImagen = ctx.createImageData(width,height);
+  const outImagen = ctx.createImageData(width,height);
   const dst = new Uint32Array(outImagen.data.buffer);
   func(dst);
   ctx.putImageData(outImagen, 0,0);
 }
 
-/*Старт*/
-
+//Оброботчик canvas
 function update() {
-  editCanvas(getImageData());
+
+//Старт
+editCanvas(getImageData());
+
+//Параметры для изменения editFotoPixels 
+document.getElementById("editFotoPixels").addEventListener("input", clickInput, false);
+function clickInput(e) {
+  if (e.target != e.currentTarget) {
+    let clickItem  = e.target.id,
+        clickValue  = e.target.value;
+        editCanvas(getImageData(), clickItem, clickValue);
+  }  
 }
 
+//Параметры для врашения editFotoMethods 
+document.getElementById("radioBlock").addEventListener("click", clickRadio, false);
+function clickRadio(e) {
+  if (e.target != e.currentTarget) {
+    let clickItem  = e.target.id,
+        clickValue  = e.target.value;
+        editCanvas(getImageData(), clickItem,clickValue);
+  }  
+}
+
+//Параметры для Effect 
+document.getElementById("effect").addEventListener("click", clickRadio, false);
+function clickRadio(e) {
+  if (e.target != e.currentTarget) {
+    let clickItem  = e.target.id,
+        clickValue  = e.target.value;
+        editCanvas(getImageData(), clickItem,clickValue);
+  }  
+}
+
+}
+//Reset
+let resetPages = document.getElementById("resetEdit");
+  resetPages.addEventListener('click',function (){   
+    alert("В разработке");
+  })  
 </script>
