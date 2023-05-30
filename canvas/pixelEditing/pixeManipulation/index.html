@@ -230,11 +230,11 @@ let imgCopy = new Image(),
         canvasImagenCopy.height = height;
         ctxImagenCopy.drawImage(imgCopy, 0, 0);
         let imgGetCopy = ctxImagenCopy.getImageData(0, 0, width, height);
-        /*1variant*/
+        /*1action*/
         canvasCopy.width = width;
         canvasCopy.height = height;
         ctxCopy.putImageData(imgGetCopy, 0, 0);
-        /*2variant*/
+        /*2action*/
         /*pixel for edit*/
         let src = new Uint32Array(imgGetCopy.data.buffer),
         /*blank*/

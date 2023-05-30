@@ -58,34 +58,34 @@
     <p>Brightness</p>
     <div>
       <label>
-        <input id="rangeBrightness" name = "range" type="range" min="-255" max="255" value="0" />
-        <span id="valueBrightness">0</span>
+        <input id="rangeBrightness" type="range" name = "range" min="-255" max="255" value="0" />
+        <span id="valueBrightness" name="number">0</span>
       </label>
     </div>
     <p>Contrast</p>
     <div>
       <label>
-        <input id="rangeContrast" name = "range" type="range" min="-255" max="255" value="" />
-        <span id="valueContrast">0</span>
+        <input id="rangeContrast" type="range" name = "range" min="-255" max="255" value="0" />
+        <span id="valueContrast" name="number">0</span>
       </label>
     </div>
     <p>Saturation</p>
     <div>
       <label>
         <input id="rangeSaturation" type="range"  name="range" min="-255" max="255" value="0" />
-        <span id="valueSaturation">0</span>                
+        <span id="valueSaturation" name="number">0</span>                
       </label>  
     </div>
     <p>Sharp</p>
     <div>
       <label>
         <input id="rangeSharp" type="range"  name="range" min="0.1" max="100" step="0.01" value="0" />
-        <span id="valueSharp">0</span>                
+        <span id="valueSharp" name="number">0</span>                
       </label>  
     </div>
     <p>Resize:</p>
                 <div id="inputScale">
-                <input id="numWidth" type="number" name="rangeScale" value=""/>x<input class="closet" id="numHeight" type="number" name="rangeScale" value="" disabled/>
+                <input id="numWidth" type="number" name="rangeScale" value="0"/>x<input class="closet" id="numHeight" type="number" name="rangeScale" value="0" disabled/>
                 </div>
                 <div>
                   <label>
@@ -135,10 +135,54 @@
 </div>
 <script>
 /*Загружаем изображение*/
-    let img = new Image();
-        img.onload = update;
-        img.src = "./kiza.jpeg";
-   
+let img = new Image();
+    img.src = "./kiza.jpeg"
+    img.onload = update;  
+
+/*Функционал ввода данных*/        
+//переключатель для изменения размера пропорций
+document.getElementById("cbProportions").addEventListener('click',function(){ 
+  if (numHeight.className =="open") {
+    numHeight.className = "closet";
+    numHeight.disabled = true;            
+  } else {
+    numHeight.className = "open";  
+    numHeight.disabled = false;           
+  }
+})
+//переключатель для гистограммы ч-б/цветное
+let switchHistogram = document.getElementsByName("rType");
+for (let i = 0; i < switchHistogram.length; i++) { 
+  switchHistogram[i].addEventListener('change',()=>{  
+    update(switchHistogram[i]);  
+  });
+}
+//Изменение положение картинки(Поворот)
+let degrees = document.getElementById("degrees"),
+    radioBlock = document.getElementById("radioBlock"),
+    inputRotation = radioBlock.getElementsByTagName("input"),
+    angle = 0;
+   for (let i = 0; i < inputRotation.length; i++) {        
+      inputRotation[i].addEventListener('change',function (){  
+          if (inputRotation[i].value == "arbitrary" || inputRotation[i].id == "degrees") {              
+              inputRotation["degrees"].removeAttribute("disabled");
+              inputRotation["degrees"].addEventListener('input',function (){
+              angle = inputRotation["degrees"].value;
+              //добавляем стили для canvas
+              document.getElementById("canvasEdihion").style.margin = "auto";  
+              document.getElementById("canvasEdihion").style.backgroundColor = "grey"; 
+            });              
+          } else {
+            angle = parseInt(inputRotation[i].value);
+            inputRotation["degrees"].setAttribute("disabled","");
+            //удаляем стили для canvas
+            document.getElementById("canvasEdihion").style.margin = "";  
+            document.getElementById("canvasEdihion").style.backgroundColor = ""; 
+          }            
+      });  
+    }
+
+
 /*Редоктируем canvas*/
 function editCanvas(inImagen, clickItem, clickValue) {
   const width = inImagen.width,
@@ -166,7 +210,8 @@ function editCanvas(inImagen, clickItem, clickValue) {
       for (let i = 0; i < dst.length; i++) {
         dst[i] = src[i];
       }
-    }      
+    }
+
     //Contrast, Brightness, Saturation
     if (clickItem == "rangeBrightness" || clickItem == "rangeContrast" || clickItem == "rangeSaturation") {
     let avgGray = 0;
@@ -206,6 +251,7 @@ function editCanvas(inImagen, clickItem, clickValue) {
         dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
       }        
     }      
+    
     //Sharp
     if (clickItem =="rangeSharp") {
       //Все для работы с матрицей
@@ -239,19 +285,48 @@ function editCanvas(inImagen, clickItem, clickValue) {
         }
       }
     }
+    
     //Resize
     if (clickItem =="numWidth" || clickItem =="numHeight") {
+      if (numHeight.className =="closet") {numHeight.value = Math.round(img.height * numWidth.value / img.width);} 
+      const newWidth = numWidth.value;
+      const newHeight = numHeight.value;  
+      const nameScaleVersion = scaleVersion.value;
+      document.getElementById("canvasEdihion").width= newWidth;
+      document.getElementById("canvasEdihion").height= newHeight;
+        if (nameScaleVersion == "bilinear") {
+         //Bilinear scaling  
+         
+        } else if(nameScaleVersion == "lanczos"){
+         //Lanczos scaling 
+         
+        }
+        else {
+         //Nearest neighbor scaling
+         
+        const dx = width / newWidth;
+        const dy = height / newHeight;
+        for (let y = 0; y < newHeight; y++) {
+          let srcY = (y * dy) >> 0;    
+          for (let x = 0; x < newWidth; x++) {
+            let srcX = (x * dx) >> 0;            
+            dst[y * newWidth + x] = src[srcY * width + srcX];                       
+          }
+        }
+        }
       
-    }
-      histogram(dst); //Histogram 
+    } 
+    
+    //Histogram 
+    histogram(dst); 
   });
 
 }
 
-//Гистограмма
+/*Гистограмма*/
 function histogram(dst) {
   //переключаем отображения гистограммы
-  const isValueHistogram = document.getElementById('typeValue').checked; 
+  const isValueHistogram = document.getElementById('typeValue').checked;   
     let histBrightness = (new Array(256)).fill(0);
     let histR = (new Array(256)).fill(0);
     let histG = (new Array(256)).fill(0);
@@ -340,13 +415,6 @@ function histogram(dst) {
     }
 }
 
-//переключатель для гистограммы ч-б/цветное
-let switchHistogram = document.getElementsByName("rType");
-for (let i = 0; i < switchHistogram.length; i++) { 
-  switchHistogram[i].addEventListener('change',()=>{  
-    update(switchHistogram[i]);  
-  });
-}
 
 /*Выводим картнку + копируем информацию о картинке*/
 function getImageData() {
@@ -358,8 +426,7 @@ function getImageData() {
   //выводим конвас
   ctx.drawImage(img, 0, 0); 
   //Передаем информацию в функцию для редоктирования картинки    
-  return ctx.getImageData(0, 0, img.width, img.height);
-  
+  return ctx.getImageData(0, 0, img.width, img.height);  
 }
 
 /*Вносим изменения в canvas*/
@@ -374,46 +441,78 @@ function updateCanvasPixel(width, height, func) {
   ctx.putImageData(outImagen, 0,0);
 }
 
-//Оброботчик canvas
+/*Оброботчик canvas*/
 function update() {
+    //Старт
+    editCanvas(getImageData());
 
-//Старт
-editCanvas(getImageData());
+    //Параметры для изменения editFotoPixels 
+    document.getElementById("editFotoPixels").addEventListener("input", clickInput, false);
+    function clickInput(e) {
+      if (e.target != e.currentTarget) {
+        let clickItem  = e.target.id,
+            clickValue  = e.target.value;
+            editCanvas(getImageData(), clickItem, clickValue);
+            //Добовляем маркер изменения картинки - имя файла
+            document.getElementById("canvasEdihion").className = img.src.match(/([^/]+)\.[^\.]+$/)[0];
+      }  
+    }
 
-//Параметры для изменения editFotoPixels 
-document.getElementById("editFotoPixels").addEventListener("input", clickInput, false);
-function clickInput(e) {
-  if (e.target != e.currentTarget) {
-    let clickItem  = e.target.id,
-        clickValue  = e.target.value;
-        editCanvas(getImageData(), clickItem, clickValue);
-  }  
+    //Параметры для врашения editFotoMethods 
+    document.getElementById("radioBlock").addEventListener("click", clickRadio, false);
+    function clickRadio(e) {
+      if (e.target != e.currentTarget) {
+        let clickItem  = e.target.id,
+            clickValue  = e.target.value;
+            editCanvas(getImageData(), clickItem,clickValue);
+            //Добовляем маркер изменения картинки - имя файла
+            document.getElementById("canvasEdihion").className = img.src.match(/([^/]+)\.[^\.]+$/)[0];
+      }  
+    }
+
+    //Параметры для Effect 
+    document.getElementById("effect").addEventListener("click", clickRadio, false);
+    function clickRadio(e) {
+      if (e.target != e.currentTarget) {
+        let clickItem  = e.target.id,
+            clickValue  = e.target.value;
+            editCanvas(getImageData(), clickItem,clickValue);
+            //Добовляем маркер изменения картинки - имя файла
+            document.getElementById("canvasEdihion").className = img.src.match(/([^/]+)\.[^\.]+$/)[0];
+      }  
+    }
+
+    //отображение размера в поле изменения размера
+    let numWidth = document.getElementById("numWidth"),
+        numHeight = document.getElementById("numHeight"),
+        scaleVersion = document.getElementById("scaleVersion");
+        numWidth.value = img.width;
+        numHeight.value = img.height;
 }
 
-//Параметры для врашения editFotoMethods 
-document.getElementById("radioBlock").addEventListener("click", clickRadio, false);
-function clickRadio(e) {
-  if (e.target != e.currentTarget) {
-    let clickItem  = e.target.id,
-        clickValue  = e.target.value;
-        editCanvas(getImageData(), clickItem,clickValue);
-  }  
-}
-
-//Параметры для Effect 
-document.getElementById("effect").addEventListener("click", clickRadio, false);
-function clickRadio(e) {
-  if (e.target != e.currentTarget) {
-    let clickItem  = e.target.id,
-        clickValue  = e.target.value;
-        editCanvas(getImageData(), clickItem,clickValue);
-  }  
-}
-
-}
-//Reset
+/*Reset*/
 let resetPages = document.getElementById("resetEdit");
   resetPages.addEventListener('click',function (){   
-    alert("В разработке");
-  })  
+    let inputSize = document.getElementsByName("range"),
+    inputNumber = document.getElementsByName("number"),
+    inputRangeScale = document.getElementsByName("rangeScale");     
+    for (let i = 0; i <= inputSize.length; i++) 
+    { 
+      //main
+      update(inputSize[i].value = 0);
+      update(inputNumber[i].innerText = 0);
+     //scale
+      if (inputRangeScale.value !== " ") {
+        inputRangeScale[0].value = document.getElementById("canvasEdihion").width;
+        inputRangeScale[1].value = document.getElementById("canvasEdihion").height;                
+      }
+      //rotations
+      document.getElementsByName("rotate")[0].checked = true;
+      inputRotation[6].setAttribute("disabled","");
+      inputRotation[6].value = 0;
+      //удаляем метку для сохранения картинки
+      document.getElementById("canvasEdihion").removeAttribute("class");
+    } 
+  })
+
 </script>
