@@ -1,0 +1,120 @@
+<style>
+    p{margin: 5px;}
+</style>
+<div class="edit" id="edit">
+    <p>Brightness</p>
+    <label>
+        <input type="range" name="range" id="rangeBrightness" min="-255" max="255" value="0">
+        <span id="valueBrightness" name="namber"></span>
+    </label>
+    <p>Contrast</p>
+    <label>
+        <input type="range" name="range" id="rangeContrast" min="-255" max="255" value="0">
+        <span id="valueContrast" name="namber"></span>
+    </label>
+    <p>Saturation</p>
+    <label>
+        <input type="range" name="range" id="rangeSaturation" min="-255" max="255" value="0">
+        <span id="valueSaturation" name="namber"></span>
+    </label>
+    </div>
+<p><button id="reset">Reset</button></p>    
+<p>Changes <span id="namberAction">0</span></p>
+<p><button id="cancel">cancel</button><button id="repeat">repeat</button></p>
+
+<script>
+/*собираем информацию*/
+let edit = document.getElementById("edit"),
+rangeBrightness = document.getElementById("rangeBrightness"),
+valueBrightness = document.getElementById("valueBrightness"),
+rangeContrast = document.getElementById("rangeContrast"),
+valueContrast = document.getElementById("valueContrast"),
+rangeSaturation = document.getElementById("rangeSaturation"),
+valueSaturation = document.getElementById("valueSaturation");
+
+//Первичная загрузка
+window.onload = namberValue;
+function namberValue() {
+    valueBrightness.innerText = rangeBrightness.value;
+    valueContrast.innerText = rangeContrast.value;
+    valueSaturation.innerText = rangeSaturation.value;    
+}
+
+//сбор информации с инпут
+let clickItem,
+    clickValue;
+edit.addEventListener("change", clickActions);
+function clickActions(e) {
+      if (e.target != e.currentTarget) {
+            clickItem  = e.target.id
+            clickValue  = e.target.value;
+            changeImg(clickItem, clickValue);
+            switch (clickItem) {
+                case "rangeBrightness": 
+                    valueBrightness.innerText = clickValue;
+                    break;
+                    case "rangeContrast": 
+                    valueContrast.innerText = clickValue;
+                    break;
+                    case "rangeSaturation": 
+                    valueSaturation.innerText = clickValue;
+                    break;       
+            }            
+
+      }  
+    }
+
+//Действия
+let changes = [],
+    namberAction = document.getElementById("namberAction"),
+    cancel = document.getElementById("cancel"),
+    repeat = document.getElementById("repeat");
+function changeImg(clickItem, clickValue) {
+    changes.push("["+clickItem+","+clickValue+"]");
+    namberAction.innerText = changes.length;
+    console.log(changes);
+}
+let index = 0,
+    indexArray;
+cancel.addEventListener("click", cancelChange);
+function cancelChange() {
+    repeat.removeAttribute("disabled");
+    index += 1;
+    console.log(index);
+    if (index == changes.length) {
+        cancel.disabled = true;
+    }
+    namberAction.innerText = changes.length-index;
+    indexArray = changes.length-index;
+    console.log(changes[indexArray]);
+}
+repeat.addEventListener("click", repatChange);
+function repatChange() {
+    cancel.removeAttribute("disabled");
+    index -= 1;
+    console.log(index);
+    if (index == 0) {
+        repeat.disabled = true;
+    }
+    namberAction.innerText = changes.length-index;
+    indexArray = changes.length-index;
+    console.log(changes[indexArray]);
+}
+//Сброс
+let reset = document.getElementById("reset");
+reset.addEventListener("click", ()=>{
+    rangeBrightness.value = 0;
+    rangeContrast.value = 0;
+    rangeSaturation.value = 0;    
+    valueBrightness.innerText = 0;
+    valueContrast.innerText = 0;
+    valueSaturation.innerText = 0;
+    changes.length = 0;  
+    namberAction.innerText = 0;
+    if (cancel.disabled == true || repeat.disabled == true) {
+        cancel.removeAttribute("disabled");
+        repeat.removeAttribute("disabled");
+    }
+})
+
+</script>

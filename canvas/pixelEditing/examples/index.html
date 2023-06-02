@@ -14,7 +14,6 @@
     }
     #canvasEdihion{
       margin: auto;
-      height: 200px;
     }
     .histogram{
       display: flex;
@@ -295,15 +294,134 @@ function editCanvas(inImagen, clickItem, clickValue) {
       document.getElementById("canvasEdihion").width= newWidth;
       document.getElementById("canvasEdihion").height= newHeight;
         if (nameScaleVersion == "bilinear") {
-         //Bilinear scaling  
-         
-        } else if(nameScaleVersion == "lanczos"){
+          //Bilinear scaling  
+          function interpolate(a, b, c, d, width, height) {
+          return a * (1 - width) * (1 - height)
+              + b * width * (1 - height)
+              + c * (1 - width) * height
+              + d * width * height;
+          }
+          const xMax = (width - 1);
+          const yMax = (height - 1);
+          const dx = (xMax + 0.5) / newWidth;
+          const dy = (yMax + 0.5) / newHeight;
+          let dstOffset = 0;
+          for (let i = 0; i < newHeight; i++) {
+            for (let j = 0; j < newWidth; j++) {
+              const x = (dx * j) >> 0;
+              const y = (dy * i) >> 0;
+              const xDiff = (dx * j) - x;
+              const yDiff = (dy * i) - y;
+              const index = y * width + x;
+              // a b
+              // c d
+              const a = src[index];
+              const b = (x >= xMax) ? a : src[index + 1];
+              const c = (y >= yMax) ? a : src[index + width];
+              const d = (y >= yMax) ? b
+                  : ((x >= xMax) ? c : (src[index + width + 1]));
+
+              const red = interpolate(
+                  a & 0xff, b & 0xff,
+                  c & 0xff, d & 0xff,
+                  xDiff, yDiff) >> 0;
+              const green = interpolate(
+                  (a >> 8) & 0xff, (b >> 8) & 0xff,
+                  (c >> 8) & 0xff, (d >> 8) & 0xff,
+                  xDiff, yDiff) >> 0;
+              const blue = interpolate(
+                  (a >> 16) & 0xff, (b >> 16) & 0xff,
+                  (c >> 16) & 0xff, (d >> 16) & 0xff,
+                  xDiff, yDiff) >> 0;
+              const alpha = interpolate(
+                  (a >> 24) & 0xff, (b >> 24) & 0xff,
+                  (c >> 24) & 0xff, (d >> 24) & 0xff,
+                  xDiff, yDiff) >> 0;
+
+              dst[dstOffset++] = (alpha << 24) | (blue << 16) | (green << 8) | red;
+            }
+          }
+        } 
+        else if(nameScaleVersion == "lanczos"){
          //Lanczos scaling 
-         
+         let filterSize = 1;//меняется 1,2,3
+         function lanczos(size, x) {
+           if (x >= size || x <= -size) return 0;
+           if (x === 0) return 1;
+           const xpi = x * Math.PI;
+           return size * Math.sin(xpi) * Math.sin(xpi / size) / (xpi * xpi);
+         }
+         function createCache(cachePrecision, filterSize) {
+         const cache = {};
+         const max = filterSize * filterSize * cachePrecision;
+         const iPrecision = 1.0 / cachePrecision;
+         for (let cacheKey = 0; cacheKey < max; cacheKey++) {
+           const value = lanczos(filterSize, Math.sqrt(cacheKey * iPrecision));
+           cache[cacheKey] = value < 0 ? 0 : value;
+         }
+          return cache;
+         };
+         const values = [];
+         const sx = newWidth / width;
+         const sy = newHeight / height;
+         const xMax = width - 1;
+         const yMax = height - 1;
+         const csx = Math.min(1, sx) * Math.min(1, sx);
+         const csy = Math.min(1, sy) * Math.min(1, sy);
+         const cachePrecision = 1000;
+         const cache = createCache(cachePrecision, filterSize);
+         let x1et, y1et;
+         let y = newHeight;
+         while (y--) {
+           const sourcePixelY = (y + 0.5) * (1.0 / sy);
+           let y1b = sourcePixelY - filterSize;
+           if (y1b < 0) y1b = 0;
+           let y1e = y1et = sourcePixelY + filterSize;
+           if (y1e != y1et) y1e = y1et + 1;
+           if (y1e > yMax) y1e = yMax;
+           const cy = y * (1.0 / newHeight) - sourcePixelY;
+           const y3 = y * newWidth;
+           let x = newWidth;
+            while (x--) {
+              const sourcePixelX = (x + 0.5) * (1.0 / sx);
+              let x1b = sourcePixelX - filterSize;
+              if (x1b < 0) x1b = 0;
+              let x1e = x1et = sourcePixelX + filterSize;
+              if (x1e != x1et) x1e = x1et + 1;
+              if (x1e > xMax) x1e = xMax;
+              const cx = x * (1.0 / newWidth) - sourcePixelX;
+              ///
+              let total = 0;
+              let i = 0;
+              for (let y1 = y1b >> 0; y1 <= y1e; y1++) {
+                const distanceY = (y1 + cy) * (y1 + cy) * csy;
+                for (let x1 = x1b >> 0; x1 <= x1e; x1++) {
+                  total += values[i++] = cache[(((x1 + cx) * (x1 + cx) * csx + distanceY) * cachePrecision) >> 0] || 0;
+                }
+              }
+              total = 1.0 / total;
+              ///
+              let a = 0;
+              let r = 0;
+              let g = 0;
+              let b = 0;
+              i = 0;
+              for (let y1 = y1b >> 0; y1 <= y1e; y1++) {
+                const y2 = y1 * width;
+                for (let x1 = x1b >> 0; x1 <= x1e; x1++) {
+                  const value = values[i++] * total;
+                  const pix = src[((y2 + x1) >> 0)];
+                  r += (pix & 0xFF) * value;
+                  g += ((pix >> 8) & 0xFF) * value;
+                  b += ((pix >> 16) & 0xFF) * value;
+                  a += (((pix >> 24) & 0xFF)) * value;
+                }
+              }
+              dst[((x + y3) >> 0)] = (a << 24) | (b << 16) | (g << 8) | r;
+            }
+          }   
         }
-        else {
-         //Nearest neighbor scaling
-         
+        else{//Nearest neighbor scaling
         const dx = width / newWidth;
         const dy = height / newHeight;
         for (let y = 0; y < newHeight; y++) {
@@ -447,36 +565,16 @@ function update() {
     editCanvas(getImageData());
 
     //Параметры для изменения editFotoPixels 
-    document.getElementById("editFotoPixels").addEventListener("input", clickInput, false);
-    function clickInput(e) {
+    document.getElementById("editFotoPixels").addEventListener("input", clickActions, false);
+    //Параметры для врашения editFotoMethods 
+    document.getElementById("radioBlock").addEventListener("click", clickActions, false);
+    //Параметры для Effect 
+    document.getElementById("effect").addEventListener("click", clickActions, false);
+    function clickActions(e) {
       if (e.target != e.currentTarget) {
         let clickItem  = e.target.id,
             clickValue  = e.target.value;
             editCanvas(getImageData(), clickItem, clickValue);
-            //Добовляем маркер изменения картинки - имя файла
-            document.getElementById("canvasEdihion").className = img.src.match(/([^/]+)\.[^\.]+$/)[0];
-      }  
-    }
-
-    //Параметры для врашения editFotoMethods 
-    document.getElementById("radioBlock").addEventListener("click", clickRadio, false);
-    function clickRadio(e) {
-      if (e.target != e.currentTarget) {
-        let clickItem  = e.target.id,
-            clickValue  = e.target.value;
-            editCanvas(getImageData(), clickItem,clickValue);
-            //Добовляем маркер изменения картинки - имя файла
-            document.getElementById("canvasEdihion").className = img.src.match(/([^/]+)\.[^\.]+$/)[0];
-      }  
-    }
-
-    //Параметры для Effect 
-    document.getElementById("effect").addEventListener("click", clickRadio, false);
-    function clickRadio(e) {
-      if (e.target != e.currentTarget) {
-        let clickItem  = e.target.id,
-            clickValue  = e.target.value;
-            editCanvas(getImageData(), clickItem,clickValue);
             //Добовляем маркер изменения картинки - имя файла
             document.getElementById("canvasEdihion").className = img.src.match(/([^/]+)\.[^\.]+$/)[0];
       }  
