@@ -60,7 +60,6 @@ function clickActions(e) {
                     valueSaturation.innerText = clickValue;
                     break;       
             }            
-
       }  
     }
 
@@ -69,13 +68,15 @@ let changes = [],
     namberAction = document.getElementById("namberAction"),
     cancel = document.getElementById("cancel"),
     repeat = document.getElementById("repeat");
+//Заполняем массив
 function changeImg(clickItem, clickValue) {
-    changes.push("["+clickItem+","+clickValue+"]");
+    changes.push(clickItem+":"+clickValue);
     namberAction.innerText = changes.length;
     console.log(changes);
 }
 let index = 0,
     indexArray;
+//Назат
 cancel.addEventListener("click", cancelChange);
 function cancelChange() {
     repeat.removeAttribute("disabled");
@@ -86,8 +87,26 @@ function cancelChange() {
     }
     namberAction.innerText = changes.length-index;
     indexArray = changes.length-index;
-    console.log(changes[indexArray]);
+    let infoCansel = changes[indexArray];
+    let value = infoCansel.split(":");
+    let name = value[0];
+    let namber = value[1];
+    switch (name) {
+        case "rangeSaturation":
+        rangeSaturation.value = namber;    
+        valueSaturation.innerText = namber;                  
+            break;
+        case "rangeContrast":
+        valueContrast.innerText = namber;
+        rangeContrast.value = namber;                                     
+            break;
+        case "rangeBrightness":
+        rangeBrightness.value = namber;
+        valueBrightness.innerText = namber;
+            break;
+    }
 }
+//Вперед
 repeat.addEventListener("click", repatChange);
 function repatChange() {
     cancel.removeAttribute("disabled");
@@ -100,6 +119,7 @@ function repatChange() {
     indexArray = changes.length-index;
     console.log(changes[indexArray]);
 }
+
 //Сброс
 let reset = document.getElementById("reset");
 reset.addEventListener("click", ()=>{

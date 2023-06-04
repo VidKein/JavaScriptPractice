@@ -28,6 +28,43 @@
     input[type = "number"]{
       width: 72px;
     }
+/*Effect*/
+.effect{
+  overflow: auto;
+  margin: 0;
+  width: 40%;
+}
+.accordion{
+  background-color: rgb(242, 242, 242);
+    color: #444;
+    cursor: pointer;
+    padding: 5px;
+    width: 100%;
+    height: 30px;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 13px;
+    transition: 0.4s;
+    font-weight: 600;
+    border-top: 2px solid white;
+}
+.accordion::after{
+    content: '\02795';
+    font-size: 9px;
+    color: #777;
+    float: right;
+    margin-right: 5px;
+}
+.activeAccord:after {
+    content: "\2796";
+}
+.effects{
+    display: none;
+    background-color: white;
+    overflow: hidden;
+    width: 100%;
+}
 </style>
 <div class="actionManagement">
   <button id="resetEdit">Reset</button>
@@ -115,20 +152,95 @@
 </div>
 
 <div class="effect" id="effect">
-  <button type="button" class="accordion" id="negative">Effects 1</button>
-  <div class="effects"><p>Negative effect</p></div>                                
-  <button type="button" class="accordion" id="discoloration">Effects 2</button>
+  <button type="button" class="accordion" id="negative">Negative effect</button>
+  <div class="effects">
+    <label><input type="checkbox" checked id="cbRed" name="cd">Red</label>
+    <label><input type="checkbox" id="cbGreen" name="cd">Green</label>
+    <label><input type="checkbox" id="cbBlue" name="cd">Blue</label>
+    <label><input type="checkbox" id="cbAlpha" name="cd">Alpha</label>
+  </div>
+                                  
+  <button type="button" class="accordion" id="discoloration">Discoloration (black and white)</button>
   <div class="effects"><p>Discoloration (black and white)</p></div>
-  <button type="button" class="accordion" id="rgbCor">Effects 3</button>
-  <div class="effects"><p>RGB correction</p></div>
-  <button type="button" class="accordion" id="hslCor">Effects 4</button>
-  <div class="effects"><p>HSL correction</p></div>
-  <button type="button" class="accordion" id="gammaCor">Effects 5</button>
-  <div class="effects"><p>Gamma correction</p></div>
-  <button type="button" class="accordion" id="blur1">Effects 6</button>
-  <div class="effects"><p>Blur 1</p></div>
-  <button type="button" class="accordion" id="blur2">Effects 7</button>
-  <div class="effects"><p>Blur 2</p></div>
+
+  <button type="button" class="accordion" id="rgbCor">RGB correction</button>
+  <div class="effects">
+    <label>
+      <span style="color: red">R</span>:
+      <input id="rangeR" type="range" min="-255" max="255" value="0" name="range"/>
+      <span id="valueR" name="number">0</span>
+    </label>
+    <br/>
+    <label>
+      <span style="color: green">G</span>:
+      <input id="rangeG" type="range" min="-255" max="255" value="0" name="range"/>
+      <span id="valueG" name ="number">0</span>
+    </label>
+    <br/>
+    <label>
+      <span style="color: blue">B</span>:
+      <input id="rangeB" type="range" min="-255" max="255" value="0" name="range"/>
+      <span id="valueB" name="number">0</span>
+    </label>
+  </div>
+
+  <button type="button" class="accordion" id="hslCor">HSL correction</button>
+  <div class="effects">
+    <label>
+      H:
+      <input id="rangeH" type="range" min="-180" max="180" value="0" name="range"/>
+      <span id="valueH" name="number">0</span>°
+    </label>
+    <br/>
+    <label>
+      S:
+      <input id="rangeS" type="range" min="-100" max="100" value="0" name="range"/>
+      <span id="valueS" name="number">0</span>
+    </label>
+    <br/>
+    <label>
+      L:
+      <input id="rangeL" type="range" min="-100" max="100" value="0" name="range"/>
+      <span id="valueL" name="number">0</span>
+    </label>
+  </div>
+
+  <button type="button" class="accordion" id="gammaCor">Gamma correction</button>
+  <div class="effects">
+    <label>
+      <input id="rangeGamma" type="range" min="1" max="600" value="100" name="range"/>
+      <span id="valueGamma" name="number">0</span>
+    </label>
+  </div>
+
+  <button type="button" class="accordion" id="blur1">Blur</button>
+  <div class="effects">
+    <label>
+      <input id="rangeSize" type="range" min="0" max="3" value="1" name="range"/>
+      <span id="valueSize" name="number">0</span>
+    </label>
+  </div>
+
+  <button type="button" class="accordion" id="blur2">Blur(H/V)</button>
+  <div class="effects">
+    <label> 
+      <span>H</span>: 
+      <input id="rangeHRadius" type="range" min="0" max="25" value="1" name="range"/>
+      <span id="valueHRadius" name="number">0</span>
+    </label>
+    <br>
+    <label>
+      <span>V</span>:
+      <input id="rangeVRadius" type="range" min="0" max="25" value="1" name="range"/>
+      <span id="valueVRadius" name="number">0</span>
+    </label>
+    <br>
+    <label>
+      <input id="cbLink" type="checkbox" name="cd"/>
+      Link
+    </label>
+  </div>
+
 </div>  
 
 </div>
@@ -180,7 +292,23 @@ let degrees = document.getElementById("degrees"),
           }            
       });  
     }
-
+//Effects анимация accordion
+var acc = document.getElementsByClassName("accordion");
+var i;
+  
+  for (i = 0; i < acc.length; i++) {
+    acc[i].addEventListener("click", function() {
+    //Toggle between adding and removing the "active" class to highlight the option that controls the panel
+    this.classList.toggle("activeAccord");
+    //Switch between hiding and showing the active panel
+      var panel = this.nextElementSibling;
+      if (panel.style.display === "block") {
+        panel.style.display = "none";
+      } else {
+        panel.style.display = "block";
+      }
+    });
+  }
 
 /*Редоктируем canvas*/
 function editCanvas(inImagen, clickItem, clickValue) {
@@ -199,10 +327,22 @@ function editCanvas(inImagen, clickItem, clickValue) {
           maxSaturation = (saturation < 0) ? 255 :128,
           mix = (parseInt(document.getElementById("rangeSharp").value))*0.01;
   //отображение параметров
+  //edit foto pixel
       document.getElementById("valueBrightness").innerText = brightness;
       document.getElementById("valueContrast").innerText = document.getElementById("rangeContrast").value;
       document.getElementById("valueSaturation").innerText = saturation;
       document.getElementById("valueSharp").innerText = document.getElementById("rangeSharp").value;
+  //Effect
+      document.getElementById("valueR").innerText = document.getElementById("rangeR").value;
+      document.getElementById("valueG").innerText = document.getElementById("rangeG").value;
+      document.getElementById("valueB").innerText = document.getElementById("rangeB").value;
+      document.getElementById("valueH").innerText = document.getElementById("rangeH").value;
+      document.getElementById("valueS").innerText = document.getElementById("rangeS").value;
+      document.getElementById("valueL").innerText = document.getElementById("rangeL").value;
+      document.getElementById("valueGamma").innerText = document.getElementById("rangeGamma").value;
+      document.getElementById("valueSize").innerText = document.getElementById("rangeSize").value;
+      document.getElementById("valueHRadius").innerText = document.getElementById("rangeHRadius").value;
+      document.getElementById("valueVRadius").innerText = document.getElementById("rangeVRadius").value;
 
     //Начальная загрузка
     if (clickItem === undefined) {
@@ -593,21 +733,38 @@ let resetPages = document.getElementById("resetEdit");
   resetPages.addEventListener('click',function (){   
     let inputSize = document.getElementsByName("range"),
     inputNumber = document.getElementsByName("number"),
-    inputRangeScale = document.getElementsByName("rangeScale");     
+    inputRangeScale = document.getElementsByName("rangeScale"),
+    inputRangeCd = document.getElementsByName("cd"),
+    divEffects = document.getElementsByClassName("effects");     
     for (let i = 0; i <= inputSize.length; i++) 
     { 
-      //main
+      //main+effect
       update(inputSize[i].value = 0);
       update(inputNumber[i].innerText = 0);
+      
      //scale
       if (inputRangeScale.value !== " ") {
         inputRangeScale[0].value = document.getElementById("canvasEdihion").width;
         inputRangeScale[1].value = document.getElementById("canvasEdihion").height;                
       }
+      document.getElementById("cbProportions").checked =true;
+      document.getElementById("scaleVersion")[0].selected = true;
+
       //rotations
       document.getElementsByName("rotate")[0].checked = true;
       inputRotation[6].setAttribute("disabled","");
       inputRotation[6].value = 0;
+
+      //effect
+      inputRangeCd[0].checked = true;
+      inputRangeCd[1].checked = false;
+      inputRangeCd[2].checked = false;
+      inputRangeCd[3].checked = false;
+      inputRangeCd[4].checked = false;
+      for (let i = 0; i < divEffects.length; i++) {
+        divEffects[i].style = "display:none";
+      }
+
       //удаляем метку для сохранения картинки
       document.getElementById("canvasEdihion").removeAttribute("class");
     } 
