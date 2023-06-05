@@ -20,7 +20,7 @@
     </div>
 <p><button id="reset">Reset</button></p>    
 <p>Changes <span id="namberAction">0</span></p>
-<p><button id="cancel">cancel</button><button id="repeat">repeat</button></p>
+<p><button id="cancel">cancel</button><button id="repeat" disabled >repeat</button></p>
 
 <script>
 /*собираем информацию*/
@@ -81,17 +81,32 @@ cancel.addEventListener("click", cancelChange);
 function cancelChange() {
     repeat.removeAttribute("disabled");
     index += 1;
-    console.log(index);
-    if (index == changes.length) {
-        cancel.disabled = true;
-    }
     namberAction.innerText = changes.length-index;
     indexArray = changes.length-index;
     let infoCansel = changes[indexArray];
     let value = infoCansel.split(":");
     let name = value[0];
     let namber = value[1];
-    switch (name) {
+    if (index == changes.length) {
+        cancel.disabled = true;
+    }
+    if (changes.length <= 3) {
+        switch (name) {
+        case "rangeSaturation":
+        rangeSaturation.value = 0;    
+        valueSaturation.innerText = 0;                  
+            break;
+        case "rangeContrast":
+        valueContrast.innerText = 0;
+        rangeContrast.value = 0;                                     
+            break;
+        case "rangeBrightness":
+        rangeBrightness.value = 0;
+        valueBrightness.innerText = 0;
+            break;
+    }   
+    } else {
+        switch (name) {
         case "rangeSaturation":
         rangeSaturation.value = namber;    
         valueSaturation.innerText = namber;                  
@@ -104,20 +119,55 @@ function cancelChange() {
         rangeBrightness.value = namber;
         valueBrightness.innerText = namber;
             break;
-    }
+    }    
+    }      
 }
 //Вперед
 repeat.addEventListener("click", repatChange);
 function repatChange() {
     cancel.removeAttribute("disabled");
     index -= 1;
-    console.log(index);
     if (index == 0) {
         repeat.disabled = true;
     }
     namberAction.innerText = changes.length-index;
-    indexArray = changes.length-index;
-    console.log(changes[indexArray]);
+    indexArray = (changes.length-index)-1;
+    let infoRepeat = changes[indexArray];
+    let value = infoRepeat.split(":");
+    let name = value[0];
+    let namber = value[1];
+    if (changes.length <= 3) {
+        switch (name) {
+        case "rangeSaturation":
+        rangeSaturation.value = namber;    
+        valueSaturation.innerText = namber;                  
+            break;
+        case "rangeContrast":
+        valueContrast.innerText = namber;
+        rangeContrast.value = namber;                                     
+            break;
+        case "rangeBrightness":
+        rangeBrightness.value = namber;
+        valueBrightness.innerText = namber;
+            break;
+    }    
+    }else{
+        switch (name) {
+        case "rangeSaturation":
+        rangeSaturation.value = namber;    
+        valueSaturation.innerText = namber;                  
+            break;
+        case "rangeContrast":
+        valueContrast.innerText = namber;
+        rangeContrast.value = namber;                                     
+            break;
+        case "rangeBrightness":
+        rangeBrightness.value = namber;
+        valueBrightness.innerText = namber;
+            break;
+    }   
+    }
+    
 }
 
 //Сброс
@@ -133,8 +183,9 @@ reset.addEventListener("click", ()=>{
     namberAction.innerText = 0;
     if (cancel.disabled == true || repeat.disabled == true) {
         cancel.removeAttribute("disabled");
-        repeat.removeAttribute("disabled");
     }
+    index = 0;
+    repeat.setAttribute("disabled","disabled");
 })
 
 </script>
