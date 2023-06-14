@@ -1,0 +1,221 @@
+
+<style>
+    #canvas{
+        display: block;
+        margin: 0 auto;
+        width: auto;
+        height: 250px;
+    }
+    #reset{
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+  /*save*/
+  #imgSave{
+    display: none;
+      position: absolute;
+      top: 35%;
+      left: 25%;
+      right: 25%;
+      width: 250px;
+      margin: 0 auto;
+      text-align: center;
+      border: 1px solid #cccccc;
+      padding: 25px;
+      background-color: #F7F7F7;
+  }
+
+</style>
+<canvas id="canvas"></canvas>
+<button id="reset">Reset</button>
+<div id="imgSave">
+  <p>Вы хотите сохранить изменения</p>
+  <button id="closetImgSaveYes">Да</button>
+  <button id="closetImgSaveNoy">Нет</button>
+</div>
+<div class="editFoto" id="editFoto">
+  <div class="links" id="range">
+    <p>Contrast</p>
+    <label>
+        <input id="rangeContrast" type="range" name="range" min="-255" max="255" value="0">
+        <span id="valueContrast" name="namber">0</span>
+    </label>
+  </div>
+  <div class="links" id="rotate">
+    <p>Rotate</p>      
+    <label>
+        <input type="radio" name="rotate" id="0" min="0" value="0" title="rotate 0deg" checked> - 0&#176;
+        <input type="radio" name="rotate" id="90l" value="90" title="rotate 90deg left"> - 90&#176;
+        <input type="radio" name="rotate" id="90r" value="-90" title="rotate 90deg right"> - 270&#176;
+        <input type="radio" name="rotate" id="180" value="180" title="rotate 180deg left"> - 180&#176;
+        <input type="radio" name="rotate" id="flip" value="270" title="mirror reflection"> - mirror
+    </label>
+  </div>
+</div>
+<script>
+    let img = new Image();
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
+        img.src = "./C2,w500.jpg";
+        img.onload = initImg;
+    //Действия после загрузки картинки
+    function initImg() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+    }
+    //Редоктируем картинку
+    function editPicter(inCanvas, clickItem, clickValue) {
+        let src = new Uint32Array(inCanvas.data.buffer);
+        let width = inCanvas.width;
+        let height = inCanvas.height;
+        let contrast = parseInt(clickValue)/255;
+        
+            //Contrast
+            if (clickItem == "rangeContrast") {
+                putImage(width, height, function (dst) {
+                    let avgGray = 0;
+                for (let i = 0; i < dst.length; i++) {
+                  let r = src[i] & 0xFF;
+                  let g = (src[i] >> 8) & 0xFF;
+                  let b = (src[i] >> 16) & 0xFF;
+                  avgGray += (r * 0.2126 + g * 0.7152 + b * 0.0722);
+                }
+                avgGray /= dst.length;
+
+                for (let i = 0; i < dst.length; i++) {
+                  let r = src[i] & 0xFF;
+                  let g = (src[i] >> 8) & 0xFF;
+                  let b = (src[i] >> 16) & 0xFF;
+                
+                  // let gray = (r * 0.2126 + g * 0.7152 + b * 0.0722);
+                  let gray = avgGray;
+                
+                  r += (r - gray) * contrast;
+                  g += (g - gray) * contrast;
+                  b += (b - gray) * contrast;
+                
+                  if (r > 255) r = 255;
+                  else if (r < 0) r = 0;
+                  if (g > 255) g = 255;
+                  else if (g < 0) g = 0;
+                  if (b > 255) b = 255;
+                  else if (b < 0) b = 0;
+                
+                  dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
+                }
+                })
+            }
+            //Rotate 0
+            if (clickItem == "0") {
+                putImage(width, height, function (dst) {
+                for (let i = 0; i < dst.length; i++) {
+                dst[i] = src[i];
+                }
+                })
+            }
+            //Rotate 90
+            if (clickItem == "90l") {
+                putImage(height, width, function (dst) {
+                let newWidth = height;
+                let newHeight = width;
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                for (let y = 0; y < newHeight; y++) {
+                  for (let x = 0; x < newWidth; x++) {
+                    dst[y * newWidth + x] = src[(height - x - 1) * width + y];
+                  }
+                }                  
+               })
+            }
+            //Rotate 270
+            if (clickItem == "90r") {
+                putImage(height, width, function (dst) {
+                let newWidth = height;
+                let newHeight = width;
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                for (let y = 0; y < newHeight; y++) {
+                  for (let x = 0; x < newWidth; x++) {
+                    dst[y * newWidth + x] = src[x * width + y];
+                  }
+                }
+                })
+            }
+            //Rotate 180
+            if (clickItem == "180") {
+                putImage(width, height, function (dst) {
+                for (let y = 0; y < height; y++) {
+                  for (let x = 0; x < width; x++) {
+                    dst[y * width + x] = src[(height - y - 1)  * width + x];
+                  }
+                }               
+                })
+            }   
+            //Rotate flip
+            if (clickItem == "flip") {
+                putImage(width, height, function (dst) {
+               for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    dst[y * width + x] = src[y * width + (width - x - 1)];
+                  }
+                }          
+                })         
+            }    
+    }
+    //Собираем информацию с Canvas
+    function getImage() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        //Передаем информацию в функцию для редоктирования картинки    
+        return ctx.getImageData(0, 0, img.width, img.height);      
+    }
+    //Записываем информацию на Canvas
+    function putImage(width, height, func) {
+        const outImagen = ctx.createImageData(width, height);
+        const dst = new Uint32Array(outImagen.data.buffer);
+        func(dst);
+        ctx.putImageData(outImagen, 0,0);
+    }
+    
+    //Собирем переменные для редоктирования картинки
+    //Действия при нажатии 
+    let tablinks = document.getElementsByClassName("links"); 
+    for (let i = 0; i < tablinks.length; i++) {  
+      tablinks[i].addEventListener("input", clickActions, false);
+      tablinks[i].addEventListener("mouseup", click, false);
+
+    }
+
+    function click(e) {
+      if(canvas.className !== e.currentTarget.id){
+        console.log("-")
+        document.getElementById("imgSave").style = "display:block;"
+        closetImgSaveNoy.addEventListener("click", ()=>{document.getElementById("imgSave").style = "display:none;"}) 
+      }else{
+        console.log("+")}
+    }
+
+    function clickActions(e) {
+      //Получите все элементы с class="links" и удалите "активный" класс
+      for (let i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      //Добавить класс «активный» к кнопке, которая открыла вкладку
+      e.currentTarget.className += " active";
+      if (e.target != e.currentTarget) {
+        let clickItem  = e.target.id,
+            clickValue  = e.target.value;
+            canvas.setAttribute('class', e.currentTarget.id);
+            if (clickItem == "rangeContrast") {
+                document.getElementById("valueContrast").innerText = clickValue;
+            }
+            editPicter(getImage(), clickItem, clickValue);   
+      }
+    }
+    
+    //Reset  
+    document.getElementById("reset").addEventListener("click",()=>{window.location.reload();},false)
+</script>

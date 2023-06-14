@@ -20,7 +20,7 @@
     </div>
 <p><button id="reset">Reset</button></p>    
 <p>Changes <span id="namberAction">0</span></p>
-<p><button id="cancel">cancel</button><button id="repeat" disabled >repeat</button></p>
+<p><button id="cancel" disabled>cancel</button><button id="repeat" disabled >repeat</button></p>
 
 <script>
 /*собираем информацию*/
@@ -45,6 +45,7 @@ let clickItem,
     clickValue;
 edit.addEventListener("change", clickActions);
 function clickActions(e) {
+    cancel.removeAttribute("disabled");
       if (e.target != e.currentTarget) {
             clickItem  = e.target.id
             clickValue  = e.target.value;
@@ -106,6 +107,7 @@ function cancelChange() {
             break;
     }   
     } else {
+        console.log(indexArray);
         switch (name) {
         case "rangeSaturation":
         rangeSaturation.value = namber;    
@@ -152,6 +154,7 @@ function repatChange() {
             break;
     }    
     }else{
+        console.log(indexArray);
         switch (name) {
         case "rangeSaturation":
         rangeSaturation.value = namber;    
@@ -185,6 +188,7 @@ reset.addEventListener("click", ()=>{
         cancel.removeAttribute("disabled");
     }
     index = 0;
+    cancel.setAttribute("disabled","disabled");
     repeat.setAttribute("disabled","disabled");
 })
 

@@ -763,6 +763,11 @@ let resetPages = document.getElementById("resetEdit");
       for (let i = 0; i < divEffects.length; i++) {
         divEffects[i].style = "display:none";
       }
+      for (let i = 0; i < acc.length; i++) {
+        acc[i].className = "accordion";
+        
+      }
+
 
       //удаляем метку для сохранения картинки
       document.getElementById("canvasEdihion").removeAttribute("class");
