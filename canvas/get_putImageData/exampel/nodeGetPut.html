@@ -45,7 +45,7 @@
   <div class="links" id="rotate">
     <p>Rotate</p>      
     <label>
-        <input type="radio" name="rotate" id="0" min="0" value="0" title="rotate 0deg" checked> - 0&#176;
+        <input type="radio" name="rotate" id="0" min="0" value="0" title="rotate 0deg"> - 0&#176;
         <input type="radio" name="rotate" id="90l" value="90" title="rotate 90deg left"> - 90&#176;
         <input type="radio" name="rotate" id="90r" value="-90" title="rotate 90deg right"> - 270&#176;
         <input type="radio" name="rotate" id="180" value="180" title="rotate 180deg left"> - 180&#176;
@@ -57,7 +57,7 @@
     let img = new Image();
     let canvas = document.getElementById("canvas");
     let ctx = canvas.getContext("2d");
-        img.src = "./C2,w500.jpg";
+        img.src = "/canvas/get_putImageData/GetPut/C2,w500.jpg";
         img.onload = initImg;
     //Действия после загрузки картинки
     function initImg() {
@@ -71,7 +71,6 @@
         let width = inCanvas.width;
         let height = inCanvas.height;
         let contrast = parseInt(clickValue)/255;
-        
             //Contrast
             if (clickItem == "rangeContrast") {
                 putImage(width, height, function (dst) {
@@ -172,6 +171,11 @@
         //Передаем информацию в функцию для редоктирования картинки    
         return ctx.getImageData(0, 0, img.width, img.height);      
     }
+    
+    function getImageSave() {
+        //Передаем информацию в функцию для редоктирования картинки    
+        return ctx.getImageData(0, 0, img.width, img.height);    
+    }
     //Записываем информацию на Canvas
     function putImage(width, height, func) {
         const outImagen = ctx.createImageData(width, height);
@@ -179,42 +183,53 @@
         func(dst);
         ctx.putImageData(outImagen, 0,0);
     }
-    
     //Собирем переменные для редоктирования картинки
     //Действия при нажатии 
-    let tablinks = document.getElementsByClassName("links"); 
-    for (let i = 0; i < tablinks.length; i++) {  
-      tablinks[i].addEventListener("input", clickActions, false);
-      tablinks[i].addEventListener("mouseup", click, false);
-
+    let tablinks = document.querySelector("#editFoto"); 
+    for (let i = 0; i < tablinks.children.length; i++) { 
+      let childrenElement = tablinks.children[i];
+      childrenElement.addEventListener("input", clickActions, false);
+      childrenElement.addEventListener("input", clickActionsSave, true);
     }
-
-    function click(e) {
-      if(canvas.className !== e.currentTarget.id){
-        console.log("-")
-        document.getElementById("imgSave").style = "display:block;"
-        closetImgSaveNoy.addEventListener("click", ()=>{document.getElementById("imgSave").style = "display:none;"}) 
-      }else{
-        console.log("+")}
-    }
-
+    //Функция для прослушивания событий для сбора информации
     function clickActions(e) {
       //Получите все элементы с class="links" и удалите "активный" класс
-      for (let i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      for (let i = 0; i < tablinks.children.length; i++) {
+        let childrenElement = tablinks.children[i];
+        childrenElement.className = childrenElement.className.replace(" active", "");
       }
       //Добавить класс «активный» к кнопке, которая открыла вкладку
       e.currentTarget.className += " active";
-      if (e.target != e.currentTarget) {
-        let clickItem  = e.target.id,
-            clickValue  = e.target.value;
-            canvas.setAttribute('class', e.currentTarget.id);
-            if (clickItem == "rangeContrast") {
-                document.getElementById("valueContrast").innerText = clickValue;
+      //Выводим информацию по input
+      if (e.target.id == "rangeContrast") {
+                document.getElementById("valueContrast").innerText = e.target.value;
             }
-            editPicter(getImage(), clickItem, clickValue);   
-      }
+      //Добавляем маркер для определения перехода между типами input
+      canvas.setAttribute('class', e.currentTarget.id);
     }
+
+    function clickActionsSave(e) {
+    //Собираем информацию при выролнении события  
+    if (e.target != e.currentTarget) {  
+      let clickItem  = e.target.id,
+          clickValue  = e.target.value;
+      if(canvas.className != e.currentTarget.id && canvas.className){
+        //Вносим изменения  в канвас при переходе на другой тип inputa
+        document.getElementById("imgSave").style = "display:block;"
+        //Кнопка не сохранять
+        closetImgSaveNoy.addEventListener("click", ()=>{document.getElementById("imgSave").style = "display:none;"}) 
+        //Кнопка сохранять
+        closetImgSaveYes.addEventListener("click", ()=>{
+          editPicter(getImageSave(), clickItem, clickValue);
+          document.getElementById("imgSave").style = "display:none;"  
+        })
+      }else{
+        //Изменяем канвас но не вносим изменения
+        editPicter(getImage(), clickItem, clickValue);   
+      }
+    }  
+    }
+
     
     //Reset  
     document.getElementById("reset").addEventListener("click",()=>{window.location.reload();},false)

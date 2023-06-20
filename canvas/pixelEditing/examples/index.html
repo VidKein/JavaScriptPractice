@@ -681,7 +681,7 @@ function getImageData() {
   canvas.width = img.width;
   canvas.height = img.height;
   //выводим конвас
-  ctx.drawImage(img, 0, 0); 
+  ctx.drawImage(img, 0, 0);
   //Передаем информацию в функцию для редоктирования картинки    
   return ctx.getImageData(0, 0, img.width, img.height);  
 }

@@ -1,0 +1,55 @@
+<body>
+    <h3 id="textEventResult">Нажато <span id="eventResult" style="color: red;"></span></h3>
+    <div class="eventClicks" id="eventClicks">
+        <div id="rangeEdit">
+            <label>
+                <p>Click 1</p>
+                <input type="range" name="range" id="click1" min="-255" max="255" value="0">
+                <span id="textClick1">0</span>
+            </label>
+            <label>
+                <p>Click 2</p>
+                <input type="range" name="range" id="click2" min="-255" max="255" value="0">
+                <span id="textClick2">0</span>
+            </label>
+        </div>
+        <div id="radioEdit">
+          <p><input type="radio" name="rotate" id="0" min="0" value="0" title="rotate 0deg" checked> - 0&#176;</p>
+          <p><input type="radio" name="rotate" id="90l" value="90" title="rotate 90deg left"> - 90&#176;</p>
+          <p><input type="radio" name="rotate" id="90r" value="-90" title="rotate 90deg right"> - 270&#176;</p>
+          <p><input type="radio" name="rotate" id="180" value="180" title="rotate 180deg left"> - 180&#176;</p>
+          <p><input type="radio" name="rotate" id="flip" value="270" title="mirror reflection"> - mirror</p>
+        </div>
+    </div>
+</body>
+<script>
+    //Выбираем елементы событие
+    let eventClicks = document.querySelector("#eventClicks");
+    //Выделяем результат
+    let textEventResult = document.getElementById("textEventResult");
+    //Событие
+    for (let i = 0; i < eventClicks.children.length; i++) {
+        let childrenElement = eventClicks.children[i];
+        childrenElement.addEventListener("input", eventClick, false);
+        childrenElement.addEventListener("input", eventClickSave, true);
+    }
+    //Обработчик события для input
+    function eventClick(e) {
+        if (e.target !== e.currentTarget) {
+            let clickedName = e.target.name;
+            let clickValue = e.target.value;
+                textEventResult.className = clickedName;
+            //Отображение изменений Click 1,2
+            document.getElementById("textClick1").textContent = document.getElementById("click1").value;
+            document.getElementById("textClick2").textContent = document.getElementById("click2").value;
+        }
+    }
+    //Действия при переходе на разные типы input (сохранение)
+    function eventClickSave(e) {
+        if (textEventResult.className == e.target.name) {
+                document.getElementById("eventResult").textContent = e.target.name+" : "+e.target.value
+            } else {
+                document.getElementById("eventResult").textContent += " "+ e.target.name+" : "+e.target.value
+            }
+    }
+</script>
