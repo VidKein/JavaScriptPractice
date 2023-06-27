@@ -45,6 +45,7 @@
     right: -5px;
     cursor: se-resize;
 }
+input[type="text"]{width: 70px;}
 </style>
 <body>
     <div class="resize-container" id="resize-container">
@@ -54,8 +55,28 @@
     <span class="resize-handle resize-handle-sw"></span>
     </div>
     <canvas></canvas>
-    <p><button id="cropImgNew">Crop New imagen</button></p>
-    <p><button id="cropImg">Crop imagen</button></p>
+    <p><button id="cropImgNew">Crop New imagen</button>
+    <button id="cropImg">Crop imagen</button></p>
+    <div class="infoTop">
+        <span>Top:</span>
+        <input type="text" id="dataTop">
+        <span>px</span>
+    </div>
+    <div class="infoLeft">
+        <span>Left:</span>
+        <input type="text" id="dataLeft">
+        <span>px</span>
+    </div>
+    <div class="infoWidth">
+        <span>Width:</span>
+        <input type="text" id="dataWidth">
+        <span>px</span>
+    </div>
+    <div class="infoHeight">
+        <span>Height:</span>
+        <input type="text" id="dataHeight">
+        <span>px</span>
+    </div>
 </body>
 <script>
 //выделяем блоки
@@ -101,7 +122,9 @@ function saveEventState(e) {
     eventState.mouseX = (e.clientX || e.pageX || e.originalEvent.touches[0].clientX);
     eventState.mouseY = (e.clientY || e.pageY || e.originalEvent.touches[0].clientY);
     eventState.evnt = e;
+    
 }
+
 //основные действия
 function resizing(e) {
     let mouse={},
@@ -152,7 +175,8 @@ function resizing(e) {
         
         // Чтобы улучшить производительность, стоит ограничить количество использований resizeImage()
         resizeImage(width, height);
-
+        document.getElementById("dataWidth").value =  width;
+        document.getElementById("dataHeight").value =  height;
     } 
     
 }
@@ -185,11 +209,12 @@ function moving(e) {
     e.stopPropagation();
     mouse.x = (e.clientX || e.pageX);
     mouse.y = (e.clientY || e.pageY);
-    resizeContainer.style.left = mouse.x - ( eventState.mouseX - eventState.conteinerLeft);
-    resizeContainer.style.top = mouse.y - ( eventState.mouseY - eventState.conteinerTop);
     //Перемешаем
     resizeContainer.style.left = mouse.x - ( eventState.mouseX - eventState.conteinerLeft);
     resizeContainer.style.top = mouse.y - ( eventState.mouseY - eventState.conteinerTop);
+    document.getElementById("dataTop").value = mouse.x - ( eventState.mouseX - eventState.conteinerLeft);
+    document.getElementById("dataLeft").value = mouse.y - ( eventState.mouseY - eventState.conteinerTop);
+    
 }
 /*Реализация функционала - вырезаем часть фото*/
 //Crop imagen
@@ -230,14 +255,14 @@ function cropNewFoto() {
         x.document.close();
     } else {
     //не работает в Chrome
-       window.open(crop_canvas.toDataURL("image/png")); 
+       window.open(cropCanvas.toDataURL("image/png")); 
     }
 }
 function crop() {
 canvas.width = resizeContainer.clientWidth;
 canvas.height = resizeContainer.clientHeight;
+ctx.drawImage(img, resizeContainer.offsetLeft, resizeContainer.offsetTop, resizeContainer.clientWidth, resizeContainer.clientHeight, 0, 0, resizeContainer.clientWidth, resizeContainer.clientHeight);
 resizeContainer.style.left = canvas.offsetLeft;
 resizeContainer.style.top = canvas.offsetTop;
-ctx.drawImage(img, resizeContainer.offsetLeft, resizeContainer.offsetTop, resizeContainer.clientWidth, resizeContainer.clientHeight, 0, 0, resizeContainer.clientWidth, resizeContainer.clientHeight);
 }
 </script>
