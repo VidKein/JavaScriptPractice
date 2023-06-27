@@ -54,7 +54,8 @@
     <span class="resize-handle resize-handle-sw"></span>
     </div>
     <canvas></canvas>
-    <button id="cropImg">Crop</button>
+    <p><button id="cropImgNew">Crop New imagen</button></p>
+    <p><button id="cropImg">Crop imagen</button></p>
 </body>
 <script>
 //выделяем блоки
@@ -197,6 +198,7 @@ let canvas = document.querySelector("canvas");
 let ctx = canvas.getContext('2d');
 let img = new Image();
     img.src = "./kiza.jpeg";
+let cropImgNew = document.getElementById("cropImgNew");
 let cropImg = document.getElementById("cropImg");
 img.addEventListener("load", init);
 function init(){
@@ -205,8 +207,9 @@ function init(){
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0,0);
-    cropImg.addEventListener("click", cropNewFoto);
 }
+cropImgNew.addEventListener("click", cropNewFoto);
+cropImg.addEventListener("click", crop);
 function cropNewFoto() {
     let left = resizeContainer.offsetLeft,
         top = resizeContainer.offsetTop,
@@ -216,9 +219,7 @@ function cropNewFoto() {
         cropCanvas.width = width;
         cropCanvas.height = height;
         cropCanvas.getContext('2d').drawImage(img, left, top, width, height, 0, 0, width, height);
-        console.log(left, top, width, height, 0, 0, width, height);
-
-
+    
     //определяем браузер
     if (navigator.userAgent.indexOf("Chrome") != -1) {
         let string = cropCanvas.toDataURL("image/png"),
@@ -231,5 +232,12 @@ function cropNewFoto() {
     //не работает в Chrome
        window.open(crop_canvas.toDataURL("image/png")); 
     }
+}
+function crop() {
+canvas.width = resizeContainer.clientWidth;
+canvas.height = resizeContainer.clientHeight;
+resizeContainer.style.left = canvas.offsetLeft;
+resizeContainer.style.top = canvas.offsetTop;
+ctx.drawImage(img, resizeContainer.offsetLeft, resizeContainer.offsetTop, resizeContainer.clientWidth, resizeContainer.clientHeight, 0, 0, resizeContainer.clientWidth, resizeContainer.clientHeight);
 }
 </script>
