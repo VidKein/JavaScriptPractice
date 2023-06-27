@@ -1,4 +1,5 @@
 <canvas width="48" height="60"></canvas>
+<canvas id="canvas"></canvas>
 <script>
   var cx = document.querySelector("canvas").getContext("2d");
   var img = document.createElement("img");
@@ -16,5 +17,42 @@
       cycle = (cycle + 1) % 8;
     }, 120);
   });
+
+
+  //
+  const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+ctx.globalCompositeOperation = "destination-over";
+
+let count = 1;
+let scale = 10;
+
+function draw() {
+  let angle = count * 0.1;
+  let radius = scale * Math.sqrt(count);
+  let positionX = radius * Math.sin(angle) + canvas.width / 2;
+  let positionY = radius * Math.cos(angle) + canvas.height / 2;
+
+  ctx.fillStyle = "#F24949";
+  ctx.strokeStyle = "#8B428C";
+  ctx.beginPath();
+  ctx.arc(positionX, positionY, 20, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  count++;
+}
+
+function animate() {
+  draw();
+  if (count > 1000) return;
+  window.requestAnimationFrame(animate);
+}
+
+animate();
 
 </script>
