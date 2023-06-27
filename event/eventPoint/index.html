@@ -1,12 +1,11 @@
 <style>
 .resize-container{
-    position: relative;
+    position: absolute;
     display: inline-block;
     cursor: move;
     margin: 0 auto;
-    width: 500px;
-    height: 375px;}
-.resize-container:hover{border: 1px solid red;}
+    border: 1px solid red;
+}
 .resize-container img{
     display: block
 }
@@ -54,6 +53,8 @@
     <span class="resize-handle resize-handle-se"></span>
     <span class="resize-handle resize-handle-sw"></span>
     </div>
+    <canvas></canvas>
+    <button id="cropImg">Crop</button>
 </body>
 <script>
 //выделяем блоки
@@ -188,5 +189,47 @@ function moving(e) {
     //Перемешаем
     resizeContainer.style.left = mouse.x - ( eventState.mouseX - eventState.conteinerLeft);
     resizeContainer.style.top = mouse.y - ( eventState.mouseY - eventState.conteinerTop);
+}
+/*Реализация функционала - вырезаем часть фото*/
+//Crop imagen
+let imgCrop = document.getElementById("imgCrop");
+let canvas = document.querySelector("canvas");
+let ctx = canvas.getContext('2d');
+let img = new Image();
+    img.src = "./kiza.jpeg";
+let cropImg = document.getElementById("cropImg");
+img.addEventListener("load", init);
+function init(){
+    resizeContainer.style.width = img.width;
+    resizeContainer.style.height = img.height;
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0,0);
+    cropImg.addEventListener("click", cropNewFoto);
+}
+function cropNewFoto() {
+    let left = resizeContainer.offsetLeft,
+        top = resizeContainer.offsetTop,
+        width = resizeContainer.clientWidth,
+        height = resizeContainer.clientHeight,
+        cropCanvas = document.createElement("canvas");
+        cropCanvas.width = width;
+        cropCanvas.height = height;
+        cropCanvas.getContext('2d').drawImage(img, left, top, width, height, 0, 0, width, height);
+        console.log(left, top, width, height, 0, 0, width, height);
+
+
+    //определяем браузер
+    if (navigator.userAgent.indexOf("Chrome") != -1) {
+        let string = cropCanvas.toDataURL("image/png"),
+        iframe = "<iframe width='"+width+"px' height='"+height+"px' src='" + string + "'></iframe>",
+        x = window.open();
+        x.document.open();
+        x.document.write(iframe);
+        x.document.close();
+    } else {
+    //не работает в Chrome
+       window.open(crop_canvas.toDataURL("image/png")); 
+    }
 }
 </script>
