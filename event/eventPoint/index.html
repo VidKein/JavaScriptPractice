@@ -4,6 +4,7 @@ body{
     margin: 0;
     border: 0;
 }
+/*1version*/
 .resize-container{
     position: absolute;
     display: inline-block;
@@ -22,13 +23,42 @@ body{
 .resize-handle-ne,
 .resize-handle-se,
 .resize-handle-nw,
-.resize-handle-sw{
+.resize-handle-sw,
+.resize-handle-e,
+.resize-handle-n,
+.resize-handle-s,
+.resize-handle-w
+{
     position: absolute;
     display: block;
     width: 10px;
     height: 10px;
     background: rgba(222, 60, 80, 0.9);
     z-index: 999;
+}
+.resize-handle-e{
+    cursor: ew-resize;
+    margin-top: -3.5px;
+    right: -3.5px;
+    top: 50%;
+}
+.resize-handle-n{
+    cursor: ns-resize;
+    left: 50%;
+    margin-left: -3.5px;
+    top: -3.5px;
+}
+.resize-handle-s{
+    cursor: ns-resize;
+    left: 50%;
+    margin-left: -3.5px;
+    bottom: -3.5px;
+}
+.resize-handle-w{
+    cursor: ew-resize;
+    margin-top: -3.5px;
+    left: -3.5px;
+    top: 50%;
 }
 .resize-handle-nw{
     top: -5px;
@@ -50,10 +80,73 @@ body{
     right: -5px;
     cursor: se-resize;
 }
+/*2version*/
+/*Section*/
+.cropperDashed{
+      display: block;
+      position: absolute;
+      border: 0 dashed #eee;
+      opacity: 0.5;
+    }
+    .cropperDashed.dashedH{
+      border-bottom-width: 1px;
+      border-top-width: 1px;
+      height: calc(100% / 3);
+      left: 0;
+      top: calc(100% / 3);
+      width: 100%;
+    }
+    .cropperDashed.dashedV{
+      border-left-width: 1px;
+      border-right-width: 1px;
+      height: 100%;
+      left: calc(100% / 3);
+      top: 0;
+      width: calc(100% / 3);
+    }
+    .cropperCenter{
+      display: block;
+      height: 0;
+      left: 50%;
+      opacity: 0.75;
+      position: absolute;
+      top: 50%;
+      width: 0;
+    }
+    /*Center*/
+    .cropperCenter::before{
+      height: 1px;
+      left: -3px;
+      top: 0;
+      width: 7px
+    }
+    .cropperCenter::after{
+      height: 7px;
+      left: 0;
+      top: -3px;
+      width: 1px;
+    }
+    .cropperCenter::before, .cropperCenter::after{
+      background-color: #eee;
+      content: ' ';
+      display: block;
+      position: absolute;
+    }
+/*button*/
 input[type="text"]{width: 70px;}
 </style>
 <body>
     <div class="resize-container" id="resize-container">
+    <!--Золотое сечение-->
+    <span class="cropperDashed dashedH"></span>
+    <span class="cropperDashed dashedV"></span>
+    <!--Центр-->
+    <span class="cropperCenter"></span>
+    <!--Точки-->
+    <span class="resize-handle resize-handle-e"></span>
+    <span class="resize-handle resize-handle-n"></span>
+    <span class="resize-handle resize-handle-s"></span>
+    <span class="resize-handle resize-handle-w"></span>
     <span class="resize-handle resize-handle-nw"></span>
     <span class="resize-handle resize-handle-ne"></span> 
     <span class="resize-handle resize-handle-se"></span>
