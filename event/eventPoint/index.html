@@ -82,6 +82,9 @@ input[type="text"]{width: 70px;}
         <input type="text" id="dataHeight">
         <span>px</span>
     </div>
+    <div class="buttonActionImg">
+        <p><button id="reset">Reset</button></p>
+    </div>
 </body>
 <script>
 //выделяем блоки
@@ -282,5 +285,15 @@ document.getElementById("dataWidth").value =  resizeContainer.clientWidth;
 document.getElementById("dataHeight").value =  resizeContainer.clientHeight;
 document.getElementById("dataTop").value = resizeContainer.offsetTop;
 document.getElementById("dataLeft").value = resizeContainer.offsetLeft;
+}
+/*Функция резет*/
+let resetCrop = document.getElementById("reset");
+resetCrop.addEventListener("click", reset);
+function reset() {
+    resizeContainer.style.width = img.width;
+    resizeContainer.style.height = img.height;
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0,0);
 }
 </script>
