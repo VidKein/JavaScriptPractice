@@ -237,6 +237,7 @@ function resizing(e) {
     mouse.y = (e.clientY || e.pageY || e.originalEvent.touches[0].clientY);
     
     // Изменим положение фотографии в зависимости от того, за какую размерную ручку тянет юзер
+    //Изменяем угловые точки se/sw/nw/ne
     if( eventState.evnt.target.classList == 'resize-handle resize-handle-se'){
         width = mouse.x - eventState.conteinerLeft;
         height = mouse.y - eventState.conteinerTop;
@@ -252,7 +253,7 @@ function resizing(e) {
         height = eventState.conteinerHeight - (mouse.y - eventState.conteinerTop);
         left = mouse.x;
         top = mouse.y;
-        
+        //Сохранение пропорций при нажатии на shift
         if(constrain || e.shiftKey){
             top = mouse.y - ((width / resizeContainer.clientWidth * resizeContainer.clientHeight) - height);
         }
@@ -261,29 +262,52 @@ function resizing(e) {
         height = eventState.conteinerHeight - (mouse.y - eventState.conteinerTop);
         left = eventState.conteinerLeft;
         top = mouse.y;
-        
+        //Сохранение пропорций при нажатии на shift
         if(constrain || e.shiftKey){
            top = mouse.y - ((width / resizeContainer.clientWidth * resizeContainer.clientHeight) - height);
         }
     }
-
     // Сохраняем пропорции при нажатой клавише shift
     if(constrain || e.shiftKey){
         height = width / resizeContainer.clientWidth * resizeContainer.clientHeight;
+    }
+    //Изменяем центральные точки e/n/s/w
+    if( eventState.evnt.target.classList == 'resize-handle resize-handle-s'){ 
+        width = eventState.conteinerWidth;
+        height = mouse.y;
+        left = eventState.conteinerLeft;
+        top = eventState.conteinerTop;
+    }else if(eventState.evnt.target.classList == 'resize-handle resize-handle-e'){
+        width = mouse.x - eventState.conteinerLeft;
+        height = eventState.conteinerHeight;
+        left = eventState.conteinerLeft;
+        top = eventState.conteinerTop;
+    }else if(eventState.evnt.target.classList == 'resize-handle resize-handle-w'){
+        width = eventState.conteinerWidth - mouse.x;
+        height = eventState.conteinerHeight;
+        left = mouse.x;
+        top = eventState.conteinerTop;
+    }else if(eventState.evnt.target.classList == 'resize-handle resize-handle-n'){
+        width = eventState.conteinerWidth;
+        height = eventState.conteinerHeight - mouse.y;
+        left = eventState.conteinerLeft;
+        top = mouse.y;
     }
 
     if(width > min_width && height > min_height && width < max_width && height < max_height){
         
         // Чтобы улучшить производительность, стоит ограничить количество использований resizeImage()
-        resizeImage(width, height);
+        resizeImage(width, height, left, top);
     } 
         document.getElementById("dataWidth").value =  width;
         document.getElementById("dataHeight").value =  height;
 }
 //Меняем размеры блока JavaScript
-function resizeImage(width, height){
+function resizeImage(width, height, left, top){
     resizeContainer.style.width = width;
     resizeContainer.style.height = height;
+    resizeContainer.style.left = left;
+    resizeContainer.style.top = top;
 };
 /*Перемешаем блок*/
 //Добовляем прослушку на перемкшение
@@ -383,6 +407,8 @@ document.getElementById("dataLeft").value = resizeContainer.offsetLeft;
 let resetCrop = document.getElementById("reset");
 resetCrop.addEventListener("click", reset);
 function reset() {
+    resizeContainer.style.left = canvas.offsetLeft;
+    resizeContainer.style.top = canvas.offsetTop;
     resizeContainer.style.width = img.width;
     resizeContainer.style.height = img.height;
     canvas.width = img.width;
