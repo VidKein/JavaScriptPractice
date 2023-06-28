@@ -1,4 +1,9 @@
 <style>
+body{
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
 .resize-container{
     position: absolute;
     display: inline-block;
@@ -175,10 +180,9 @@ function resizing(e) {
         
         // Чтобы улучшить производительность, стоит ограничить количество использований resizeImage()
         resizeImage(width, height);
+    } 
         document.getElementById("dataWidth").value =  width;
         document.getElementById("dataHeight").value =  height;
-    } 
-    
 }
 //Меняем размеры блока JavaScript
 function resizeImage(width, height){
@@ -212,8 +216,8 @@ function moving(e) {
     //Перемешаем
     resizeContainer.style.left = mouse.x - ( eventState.mouseX - eventState.conteinerLeft);
     resizeContainer.style.top = mouse.y - ( eventState.mouseY - eventState.conteinerTop);
-    document.getElementById("dataTop").value = mouse.x - ( eventState.mouseX - eventState.conteinerLeft);
-    document.getElementById("dataLeft").value = mouse.y - ( eventState.mouseY - eventState.conteinerTop);
+    document.getElementById("dataTop").value = mouse.y - ( eventState.mouseY - eventState.conteinerTop);
+    document.getElementById("dataLeft").value = mouse.x - ( eventState.mouseX - eventState.conteinerLeft);
     
 }
 /*Реализация функционала - вырезаем часть фото*/
@@ -232,6 +236,10 @@ function init(){
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0,0);
+    document.getElementById("dataWidth").value =  img.width;
+    document.getElementById("dataHeight").value =  img.height;
+    document.getElementById("dataTop").value = resizeContainer.offsetTop;
+    document.getElementById("dataLeft").value = resizeContainer.offsetLeft;
 }
 cropImgNew.addEventListener("click", cropNewFoto);
 cropImg.addEventListener("click", crop);
@@ -241,14 +249,15 @@ function cropNewFoto() {
         width = resizeContainer.clientWidth,
         height = resizeContainer.clientHeight,
         cropCanvas = document.createElement("canvas");
+        let imgData = ctx.getImageData(left, top, width, height);        
         cropCanvas.width = width;
         cropCanvas.height = height;
-        cropCanvas.getContext('2d').drawImage(img, left, top, width, height, 0, 0, width, height);
+        cropCanvas.getContext('2d').putImageData(imgData, 0,0);
     
     //определяем браузер
     if (navigator.userAgent.indexOf("Chrome") != -1) {
         let string = cropCanvas.toDataURL("image/png"),
-        iframe = "<iframe width='"+width+"px' height='"+height+"px' src='" + string + "'></iframe>",
+        iframe = "<iframe width='"+width+"px' height='"+height+"px' src='" + string + "' scrolling='no'></iframe><p><span>Ширина "+width+"</span></p><p><span>Высота "+height+"</span></p>",
         x = window.open();
         x.document.open();
         x.document.write(iframe);
@@ -259,10 +268,19 @@ function cropNewFoto() {
     }
 }
 function crop() {
+//Собираем информацию о картинке
+let imgData = ctx.getImageData(resizeContainer.offsetLeft, resizeContainer.offsetTop, resizeContainer.clientWidth, resizeContainer.clientHeight);
+//Устанавливаем новые размеры canvas(затираем)
 canvas.width = resizeContainer.clientWidth;
 canvas.height = resizeContainer.clientHeight;
-ctx.drawImage(img, resizeContainer.offsetLeft, resizeContainer.offsetTop, resizeContainer.clientWidth, resizeContainer.clientHeight, 0, 0, resizeContainer.clientWidth, resizeContainer.clientHeight);
+//Вносим новіе данніе в канвас
+ctx.putImageData(imgData,0,0);
+//Передвигаем кроп блок
 resizeContainer.style.left = canvas.offsetLeft;
 resizeContainer.style.top = canvas.offsetTop;
+document.getElementById("dataWidth").value =  resizeContainer.clientWidth;
+document.getElementById("dataHeight").value =  resizeContainer.clientHeight;
+document.getElementById("dataTop").value = resizeContainer.offsetTop;
+document.getElementById("dataLeft").value = resizeContainer.offsetLeft;
 }
 </script>
