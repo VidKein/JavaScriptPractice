@@ -186,8 +186,8 @@ let resizeHandle = document.getElementsByClassName("resize-handle");
 //Создаем блок для сбора информации по перемешению
 let eventState = {};
 let constrain = false;
-let min_width = 60,
-    min_height = 60,
+let min_width = 20,
+    min_height = 20,
     max_width = 800,
     max_height = 900;
 //Прослушка контейнера 
@@ -283,13 +283,13 @@ function resizing(e) {
         left = eventState.conteinerLeft;
         top = eventState.conteinerTop;
     }else if(eventState.evnt.target.classList == 'resize-handle resize-handle-w'){
-        width = eventState.conteinerWidth - mouse.x;
+        width = eventState.conteinerWidth - (mouse.x - eventState.conteinerLeft);
         height = eventState.conteinerHeight;
         left = mouse.x;
         top = eventState.conteinerTop;
     }else if(eventState.evnt.target.classList == 'resize-handle resize-handle-n'){
         width = eventState.conteinerWidth;
-        height = eventState.conteinerHeight - mouse.y;
+        height = eventState.conteinerHeight - (mouse.y -eventState.conteinerTop);
         left = eventState.conteinerLeft;
         top = mouse.y;
     }
@@ -298,9 +298,12 @@ function resizing(e) {
         
         // Чтобы улучшить производительность, стоит ограничить количество использований resizeImage()
         resizeImage(width, height, left, top);
-    } 
+    }   
+
         document.getElementById("dataWidth").value =  width;
         document.getElementById("dataHeight").value =  height;
+        document.getElementById("dataTop").value = top;
+        document.getElementById("dataLeft").value = left;
 }
 //Меняем размеры блока JavaScript
 function resizeImage(width, height, left, top){
