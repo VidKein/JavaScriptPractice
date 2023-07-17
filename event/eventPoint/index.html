@@ -1,10 +1,15 @@
 <style>
+canvas{
+    display: block;
+    margin: 10px auto;
+}
 body{
     padding: 0;
     margin: 0;
     border: 0;
 }
 /*1version*/
+
 .resize-container{
     position: absolute;
     display: inline-block;
@@ -154,7 +159,8 @@ input[type="text"]{width: 70px;}
     </div>
     <canvas></canvas>
     <p><button id="cropImgNew">Crop New imagen</button>
-    <button id="cropImg">Crop imagen</button></p>
+    <button id="cropImg">Crop imagen</button>
+    <button id="reset">Reset</button></p>
     <div class="infoTop">
         <span>Top:</span>
         <input type="text" id="dataTop">
@@ -175,8 +181,13 @@ input[type="text"]{width: 70px;}
         <input type="text" id="dataHeight">
         <span>px</span>
     </div>
-    <div class="buttonActionImg">
-        <p><button id="reset">Reset</button></p>
+    <div class="infoMause">
+        <span>X:</span>
+        <input type="text" id="infoMauseX">
+        <span>px</span>
+        <span>Y:</span>
+        <input type="text" id="infoMauseY">
+        <span>px</span>
     </div>
 </body>
 <script>
@@ -293,9 +304,8 @@ function resizing(e) {
         left = eventState.conteinerLeft;
         top = mouse.y;
     }
-
-    if(width > min_width && height > min_height && width < max_width && height < max_height){
-        
+    //Не даем выйти за рамки загружаемого изображения
+    if(width > min_width && height > min_height && width < max_width && height < max_height && top >= 0 && left >= 0 && width <= canvas.width && height <= canvas.height){  
         // Чтобы улучшить производительность, стоит ограничить количество использований resizeImage()
         resizeImage(width, height, left, top);
     }   
@@ -336,15 +346,18 @@ function moving(e) {
     e.stopPropagation();
     mouse.x = (e.clientX || e.pageX);
     mouse.y = (e.clientY || e.pageY);
+
     //Перемешаем
-    resizeContainer.style.left = mouse.x - ( eventState.mouseX - eventState.conteinerLeft);
-    resizeContainer.style.top = mouse.y - ( eventState.mouseY - eventState.conteinerTop);
-    document.getElementById("dataTop").value = mouse.y - ( eventState.mouseY - eventState.conteinerTop);
-    document.getElementById("dataLeft").value = mouse.x - ( eventState.mouseX - eventState.conteinerLeft);
+    resizeContainer.style.left = mouse.x - (eventState.mouseX - eventState.conteinerLeft);
+    resizeContainer.style.top = mouse.y - (eventState.mouseY - eventState.conteinerTop);
+    document.getElementById("dataTop").value = mouse.y - (eventState.mouseY - eventState.conteinerTop);
+    document.getElementById("dataLeft").value = mouse.x - (eventState.mouseX - eventState.conteinerLeft);
+    document.getElementById("infoMauseX").value = mouse.x;
+    document.getElementById("infoMauseY").value = mouse.y;
     
 }
 /*Реализация функционала - вырезаем часть фото*/
-//Crop imagen
+//Crop New imagen(вырезается и создается новое изображение)
 let imgCrop = document.getElementById("imgCrop");
 let canvas = document.querySelector("canvas");
 let ctx = canvas.getContext('2d');
@@ -363,6 +376,17 @@ function init(){
     document.getElementById("dataHeight").value =  img.height;
     document.getElementById("dataTop").value = resizeContainer.offsetTop;
     document.getElementById("dataLeft").value = resizeContainer.offsetLeft;
+    //координаты crop элемента
+    let box = canvas.getBoundingClientRect();
+    resizeContainer.style.left = box.left;
+    resizeContainer.style.top = box.top;
+}
+//прикрепляем crop к сanvas
+window.addEventListener("resize", resizeCrop);
+function resizeCrop() {
+    let box = canvas.getBoundingClientRect();
+    resizeContainer.style.left = box.left;
+    resizeContainer.style.top = box.top;
 }
 cropImgNew.addEventListener("click", cropNewFoto);
 cropImg.addEventListener("click", crop);
@@ -390,7 +414,8 @@ function cropNewFoto() {
        window.open(cropCanvas.toDataURL("image/png")); 
     }
 }
-function crop() {
+//Crop imagen(вырезается и затирается canvas)
+function crop() {   
 //Собираем информацию о картинке
 let imgData = ctx.getImageData(resizeContainer.offsetLeft, resizeContainer.offsetTop, resizeContainer.clientWidth, resizeContainer.clientHeight);
 //Устанавливаем новые размеры canvas(затираем)
@@ -417,5 +442,8 @@ function reset() {
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0,0);
+    let box = canvas.getBoundingClientRect();
+    resizeContainer.style.left = box.left;
+    resizeContainer.style.top = box.top;
 }
 </script>
