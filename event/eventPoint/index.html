@@ -1,20 +1,29 @@
 <style>
-canvas{
-    display: block;
-    margin: 10px auto;
-}
 body{
     padding: 0;
     margin: 0;
     border: 0;
 }
+/*Img block*/
+.main{
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.editImg{
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
 /*1version*/
-
 .resize-container{
     position: absolute;
-    display: inline-block;
     cursor: move;
-    margin: 0 auto;
     border: 1px solid red;
 }
 .resize-container img{
@@ -141,54 +150,60 @@ body{
 input[type="text"]{width: 70px;}
 </style>
 <body>
-    <div class="resize-container" id="resize-container">
-    <!--Золотое сечение-->
-    <span class="cropperDashed dashedH"></span>
-    <span class="cropperDashed dashedV"></span>
-    <!--Центр-->
-    <span class="cropperCenter"></span>
-    <!--Точки-->
-    <span class="resize-handle resize-handle-e"></span>
-    <span class="resize-handle resize-handle-n"></span>
-    <span class="resize-handle resize-handle-s"></span>
-    <span class="resize-handle resize-handle-w"></span>
-    <span class="resize-handle resize-handle-nw"></span>
-    <span class="resize-handle resize-handle-ne"></span> 
-    <span class="resize-handle resize-handle-se"></span>
-    <span class="resize-handle resize-handle-sw"></span>
-    </div>
-    <canvas></canvas>
-    <p><button id="cropImgNew">Crop New imagen</button>
-    <button id="cropImg">Crop imagen</button>
-    <button id="reset">Reset</button></p>
-    <div class="infoTop">
-        <span>Top:</span>
-        <input type="text" id="dataTop">
-        <span>px</span>
-    </div>
-    <div class="infoLeft">
-        <span>Left:</span>
-        <input type="text" id="dataLeft">
-        <span>px</span>
-    </div>
-    <div class="infoWidth">
-        <span>Width:</span>
-        <input type="text" id="dataWidth">
-        <span>px</span>
-    </div>
-    <div class="infoHeight">
-        <span>Height:</span>
-        <input type="text" id="dataHeight">
-        <span>px</span>
-    </div>
-    <div class="infoMause">
-        <span>X:</span>
-        <input type="text" id="infoMauseX">
-        <span>px</span>
-        <span>Y:</span>
-        <input type="text" id="infoMauseY">
-        <span>px</span>
-    </div>
+    <main class="main">
+        <section class="editImg">
+            <div class="resize-container" id="resize-container">
+                <!--Золотое сечение-->
+                <span class="cropperDashed dashedH"></span>
+                <span class="cropperDashed dashedV"></span>
+                <!--Центр-->
+                <span class="cropperCenter"></span>
+                <!--Точки-->
+                <span class="resize-handle resize-handle-e"></span>
+                <span class="resize-handle resize-handle-n"></span>
+                <span class="resize-handle resize-handle-s"></span>
+                <span class="resize-handle resize-handle-w"></span>
+                <span class="resize-handle resize-handle-nw"></span>
+                <span class="resize-handle resize-handle-ne"></span> 
+                <span class="resize-handle resize-handle-se"></span>
+                <span class="resize-handle resize-handle-sw"></span>
+            </div>
+            <canvas></canvas>
+        </section>
+        <section class="infoImg">
+            <p><button id="cropImgNew">Crop New imagen</button>
+            <button id="cropImg">Crop imagen</button>
+            <button id="reset">Reset</button></p>
+            <div class="infoTop">
+                <span>Top Crop:</span>
+                <input type="text" id="dataTop">
+                <span>px</span>
+            </div>
+            <div class="infoLeft">
+                <span>Left Crop:</span>
+                <input type="text" id="dataLeft">
+                <span>px</span>
+            </div>
+            <div class="infoWidth">
+                <span>Width Crop:</span>
+                <input type="text" id="dataWidth">
+                <span>px</span>
+            </div>
+            <div class="infoHeight">
+                <span>Height Crop:</span>
+                <input type="text" id="dataHeight">
+                <span>px</span>
+            </div>
+            <div class="infoMause">
+                <span>X:</span>
+                <input type="text" id="infoMauseX">
+                <span>px</span>
+                <span>Y:</span>
+                <input type="text" id="infoMauseY">
+                <span>px</span>
+            </div>
+        </section>
+    </main>  
 </body>
 <script>
 //выделяем блоки
@@ -233,8 +248,7 @@ function saveEventState(e) {
     eventState.conteinerTop = resizeContainer.offsetTop;
     eventState.mouseX = (e.clientX || e.pageX || e.originalEvent.touches[0].clientX);
     eventState.mouseY = (e.clientY || e.pageY || e.originalEvent.touches[0].clientY);
-    eventState.evnt = e;
-    
+    eventState.evnt = e;  
 }
 
 //основные действия
@@ -376,17 +390,6 @@ function init(){
     document.getElementById("dataHeight").value =  img.height;
     document.getElementById("dataTop").value = resizeContainer.offsetTop;
     document.getElementById("dataLeft").value = resizeContainer.offsetLeft;
-    //координаты crop элемента
-    let box = canvas.getBoundingClientRect();
-    resizeContainer.style.left = box.left;
-    resizeContainer.style.top = box.top;
-}
-//прикрепляем crop к сanvas
-window.addEventListener("resize", resizeCrop);
-function resizeCrop() {
-    let box = canvas.getBoundingClientRect();
-    resizeContainer.style.left = box.left;
-    resizeContainer.style.top = box.top;
 }
 cropImgNew.addEventListener("click", cropNewFoto);
 cropImg.addEventListener("click", crop);
@@ -442,8 +445,27 @@ function reset() {
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0,0);
-    let box = canvas.getBoundingClientRect();
-    resizeContainer.style.left = box.left;
-    resizeContainer.style.top = box.top;
 }
+
+
+
+window.addEventListener("resize", res);
+function getCoords(resizeContainer) {
+ 
+  
+  return {
+    top: box.top + window.pageYOffset,
+    left: box.left + window.pageXOffset,
+    right: box.right + window.pageXOffset,
+    bottom: box.bottom + window.pageYOffset
+  };
+  
+}
+console.log(resizeContainer.offsetLeft);
+function res() {
+    let box = canvas.getBoundingClientRect();
+    console.log(box.left+ window.pageXOffset);    
+}
+
+
 </script>
