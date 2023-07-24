@@ -12,6 +12,7 @@ body{
     right: 0;
     top: 0;
 }
+/*
 .editImg{
     margin: 1rem 0;
     display: flex;
@@ -19,6 +20,11 @@ body{
     align-content: center;
     justify-content: center;
     align-items: center;
+}
+*/
+canvas{
+    display: block;
+    margin: 1rem auto;
 }
 /*1version*/
 .resize-container{
@@ -101,51 +107,51 @@ body{
       position: absolute;
       border: 0 dashed #eee;
       opacity: 0.5;
-    }
-    .cropperDashed.dashedH{
-      border-bottom-width: 1px;
-      border-top-width: 1px;
-      height: calc(100% / 3);
-      left: 0;
-      top: calc(100% / 3);
-      width: 100%;
-    }
-    .cropperDashed.dashedV{
-      border-left-width: 1px;
-      border-right-width: 1px;
-      height: 100%;
-      left: calc(100% / 3);
-      top: 0;
-      width: calc(100% / 3);
-    }
-    .cropperCenter{
-      display: block;
-      height: 0;
-      left: 50%;
-      opacity: 0.75;
-      position: absolute;
-      top: 50%;
-      width: 0;
-    }
-    /*Center*/
-    .cropperCenter::before{
-      height: 1px;
-      left: -3px;
-      top: 0;
-      width: 7px
-    }
-    .cropperCenter::after{
-      height: 7px;
-      left: 0;
-      top: -3px;
-      width: 1px;
-    }
-    .cropperCenter::before, .cropperCenter::after{
-      background-color: #eee;
-      content: ' ';
-      display: block;
-      position: absolute;
-    }
+}
+.cropperDashed.dashedH{
+  border-bottom-width: 1px;
+  border-top-width: 1px;
+  height: calc(100% / 3);
+  left: 0;
+  top: calc(100% / 3);
+  width: 100%;
+}
+.cropperDashed.dashedV{
+  border-left-width: 1px;
+  border-right-width: 1px;
+  height: 100%;
+  left: calc(100% / 3);
+  top: 0;
+  width: calc(100% / 3);
+}
+.cropperCenter{
+  display: block;
+  height: 0;
+  left: 50%;
+  opacity: 0.75;
+  position: absolute;
+  top: 50%;
+  width: 0;
+}
+/*Center*/
+.cropperCenter::before{
+  height: 1px;
+  left: -3px;
+  top: 0;
+  width: 7px
+}
+.cropperCenter::after{
+  height: 7px;
+  left: 0;
+  top: -3px;
+  width: 1px;
+}
+.cropperCenter::before, .cropperCenter::after{
+  background-color: #eee;
+  content: ' ';
+  display: block;
+  position: absolute;
+}
 /*button*/
 input[type="text"]{width: 70px;}
 </style>
@@ -216,6 +222,8 @@ let min_width = 20,
     min_height = 20,
     max_width = 800,
     max_height = 900;
+//Растояние от canvas до crop
+let stepLeft;
 //Прослушка контейнера 
 for (let i = 0; i < resizeHandle.length; i++) {
     resizeHandle[i].addEventListener("mousedown", startResize);   
@@ -322,6 +330,8 @@ function resizing(e) {
     if(width > min_width && height > min_height && width < max_width && height < max_height && top >= 0 && left >= 0 && width <= canvas.width && height <= canvas.height){  
         // Чтобы улучшить производительность, стоит ограничить количество использований resizeImage()
         resizeImage(width, height, left, top);
+        //Определяем растояние от края crop для rezise функции(при изменении размеров crop блока)
+        stepLeft = left-canvas.offsetLeft;
     }   
 
         document.getElementById("dataWidth").value =  width;
@@ -364,11 +374,12 @@ function moving(e) {
     //Перемешаем
     resizeContainer.style.left = mouse.x - (eventState.mouseX - eventState.conteinerLeft);
     resizeContainer.style.top = mouse.y - (eventState.mouseY - eventState.conteinerTop);
+    //Определяем растояние от края crop для rezise функции(при перемешении crop блока)
+    stepLeft = (mouse.x - (eventState.mouseX - eventState.conteinerLeft))-canvas.offsetLeft;
     document.getElementById("dataTop").value = mouse.y - (eventState.mouseY - eventState.conteinerTop);
     document.getElementById("dataLeft").value = mouse.x - (eventState.mouseX - eventState.conteinerLeft);
     document.getElementById("infoMauseX").value = mouse.x;
-    document.getElementById("infoMauseY").value = mouse.y;
-    
+    document.getElementById("infoMauseY").value = mouse.y;   
 }
 /*Реализация функционала - вырезаем часть фото*/
 //Crop New imagen(вырезается и создается новое изображение)
@@ -386,6 +397,9 @@ function init(){
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0,0);
+    //Устанавливаем crop block на место canvas
+    resizeContainer.style.left = canvas.offsetLeft;
+    resizeContainer.style.top = canvas.offsetTop;
     document.getElementById("dataWidth").value =  img.width;
     document.getElementById("dataHeight").value =  img.height;
     document.getElementById("dataTop").value = resizeContainer.offsetTop;
@@ -394,12 +408,14 @@ function init(){
 cropImgNew.addEventListener("click", cropNewFoto);
 cropImg.addEventListener("click", crop);
 function cropNewFoto() {
-    let left = resizeContainer.offsetLeft,
-        top = resizeContainer.offsetTop,
-        width = resizeContainer.clientWidth,
-        height = resizeContainer.clientHeight,
-        cropCanvas = document.createElement("canvas");
-        let imgData = ctx.getImageData(left, top, width, height);        
+    let left = resizeContainer.offsetLeft;
+    let top = resizeContainer.offsetTop;
+    let width = resizeContainer.clientWidth;
+    let height = resizeContainer.clientHeight;
+    let cropCanvas = document.createElement("canvas");
+    //Коректировка по расположению canvas
+    let boxCropNewFotoCorection = canvas.getBoundingClientRect();
+    let imgData = ctx.getImageData(left-boxCropNewFotoCorection.left, top-boxCropNewFotoCorection.top, width, height);        
         cropCanvas.width = width;
         cropCanvas.height = height;
         cropCanvas.getContext('2d').putImageData(imgData, 0,0);
@@ -419,8 +435,10 @@ function cropNewFoto() {
 }
 //Crop imagen(вырезается и затирается canvas)
 function crop() {   
+//Коректировка по расположению canvas
+let boxCropCorection = canvas.getBoundingClientRect();
 //Собираем информацию о картинке
-let imgData = ctx.getImageData(resizeContainer.offsetLeft, resizeContainer.offsetTop, resizeContainer.clientWidth, resizeContainer.clientHeight);
+let imgData = ctx.getImageData(resizeContainer.offsetLeft-boxCropCorection.left, resizeContainer.offsetTop-boxCropCorection.top, resizeContainer.clientWidth, resizeContainer.clientHeight);
 //Устанавливаем новые размеры canvas(затираем)
 canvas.width = resizeContainer.clientWidth;
 canvas.height = resizeContainer.clientHeight;
@@ -434,38 +452,28 @@ document.getElementById("dataHeight").value =  resizeContainer.clientHeight;
 document.getElementById("dataTop").value = resizeContainer.offsetTop;
 document.getElementById("dataLeft").value = resizeContainer.offsetLeft;
 }
+/*Функция позволяет остовася crop block на месте при изменении размера экрана*/
+window.addEventListener("resize", resizeWindows);
+function resizeWindows() {  
+    let boxCanvas = canvas.getBoundingClientRect(),
+    boxCrop = resizeContainer.getBoundingClientRect();
+    //Коректируем блок crop при изменении экрана  
+    if (stepLeft == undefined ){
+        resizeContainer.style.left = canvas.offsetLeft;
+    } else {
+      resizeContainer.style.left = boxCanvas.left+stepLeft;  
+    }
+}
 /*Функция резет*/
 let resetCrop = document.getElementById("reset");
 resetCrop.addEventListener("click", reset);
 function reset() {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0,0);
     resizeContainer.style.left = canvas.offsetLeft;
     resizeContainer.style.top = canvas.offsetTop;
     resizeContainer.style.width = img.width;
     resizeContainer.style.height = img.height;
-    canvas.width = img.width;
-    canvas.height = img.height;
-    ctx.drawImage(img, 0,0);
 }
-
-
-
-window.addEventListener("resize", res);
-function getCoords(resizeContainer) {
- 
-  
-  return {
-    top: box.top + window.pageYOffset,
-    left: box.left + window.pageXOffset,
-    right: box.right + window.pageXOffset,
-    bottom: box.bottom + window.pageYOffset
-  };
-  
-}
-console.log(resizeContainer.offsetLeft);
-function res() {
-    let box = canvas.getBoundingClientRect();
-    console.log(box.left+ window.pageXOffset);    
-}
-
-
 </script>
