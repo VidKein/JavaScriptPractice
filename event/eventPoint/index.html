@@ -12,16 +12,6 @@ body{
     right: 0;
     top: 0;
 }
-/*
-.editImg{
-    margin: 1rem 0;
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    justify-content: center;
-    align-items: center;
-}
-*/
 canvas{
     display: block;
     margin: 1rem auto;
@@ -440,8 +430,7 @@ let boxCropCorection = canvas.getBoundingClientRect();
 //Собираем информацию о картинке
 let imgData = ctx.getImageData(resizeContainer.offsetLeft-boxCropCorection.left, resizeContainer.offsetTop-boxCropCorection.top, resizeContainer.clientWidth, resizeContainer.clientHeight);
 //Устанавливаем новые размеры canvas(затираем)
-canvas.width = resizeContainer.clientWidth;
-canvas.height = resizeContainer.clientHeight;
+ctx.clearRect(0, 0, canvas.width, canvas.height); 
 //Вносим новіе данніе в канвас
 ctx.putImageData(imgData,0,0);
 //Передвигаем кроп блок
@@ -452,7 +441,7 @@ document.getElementById("dataHeight").value =  resizeContainer.clientHeight;
 document.getElementById("dataTop").value = resizeContainer.offsetTop;
 document.getElementById("dataLeft").value = resizeContainer.offsetLeft;
 }
-/*Функция позволяет остовася crop block на месте при изменении размера экрана*/
+/*Функция позволяет оставаться crop block на месте при изменении размера экрана*/
 window.addEventListener("resize", resizeWindows);
 function resizeWindows() {  
     let boxCanvas = canvas.getBoundingClientRect(),

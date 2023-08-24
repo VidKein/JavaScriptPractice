@@ -261,13 +261,6 @@ document.getElementById("cbProportions").addEventListener('click',function(){
     numHeight.disabled = false;           
   }
 })
-//переключатель для гистограммы ч-б/цветное
-let switchHistogram = document.getElementsByName("rType");
-for (let i = 0; i < switchHistogram.length; i++) { 
-  switchHistogram[i].addEventListener('change',()=>{  
-    update(switchHistogram[i]);  
-  });
-}
 //Изменение положение картинки(Поворот)
 let degrees = document.getElementById("degrees"),
     radioBlock = document.getElementById("radioBlock"),
@@ -352,6 +345,7 @@ function editCanvas(inImagen, clickItem, clickValue) {
 
     //Contrast, Brightness, Saturation
     if (clickItem == "rangeBrightness" || clickItem == "rangeContrast" || clickItem == "rangeSaturation") {
+      
     let avgGray = 0;
       for (let i = 0; i < dst.length; i++) {
         let r = src[i] & 0xFF;
@@ -370,6 +364,7 @@ function editCanvas(inImagen, clickItem, clickValue) {
         r += (r - avgGray) * contrast;
         g += (g - avgGray) * contrast;
         b += (b - avgGray) * contrast;
+
         // Brightness
         r += brightness;
         g += brightness;
@@ -673,6 +668,14 @@ function histogram(dst) {
 }
 
 
+//переключатель для гистограммы ч-б/цветное
+let switchHistogram = document.getElementsByName("rType");
+for (let i = 0; i < switchHistogram.length; i++) { 
+  switchHistogram[i].addEventListener('change',()=>{  
+    update(switchHistogram[i]);  
+  });
+}
+
 /*Выводим картнку + копируем информацию о картинке*/
 function getImageData() {
   //Создаем поле для Canvas           
@@ -737,15 +740,15 @@ let resetPages = document.getElementById("resetEdit");
     divEffects = document.getElementsByClassName("effects");     
     for (let i = 0; i <= inputSize.length; i++) 
     { 
-      //main+effect
-      update(inputSize[i].value = 0);
-      update(inputNumber[i].innerText = 0);
-      
-     //scale
-      if (inputRangeScale.value !== " ") {
+      if(inputSize[i].value !== 0 || inputNumber[i].innerText !== 0 && inputRangeScale[i].value !== 0){
+        //main+effect
+        inputSize[i].value = 0;
+        inputNumber[i].innerText = 0;
+        //scale
         inputRangeScale[0].value = document.getElementById("canvasEdihion").width;
-        inputRangeScale[1].value = document.getElementById("canvasEdihion").height;                
+        inputRangeScale[1].value = document.getElementById("canvasEdihion").height; 
       }
+      
       document.getElementById("cbProportions").checked =true;
       document.getElementById("scaleVersion")[0].selected = true;
 
@@ -771,6 +774,8 @@ let resetPages = document.getElementById("resetEdit");
 
       //удаляем метку для сохранения картинки
       document.getElementById("canvasEdihion").removeAttribute("class");
+
+      editCanvas(getImageData());
     } 
   })
 

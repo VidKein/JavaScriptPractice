@@ -120,7 +120,7 @@ let colorToggle = document.getElementById("colorToggle");
             /*blank*/
                 outImg = ctxImagen.createImageData(height,width),//!!!!!!
                 dst = new Uint32Array(outImg.data.buffer);
-                
+                console.log(outImg);
             colorToggleImagen.addEventListener("click",function () {
                 colorToggleImagen.classList.toggle("activ");
                 if (colorToggleImagen.className == "colorToggleImagen activ") {

@@ -192,4 +192,32 @@ reset.addEventListener("click", ()=>{
     repeat.setAttribute("disabled","disabled");
 })
 
+//Заполнение обьекта обьектом
+
+function fillAndRetrieveObject(targetObject, sourceObjects) {
+    let number = 1;
+
+    for (const sourceObject of sourceObjects) {
+        const copy = Object.assign({}, sourceObject);
+        copy.number = number;
+        targetObject.push(copy);
+        number++;
+    }
+
+    // Функция для извлечения объекта по номеру
+    targetObject.getObjectByNumber = function (searchNumber) {
+        return this.find(obj => obj.number === searchNumber) || null;
+    };
+}
+
+// Пример использования
+const targetArray = [];
+const sourceArray = [{ rangeBrightness: "112" }, { rangeBrightness: "112" }, { rangeContrast: "167" }];
+fillAndRetrieveObject(targetArray, sourceArray);
+
+console.log(targetArray);
+
+const retrievedObject = targetArray.getObjectByNumber(3);
+console.log(retrievedObject);
+
 </script>

@@ -1,10 +1,8 @@
-
 <style>
     #canvas{
         display: block;
         margin: 0 auto;
-        width: auto;
-        height: 250px;
+        background-color: gray;
     }
     #reset{
         position: absolute;
@@ -18,38 +16,85 @@
       top: 35%;
       left: 25%;
       right: 25%;
-      width: 250px;
+      width: 350px;
       margin: 0 auto;
       text-align: center;
       border: 1px solid #cccccc;
       padding: 25px;
       background-color: #F7F7F7;
   }
-
+#inputName{
+  color: red;
+}
+p, h4{
+  margin: 0.2rem;
+}
+input[type = "number"] {
+    width: 72px;
+}
 </style>
 <canvas id="canvas"></canvas>
 <button id="reset">Reset</button>
-<div id="imgSave">
-  <p>Вы хотите сохранить изменения</p>
+  <div id="imgSave">
+  <p>Вы хотите сохранить изменения в :  <span id="inputName"></span></p>
   <button id="closetImgSaveYes">Да</button>
   <button id="closetImgSaveNoy">Нет</button>
 </div>
+<h4>Цветокарекция/Color correction</h4>
 <div class="editFoto" id="editFoto">
-  <div class="links" id="range">
-    <p>Contrast</p>
+  <div class="links" id="contrast">
+    <p>Contrast/Контраст</p>
     <label>
-        <input id="rangeContrast" type="range" name="range" min="-255" max="255" value="0">
-        <span id="valueContrast" name="namber">0</span>
+        <input id="rangeContrast" type="range" name="contrast" min="-255" max="255" value="0">  
     </label>
+    <span id="valueContrast" name="namber">0</span>
+  </div>
+  <div class="links" id="brightness">
+    <p>Brightness/Яркость</p>
+    <label>
+        <input id="rangeBrightness" type="range" name="brightness" min="-255" max="255" value="0">  
+    </label>
+    <span id="valueBrightness" name="namber">0</span>
+  </div>
+  <div class="links" id="saturation">
+    <p>Saturation/Насышенность цвета</p>
+    <label>
+        <input id="rangeSaturation" type="range" name="saturation" min="-255" max="255" value="0">  
+    </label>
+    <span id="valueSaturation" name="namber">0</span>
+  </div>
+  <div class="links" id="sharp">
+    <p>Sharp/Резкость</p>
+      <label>
+        <input id="rangeSharp" type="range"  name="sharp" min="0.1" max="100" step="0.01" value="0" />                
+      </label>
+      <span id="valueSharp" name="number">0</span>
+      <hr>  
+  </div>
+  <div class="links" id="resize">
+    <h4>Размер/Resize</h4>
+      <label id="inputScale">
+        <input id="numWidth" type="number" name="rangeScale" value=""/>x<input class="closet" id="numHeight" type="number" name="rangeScale" value="" disabled/>
+      </label>
+      <label>
+        <input id="cbProportions" type="checkbox" checked/>Proportions
+        <select name="scaleVersion" id="scaleVersion" size="1">
+          <option value="neighbor" selected>Nearest neighbor scaling</option>
+          <option value="bilinear">Bilinear scaling</option>
+          <option value="lanczos">Lanczos scaling</option>
+        </select>   
+      </label>
+      <hr>  
   </div>
   <div class="links" id="rotate">
-    <p>Rotate</p>      
+    <h4>Врашение/Rotate</h4>      
     <label>
-        <input type="radio" name="rotate" id="0" min="0" value="0" title="rotate 0deg"> - 0&#176;
+        <input type="radio" name="rotate" id="0" min="0" value="0" title="rotate 0deg" checked> - 0&#176;
         <input type="radio" name="rotate" id="90l" value="90" title="rotate 90deg left"> - 90&#176;
         <input type="radio" name="rotate" id="90r" value="-90" title="rotate 90deg right"> - 270&#176;
         <input type="radio" name="rotate" id="180" value="180" title="rotate 180deg left"> - 180&#176;
         <input type="radio" name="rotate" id="flip" value="270" title="mirror reflection"> - mirror
+        <input type="radio" name="rotate" id="arbitrary" value="0" title="arbitrary"> - <input type="number" name="degrees" id="degrees" placeholder="&#177;0-90&#176;" value="0" minlength="1" maxlength="3" min="-90"  max="90" disabled>
     </label>
   </div>
 </div>
@@ -57,66 +102,210 @@
     let img = new Image();
     let canvas = document.getElementById("canvas");
     let ctx = canvas.getContext("2d");
-        img.src = "/canvas/get_putImageData/GetPut/C2,w500.jpg";
+        img.src = "/canvas/pixelEditing/examples/kiza.jpeg";
         img.onload = initImg;
+    //Размер Resize
+    let checked = document.getElementById("cbProportions");
+    let numWidth = document.getElementById("numWidth");
+    let numHeight = document.getElementById("numHeight");  
+    let inputScale = document.getElementById("inputScale"); 
+    let scaleVersion = document.getElementById("scaleVersion"); 
+    let nameScaleVersion;
+    //Обьект с изменениями
+    let clicks = {};
     //Действия после загрузки картинки
     function initImg() {
         canvas.width = img.width;
         canvas.height = img.height;
         ctx.drawImage(img, 0, 0);
+        //Выводим размеры картинки в Размер/Resize
+        numWidth.value = img.width;
+        numHeight.value = img.height;
     }
+    //Переключатель Resize+Proportions
+    checked.addEventListener('click',function(){         
+        if (numHeight.className =="open") {
+          numHeight.className = "closet";
+          numHeight.disabled = true;            
+        } else {
+          numHeight.className = "open";  
+          numHeight.disabled = false;           
+        } 
+   })
     //Редоктируем картинку
-    function editPicter(inCanvas, clickItem, clickValue) {
+    function editPicter(inCanvas, clickItem, clickValue) {       
         let src = new Uint32Array(inCanvas.data.buffer);
         let width = inCanvas.width;
         let height = inCanvas.height;
-        let contrast = parseInt(clickValue)/255;
+        let contrast = 0;
+        let brightness = 0;
+        let saturation = 0;
+        let maxSaturation = 0;
+        let mix = 0.01;
+        let newWidth = numWidth.value;
+        let newHeight = numHeight.value; 
+        let angle;
+        //Определяем тип обработки Resize          
+        scaleVersion.addEventListener("change", function () {nameScaleVersion = scaleVersion.value;});
+        if (clickItem == "rangeContrast") {contrast = parseInt(clickValue)/255;}
+        else if(clickItem == "rangeBrightness"){brightness = parseInt(clickValue);}
+        else if(clickItem == "rangeSaturation"){
+          saturation = parseInt(clickValue);
+          maxSaturation = (clickValue < 0) ? 255 :128;
+        }
+        else if(clickItem == "rangeSharp"){mix = (clickValue)*0.01;}     
+        else if(clickItem == "degrees"){angle = Number(clickValue);}     
+            
             //Contrast
-            if (clickItem == "rangeContrast") {
+            if (clickItem == "rangeContrast" ) {
                 putImage(width, height, function (dst) {
-                    let avgGray = 0;
-                for (let i = 0; i < dst.length; i++) {
-                  let r = src[i] & 0xFF;
-                  let g = (src[i] >> 8) & 0xFF;
-                  let b = (src[i] >> 16) & 0xFF;
-                  avgGray += (r * 0.2126 + g * 0.7152 + b * 0.0722);
-                }
-                avgGray /= dst.length;
+                  console.log(clickItem ,contrast);
+                  let avgGray = 0;
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+                    avgGray += (r * 0.2126 + g * 0.7152 + b * 0.0722);
+                  }
+                  avgGray /= dst.length;
 
-                for (let i = 0; i < dst.length; i++) {
-                  let r = src[i] & 0xFF;
-                  let g = (src[i] >> 8) & 0xFF;
-                  let b = (src[i] >> 16) & 0xFF;
-                
-                  // let gray = (r * 0.2126 + g * 0.7152 + b * 0.0722);
-                  let gray = avgGray;
-                
-                  r += (r - gray) * contrast;
-                  g += (g - gray) * contrast;
-                  b += (b - gray) * contrast;
-                
-                  if (r > 255) r = 255;
-                  else if (r < 0) r = 0;
-                  if (g > 255) g = 255;
-                  else if (g < 0) g = 0;
-                  if (b > 255) b = 255;
-                  else if (b < 0) b = 0;
-                
-                  dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
-                }
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+
+                    // Contrast
+                    r += (r - avgGray) * contrast;
+                    g += (g - avgGray) * contrast;
+                    b += (b - avgGray) * contrast;
+                    
+                    if (r > 255) r = 255;
+                    else if (r < 0) r = 0;
+                    if (g > 255) g = 255;
+                    else if (g < 0) g = 0;
+                    if (b > 255) b = 255;
+                    else if (b < 0) b = 0;
+
+                    dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
+                  }    
                 })
+            }
+            //Brightness
+            if ( clickItem == "rangeBrightness") {
+                putImage(width, height, function (dst) {console.log(clickItem, brightness);
+                  let avgGray = 0;
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+                    avgGray += (r * 0.2126 + g * 0.7152 + b * 0.0722);
+                  }
+                  avgGray /= dst.length;
+
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+
+
+                    // Brightness
+                    r += brightness;
+                    g += brightness;
+                    b += brightness;
+
+
+                    if (r > 255) r = 255;
+                    else if (r < 0) r = 0;
+                    if (g > 255) g = 255;
+                    else if (g < 0) g = 0;
+                    if (b > 255) b = 255;
+                    else if (b < 0) b = 0;
+
+                    dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
+                  }    
+                })
+            }
+            //Saturation
+            if (clickItem == "rangeSaturation") {
+                putImage(width, height, function (dst) {console.log(clickItem, saturation, maxSaturation);
+                  let avgGray = 0;
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+                    avgGray += (r * 0.2126 + g * 0.7152 + b * 0.0722);
+                  }
+                  avgGray /= dst.length;
+
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+
+                    //Saturation
+                    r += (r - avgGray) * saturation / maxSaturation;
+                    g += (g - avgGray) * saturation / maxSaturation;
+                    b += (b - avgGray) * saturation / maxSaturation;
+
+                    if (r > 255) r = 255;
+                    else if (r < 0) r = 0;
+                    if (g > 255) g = 255;
+                    else if (g < 0) g = 0;
+                    if (b > 255) b = 255;
+                    else if (b < 0) b = 0;
+
+                    dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
+                  }    
+                })
+            }
+            //Sharp
+            if (clickItem == "rangeSharp") {  
+              putImage(width, height, function (dst) {console.log(clickItem, mix);
+              //Все для работы с матрицей
+              let kernel = [[0, -1, 0],//матрица
+                           [-1, 5, -1],
+                           [0, -1, 0]],
+                  katet = Math.round(Math.sqrt(kernel.length))+1,//корень 9=3
+                  half = (katet * 0.5) | 0,//3*0.5=1.5 отбрасываем значения после запятой
+                  offset = 0,//offset - коэффициент
+                  div = 1.0;//div - делитель        
+              //обработка пикселей
+              let dstIndex = 0;
+                for (let y = 0; y < height; y++) {
+                  for (let x = 0; x < width; x++) {
+                    let r = 0, g = 0, b = 0;
+                    for (let sy = 0; sy < katet; sy++) {
+                      const yy = Math.min(height - 1, Math.max(0, y + sy - half));
+                      for (let sx = 0; sx < katet; sx++) {
+                        const xx = Math.min(width - 1, Math.max(0, x + sx - half));
+                        let pix = src[yy * width + xx];//обробатываем информацию                     
+                        r += ((pix & 0xFF) * kernel[sy][sx]);
+                        g += ((((pix) >> 8) & 0xFF) * kernel[sy][sx]);
+                        b += ((((pix) >> 16) & 0xFF) * kernel[sy][sx]);
+                      }
+                    }          
+                    red = Math.min(255,Math.max(0, (r*mix)+((src[y * width + x] )&0xFF)*(1-mix) ))&0xFF;
+                    green = Math.min(255, Math.max(0, (g*mix)+(((src[y * width + x])>> 8)&0xFF)*(1-mix) ))&0xFF;
+                    blue = Math.min(255, Math.max(0, (b*mix)+(((src[y * width + x])>> 16)&0xFF)*(1-mix) ))&0xFF;
+                    const alfa = src[y * width + x] & 0xFF000000;//обробатываем информацию
+                    dst[dstIndex++] = red | ((green) << 8) | ((blue) << 16) | alfa ;//заполняем изменениями            
+                  }
+                }
+              })
             }
             //Rotate 0
             if (clickItem == "0") {
                 putImage(width, height, function (dst) {
+                  console.log(clickItem ,clickValue);
                 for (let i = 0; i < dst.length; i++) {
                 dst[i] = src[i];
                 }
                 })
             }
             //Rotate 90
-            if (clickItem == "90l") {
+            if (clickItem == "90") {
                 putImage(height, width, function (dst) {
+                  console.log(clickItem ,clickValue);
                 let newWidth = height;
                 let newHeight = width;
                 canvas.width = newWidth;
@@ -129,8 +318,9 @@
                })
             }
             //Rotate 270
-            if (clickItem == "90r") {
+            if (clickItem == "-90") {
                 putImage(height, width, function (dst) {
+                  console.log(clickItem ,clickValue);
                 let newWidth = height;
                 let newHeight = width;
                 canvas.width = newWidth;
@@ -145,6 +335,7 @@
             //Rotate 180
             if (clickItem == "180") {
                 putImage(width, height, function (dst) {
+                  console.log(clickItem ,clickValue);
                 for (let y = 0; y < height; y++) {
                   for (let x = 0; x < width; x++) {
                     dst[y * width + x] = src[(height - y - 1)  * width + x];
@@ -153,84 +344,315 @@
                 })
             }   
             //Rotate flip
-            if (clickItem == "flip") {
+            if (clickItem == "270") {
                 putImage(width, height, function (dst) {
+                  console.log(clickItem ,clickValue);
                for (let y = 0; y < height; y++) {
                 for (let x = 0; x < width; x++) {
                     dst[y * width + x] = src[y * width + (width - x - 1)];
                   }
                 }          
                 })         
-            }    
-    }
+            }
+            //Rotate Degress
+            if (clickItem == "degrees") {
+              console.log(clickItem ,clickValue);
+                let TO_RADIANS = Math.PI/180; 
+                putImage(width, height, function (dst) {
+                    let New_Height = Math.round(width * Math.abs(Math.sin(angle*TO_RADIANS)) + height * Math.abs(Math.cos(angle*TO_RADIANS)));
+                    let New_Width = Math.round(width * Math.abs(Math.cos(angle*TO_RADIANS)) + height * Math.abs(Math.sin(angle*TO_RADIANS)));                
+                    canvas.width = New_Width;
+                    canvas.height = New_Height;  
+                    let x = Math.round(New_Width/2);
+                    let y = Math.round(New_Height/2);
+                    //Создаем временный холст и контекст для поворота
+                    let tempCanvas = document.createElement("canvas");
+                    let tempContext = tempCanvas.getContext("2d");
+                    tempCanvas.width = canvas.width;
+                    tempCanvas.height = canvas.height;   
+                    //Заполняем временный холст исходными данными ImageData
+                    tempContext.putImageData(inCanvas, 0, 0);
+                    //Поворачиваем временный холст
+                    tempContext.translate(x,y);
+                    tempContext.rotate(angle * TO_RADIANS);
+                    let rotatedImageData = tempContext.getImageData(0, 0, inCanvas.width, inCanvas.height);
+                    let srсDegrees = new Uint32Array(rotatedImageData.data.buffer);
+                    for (let i = 0; i < dst.length; i++) {
+                        dst[i] = srсDegrees[i];
+                        }
+                })         
+            }
+            //Rotate flip    
+            //Resize
+            if (clickItem == "numWidth" || clickItem == "numHeight") {
+              canvas.width = newWidth;
+              canvas.height = newHeight;
+              putImage(newWidth, newHeight, function (dst) {
+                if (nameScaleVersion == "bilinear") {
+                    //Bilinear scaling
+                    function interpolate(a, b, c, d, width, height) {
+                    return a * (1 - width) * (1 - height)
+                        + b * width * (1 - height)
+                        + c * (1 - width) * height
+                        + d * width * height;
+                    }
+                    const xMax = (width - 1);
+                    const yMax = (height - 1);
+                    const dx = (xMax + 0.5) / newWidth;
+                    const dy = (yMax + 0.5) / newHeight;
+                    let dstOffset = 0;
+                    for (let i = 0; i < newHeight; i++) {
+                      for (let j = 0; j < newWidth; j++) {
+                        const x = (dx * j) >> 0;
+                        const y = (dy * i) >> 0;
+                        const xDiff = (dx * j) - x;
+                        const yDiff = (dy * i) - y;
+                        const index = y * width + x;
+                        // a b
+                        // c d
+                        const a = src[index];
+                        const b = (x >= xMax) ? a : src[index + 1];
+                        const c = (y >= yMax) ? a : src[index + width];
+                        const d = (y >= yMax) ? b
+                            : ((x >= xMax) ? c : (src[index + width + 1]))
+                        const red = interpolate(
+                            a & 0xff, b & 0xff,
+                            c & 0xff, d & 0xff,
+                            xDiff, yDiff) >> 0;
+                        const green = interpolate(
+                            (a >> 8) & 0xff, (b >> 8) & 0xff,
+                            (c >> 8) & 0xff, (d >> 8) & 0xff,
+                            xDiff, yDiff) >> 0;
+                        const blue = interpolate(
+                            (a >> 16) & 0xff, (b >> 16) & 0xff,
+                            (c >> 16) & 0xff, (d >> 16) & 0xff,
+                            xDiff, yDiff) >> 0;
+                        const alpha = interpolate(
+                            (a >> 24) & 0xff, (b >> 24) & 0xff,
+                            (c >> 24) & 0xff, (d >> 24) & 0xff,
+                            xDiff, yDiff) >> 0
+                        dst[dstOffset++] = (alpha << 24) | (blue << 16) | (green << 8) | red;
+                      }
+                    } 
+              }else if(nameScaleVersion == "lanczos") {
+                    //Lanczos scaling
+                    let filterSize = 1;//меняется 1,2,3
+                    function lanczos(size, x) {
+                      if (x >= size || x <= -size) return 0;
+                      if (x === 0) return 1;
+                      const xpi = x * Math.PI;
+                      return size * Math.sin(xpi) * Math.sin(xpi / size) / (xpi * xpi);
+                    }
+                    function createCache(cachePrecision, filterSize) {
+                    const cache = {};
+                    const max = filterSize * filterSize * cachePrecision;
+                    const iPrecision = 1.0 / cachePrecision;
+                    for (let cacheKey = 0; cacheKey < max; cacheKey++) {
+                      const value = lanczos(filterSize, Math.sqrt(cacheKey * iPrecision));
+                      cache[cacheKey] = value < 0 ? 0 : value;
+                    }
+                     return cache;
+                    };
+                    const values = [];
+                    const sx = newWidth / width;
+                    const sy = newHeight / height;
+                    const xMax = width - 1;
+                    const yMax = height - 1;
+                    const csx = Math.min(1, sx) * Math.min(1, sx);
+                    const csy = Math.min(1, sy) * Math.min(1, sy);
+                    const cachePrecision = 1000;
+                    const cache = createCache(cachePrecision, filterSize);
+                    let x1et, y1et;
+                    let y = newHeight;
+                    while (y--) {
+                      const sourcePixelY = (y + 0.5) * (1.0 / sy);
+                      let y1b = sourcePixelY - filterSize;
+                      if (y1b < 0) y1b = 0;
+                      let y1e = y1et = sourcePixelY + filterSize;
+                      if (y1e != y1et) y1e = y1et + 1;
+                      if (y1e > yMax) y1e = yMax;
+                      const cy = y * (1.0 / newHeight) - sourcePixelY;
+                      const y3 = y * newWidth;
+                      let x = newWidth;
+                      while (x--) {
+                        const sourcePixelX = (x + 0.5) * (1.0 / sx);
+                        let x1b = sourcePixelX - filterSize;
+                        if (x1b < 0) x1b = 0;
+                        let x1e = x1et = sourcePixelX + filterSize;
+                        if (x1e != x1et) x1e = x1et + 1;
+                        if (x1e > xMax) x1e = xMax;
+                        const cx = x * (1.0 / newWidth) - sourcePixelX;
+                        ///
+                        let total = 0;
+                        let i = 0;
+                        for (let y1 = y1b >> 0; y1 <= y1e; y1++) {
+                          const distanceY = (y1 + cy) * (y1 + cy) * csy;
+                          for (let x1 = x1b >> 0; x1 <= x1e; x1++) {
+                            total += values[i++] = cache[(((x1 + cx) * (x1 + cx) * csx + distanceY) * cachePrecision) >> 0] || 0;
+                          }
+                        }
+                        total = 1.0 / total;
+                        ///
+                        let a = 0;
+                        let r = 0;
+                        let g = 0;
+                        let b = 0;
+                        i = 0;
+                        for (let y1 = y1b >> 0; y1 <= y1e; y1++) {
+                          const y2 = y1 * width;
+                          for (let x1 = x1b >> 0; x1 <= x1e; x1++) {
+                            const value = values[i++] * total;
+                            const pix = src[((y2 + x1) >> 0)];
+                            r += (pix & 0xFF) * value;
+                            g += ((pix >> 8) & 0xFF) * value;
+                            b += ((pix >> 16) & 0xFF) * value;
+                            a += (((pix >> 24) & 0xFF)) * value;
+                          }
+                        }
+                        dst[((x + y3) >> 0)] = (a << 24) | (b << 16) | (g << 8) | r;
+                      }
+                    } 
+                }else{
+                      //Nearest neighbor scaling
+                      const dx = width / newWidth;
+                        const dy = height / newHeight;
+                        for (let y = 0; y < newHeight; y++) {
+                          let srcY = (y * dy) >> 0;
+                          for (let x = 0; x < newWidth; x++) {
+                            let srcX = (x * dx) >> 0;
+                            dst[y * newWidth + x] = src[srcY * width + srcX];
+                          }
+                      }
+                }
+                
+              })
+            }
+          
+          }
+    
     //Собираем информацию с Canvas
     function getImage() {
         canvas.width = img.width;
         canvas.height = img.height;
         ctx.drawImage(img, 0, 0);
         //Передаем информацию в функцию для редоктирования картинки    
-        return ctx.getImageData(0, 0, img.width, img.height);      
+        return ctx.getImageData(0, 0, canvas.width, canvas.height);      
     }
-    
+    //Собираем информацию с Canvas после внесения изменений
     function getImageSave() {
-        //Передаем информацию в функцию для редоктирования картинки    
-        return ctx.getImageData(0, 0, img.width, img.height);    
+        //Передаем информацию в функцию для редоктирования картинки
+        return ctx.getImageData(0, 0, canvas.width, canvas.height);    
     }
     //Записываем информацию на Canvas
     function putImage(width, height, func) {
         const outImagen = ctx.createImageData(width, height);
         const dst = new Uint32Array(outImagen.data.buffer);
         func(dst);
+        //выводим измения 
         ctx.putImageData(outImagen, 0,0);
     }
+    
     //Собирем переменные для редоктирования картинки
     //Действия при нажатии 
     let tablinks = document.querySelector("#editFoto"); 
     for (let i = 0; i < tablinks.children.length; i++) { 
       let childrenElement = tablinks.children[i];
-      childrenElement.addEventListener("input", clickActions, false);
-      childrenElement.addEventListener("input", clickActionsSave, true);
+      childrenElement.addEventListener("input", clickActions);
+      childrenElement.addEventListener("input", clickActionsSave,true);
     }
     //Функция для прослушивания событий для сбора информации
     function clickActions(e) {
       //Получите все элементы с class="links" и удалите "активный" класс
       for (let i = 0; i < tablinks.children.length; i++) {
         let childrenElement = tablinks.children[i];
-        childrenElement.className = childrenElement.className.replace(" active", "");
+        childrenElement.className = childrenElement.className.replace(" active", "");  
       }
       //Добавить класс «активный» к кнопке, которая открыла вкладку
       e.currentTarget.className += " active";
       //Выводим информацию по input
       if (e.target.id == "rangeContrast") {
                 document.getElementById("valueContrast").innerText = e.target.value;
-            }
+        }
+      if (e.target.id == "rangeBrightness") {
+                document.getElementById("valueBrightness").innerText = e.target.value;
+        }
+      if (e.target.id == "rangeSaturation") {
+                document.getElementById("valueSaturation").innerText = e.target.value;
+        }
+      if (e.target.id == "rangeContrast") {
+                document.getElementById("valueContrast").innerText = e.target.value;
+        }
+      if (e.target.id == "rangeSharp") {
+          document.getElementById("valueSharp").innerText = e.target.value;
+        } 
+      if ( document.getElementById("arbitrary").checked || e.target.id == "degrees") {
+        document.getElementById("degrees").disabled = false;
+      }else{
+        document.getElementById("degrees").disabled = true;
+      }
+      if (numHeight.className =="closet") {numHeight.value = Math.round(img.height * numWidth.value / img.width);}     
       //Добавляем маркер для определения перехода между типами input
       canvas.setAttribute('class', e.currentTarget.id);
     }
+   
+    //Функция событий, алгоритм выполнения после изменений
+    function clickActionsSave() {
+      for (let i = 0; i < tablinks.children.length; i++) {
+          let rozdil = tablinks.children[i],
+              podrozdil = rozdil.children[1];   
+          for (let i = 0; i < podrozdil.children.length; i++) {
+            if (podrozdil.children[i].id == "rangeContrast" ) {
+              clicks[podrozdil.children[i].id] = podrozdil.children[i].value;
+            }
+            if (podrozdil.children[i].id == "rangeBrightness" ) {
+              clicks[podrozdil.children[i].id] = podrozdil.children[i].value;
+            }
+            if (podrozdil.children[i].id == "rangeSaturation" ) {
+              clicks[podrozdil.children[i].id] = podrozdil.children[i].value;
+            }
+           if (podrozdil.children[i].id == "rangeSharp" ) {
+              clicks[podrozdil.children[i].id] = podrozdil.children[i].value;
+            }
+            if (podrozdil.children[i].checked) {
+              clicks[podrozdil.children[i].name] = podrozdil.children[i].value; 
+            }
+            if (podrozdil.children[i].id == "degrees") {
+              clicks.degrees = podrozdil.children[i].value;
+            }
+            if (podrozdil.children[i].id == "numWidth" || podrozdil.children[i].id == "numHeight" ) {
+              clicks[podrozdil.children[i].id] = podrozdil.children[i].value;
+            } 
 
-    function clickActionsSave(e) {
-    //Собираем информацию при выполнении события  
-    if (e.target != e.currentTarget) {  
-      let clickItem  = e.target.id,
-          clickValue  = e.target.value;
-      if(canvas.className != e.currentTarget.id && canvas.className){
-        //Вносим изменения  в канвас при переходе на другой тип inputa
-        document.getElementById("imgSave").style = "display:block;"
-        //Кнопка не сохранять
-        closetImgSaveNoy.addEventListener("click", ()=>{document.getElementById("imgSave").style = "display:none;"}) 
-        //Кнопка сохранять
-        closetImgSaveYes.addEventListener("click", ()=>{
-          editPicter(getImageSave(), clickItem, clickValue);
-          document.getElementById("imgSave").style = "display:none;"  
-        })
-      }else{
-        //Изменяем канвас но не вносим изменения
-        editPicter(getImage(), clickItem, clickValue);   
-      }
-    }  
+          }
+        }  
+        for (let index in clicks) {
+          let clickItem = index, 
+              clickValue = clicks[index];
+              if (clickItem == "rangeContrast") {
+                editPicter(getImage(), clickItem, clickValue); 
+              }
+              if (clickItem == "rangeBrightness") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if (clickItem == "rangeSaturation") {
+                editPicter(getImageSave(), clickItem, clickValue);
+              }
+              if (clickItem == "rangeSharp") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if(clickItem == "rotate") {
+                editPicter(getImageSave(), clickValue, clickValue); 
+              }
+              if(clickItem == "degrees") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if(clickItem == "numHeight") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+        } 
     }
-
     
     //Reset  
-    document.getElementById("reset").addEventListener("click",()=>{window.location.reload();},false)
+    document.getElementById("reset").addEventListener("click",()=>{window.location.reload();},false)  
+</script>
 </script>
