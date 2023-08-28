@@ -112,7 +112,7 @@ input[type = "number"] {
     let scaleVersion = document.getElementById("scaleVersion"); 
     let nameScaleVersion;
     //Обьект с изменениями
-    let clicks = {};
+    let clicks = {};   
     //Действия после загрузки картинки
     function initImg() {
         canvas.width = img.width;
@@ -380,9 +380,8 @@ input[type = "number"] {
                               dst[destIndex + 3] = src[srcIndex + 3];
                             }
                         }
-                    }           
-
-                })        
+                    }  
+                })       
             }
             //Rotate flip    
             //Resize
