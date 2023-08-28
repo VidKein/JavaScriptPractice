@@ -4,99 +4,73 @@
         margin: 0;
         padding: 0;
     }
+    .blokRight{
+        position: absolute;
+        top: 0.65rem;
+        left: 50%;
+    }
 </style>
-<p>1 картинка</p>
-<canvas id="myCanvas" style="background-color: gray;"></canvas>
-<input type="number" name="degrees" id="degrees" value="0" minlength="1" maxlength="2" min="-90"  max="90" >
-<p>2 картинка</p>
-<canvas style="background-color: gray;" id="canvas"></canvas>
+<div class="blokLeft">
+    <p>1 картинка(из)</p>
+    <canvas id="myCanvas" style="background-color: gray;"></canvas>
+    <input type="number" name="degrees" id="degrees" value="0" minlength="1" maxlength="2" min="-90"  max="90" >
+    <p>2 картинка(в)</p>
+    <canvas id="canvas" style="background-color: gray;"></canvas>
+</div>
+<div class="blokRight">
+    <p>3 картинка (все делаем внутри)</p>
+    <canvas id="imagenData" style="background-color: gray;"></canvas>
+    <input type="number" name="clickValue" id="clickValue" value="0" minlength="1" maxlength="2" min="-90"  max="90" > 
+    <p>4 картинка (поворот пикселями ??)</p>
+    <canvas id="imagenPixels" style="background-color: gray;"></canvas>
+    <input type="number" name="clickPixels" id="clickPixels" value="0" minlength="1" maxlength="2" min="-90"  max="90" > 
+</div>
+<canvas id="canvase" style="background-color: gray;"></canvas>
+<input type="number" name="clickAfine" id="clickAfine" value="0" minlength="1" maxlength="2" min="-90"  max="90" >
+
+
 
 <script>
     let degreesInput = document.getElementById("degrees");
     let img = new Image(); 
     let TO_RADIANS = Math.PI/180; 
-    const originalCanvas = document.getElementById('myCanvas');
-    const originalCtx = originalCanvas.getContext('2d');
+    //1
+    let originalCanvas = document.getElementById('myCanvas');
+    let originalCtx = originalCanvas.getContext('2d');
+    //2
     let copuImg = document.getElementById("canvas");   
     let ctxCopy = copuImg.getContext('2d');
+    //3
+    let canvasImagenData = document.getElementById("imagenData");
+    let ctxImagenData = canvasImagenData.getContext('2d');
+    //4
+    let imagenPixels = document.getElementById("imagenPixels");
+    let ctxPexelsRotate = imagenPixels.getContext("2d");
+
     img.src = "./kiza.jpeg";
     img.onload = initImg;
     function initImg() {
+      //1
       originalCanvas.width = img.width;
       originalCanvas.height = img.height;
       originalCtx.drawImage(img, 0 ,0);
+      //2
       copuImg.width = img.width;
       copuImg.height = img.height;
-      ctxCopy.drawImage(img, 0 ,0);   
-    }
-/*
-
-degreesInput.addEventListener("input", ()=>{
-    let originalCanvas = document.getElementById("myCanvas"),
-        degrees = degreesInput.value;
-        rotateCanvasArbitrary(originalCanvas, degrees);
-    })
-
-function rotateCanvasArbitrary(originalCanvas, degrees) {
-    const radians = degrees * (Math.PI / 180);
-    const originalCtx = originalCanvas.getContext('2d');
-    //Подготовка к повороту
-    let TO_RADIANS = Math.PI/180;
-    let originalWidth = img.width;                
-    let originalHeight = img.height;
-
-    const rotatedCanvas = document.createElement('canvas');
-    rotatedCanvas.width = originalWidth;
-    rotatedCanvas.height = originalHeight;
-    const rotatedCtx = rotatedCanvas.getContext('2d');
-
-    const imageData = originalCtx.getImageData(0, 0, originalWidth, originalHeight);
-    const originalData = new Uint32Array(imageData.data.buffer);
-
-    const rotatedImageData = rotatedCtx.createImageData(originalWidth, originalHeight);
-    const rotatedData = new Uint32Array(rotatedImageData.data.buffer);
-    //Определяем центр оригального изображения
-    const centerX = originalWidth / 2;
-    const centerY = originalHeight / 2;
-
-    for (let y = 0; y < originalHeight; y++) {
-        for (let x = 0; x < originalWidth; x++) {
-            const offsetX = x - centerX;
-            const offsetY = y - centerY;
-            const rotatedX = centerX + offsetX * Math.cos(radians) - offsetY * Math.sin(radians);
-            const rotatedY = centerY + offsetX * Math.sin(radians) + offsetY * Math.cos(radians);
-            //Формула с книги
-            //х* = х * cos (а) - у * sin (а);
-            //У * = у * cos(a) + х * sin (а);
-            //против часовой стрелки
-            //rotatedX = cos(θ) * (x - cx) - sin(θ) * (y - cy) + cx
-            //rotatedY = sin(θ) * (x - cx) + cos(θ) * (y - cy) + cy
-            //по часовой стрелке 
-            //rotatedX = cos(θ) * (x - cx) + sin(θ) * (y - cy) + cx
-            //rotatedY = -sin(θ) * (x - cx) + cos(θ) * (y - cy) + cy
-
-            if (rotatedX >= 0 && rotatedX < originalWidth && rotatedY >= 0 && rotatedY < originalHeight) {
-                const sourceIndex = y * originalWidth + x;  // Индекс текущего пикселя в оригинальном изображении
-                const targetIndex = Math.floor(rotatedY) * originalWidth + Math.floor(rotatedX);
-                rotatedData[targetIndex] = originalData[sourceIndex];
-            }
-
-            
-        }
+      ctxCopy.drawImage(img, 0 ,0); 
+      //3
+      canvasImagenData.width = img.width;
+      canvasImagenData.height = img.height;
+      ctxImagenData.drawImage(img, 0 ,0); 
+      //4
+      imagenPixels.width = img.width;
+      imagenPixels.height = img.height;
+      ctxPexelsRotate.drawImage(img,0,0);
     }
 
-    rotatedCtx.putImageData(rotatedImageData, 0, 0);
-    // Затираем исходный холст перед отображением повернутой версии
-    originalCtx.clearRect(0, 0, ne, originalHeight);
-    originalCanvas.width = originalWidth;
-    originalCanvas.height = originalHeight;
-    // Отображаем повернутый холст на исходном холсте
-    originalCtx.drawImage(rotatedCanvas, 0, 0);
-
-
-}
-*/    
-
+  
+//Создаем два canvasa
+//Поворачиваем один канвас поворачивается паралельно и второй
 degreesInput.addEventListener("input", ()=>{
         copuImg.width = originalCanvas.width;
         copuImg.height = originalCanvas.height;
@@ -105,10 +79,9 @@ degreesInput.addEventListener("input", ()=>{
         height = img.height;
         //32 bit arrau
         let getImageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height); 
-        //let dst = new Uint32Array(getImageData.data.buffer);
+        let dst = new Uint32Array(getImageData.data.buffer);
         rotateImageDataWithTranslateAndRotate(width, height, getImageData, degrees);            
 })
-
 
 function rotateImageDataWithTranslateAndRotate(width, height, dst, degrees) {
   //Функционал поворота
@@ -134,7 +107,6 @@ function rotateImageDataWithTranslateAndRotate(width, height, dst, degrees) {
   //Поворачиваем временный холст
   tempContext.translate(x,y);
   tempContext.rotate(degrees * TO_RADIANS);          
-  console.log(new Uint32Array((tempContext.getImageData(0, 0, originalCanvas.width, originalCanvas.height)).data.buffer));
   const rotatedImageData = tempContext.getImageData(0, 0, dst.width, dst.height);
    
   // Очищаем холст
@@ -142,5 +114,236 @@ function rotateImageDataWithTranslateAndRotate(width, height, dst, degrees) {
   // Рисуем повернутые данные ImageData на холсте
   ctxCopy.putImageData(rotatedImageData, 0, 0);
 }
+
+//Создаем один канвас
+//Создаем канвас без отображения
+//Копираем и поварачиваем.
+//Отображаем на канвасе 
+    let clickRotat = document.getElementById("clickValue");
+    clickRotat.addEventListener("input",()=>{
+        let clickValue = clickRotat.value;
+        let inCanvas = ctxImagenData.getImageData(0, 0, canvasImagenData.width, canvasImagenData.height);
+        rotateCanvasImagenData(inCanvas, clickValue);
+    });
+
+    function rotateCanvasImagenData(inCanvas, angle) {
+        let width = canvasImagenData.width;
+        let height = canvasImagenData.height;
+        let TO_RADIANS = Math.PI/180;  
+        let New_Height = Math.round(width * Math.abs(Math.sin(angle*TO_RADIANS)) + height * Math.abs(Math.cos(angle*TO_RADIANS)));
+        let New_Width = Math.round(width * Math.abs(Math.cos(angle*TO_RADIANS)) + height * Math.abs(Math.sin(angle*TO_RADIANS)));                
+        let x = Math.round(New_Width/2);
+        let y = Math.round(New_Height/2);
+        putImage(width, height, function (dst) {
+            //Создаем временный холст и контекст для поворота
+            let tempCanvas = document.createElement("canvas");
+            let tempContext = tempCanvas.getContext("2d");
+            //Заполняем временный холст исходными данными ImageData
+            tempCanvas.width = New_Width;
+            tempCanvas.height = New_Height;
+            tempContext.putImageData(inCanvas, 0, 0);
+            //Поворачиваем временный холст
+            //Затираем исходный холст перед отображением повернутой версии
+            tempContext.clearRect(0, 0, New_Width, New_Height);
+            tempContext.translate(x,y);
+            tempContext.rotate(angle * TO_RADIANS);
+            tempContext.drawImage(originalCanvas, -(inCanvas.width/2), -(inCanvas.height/2));
+            let rotatedImageData = tempContext.getImageData(0, 0, inCanvas.width, inCanvas.height);
+            let srсDegrees = new Uint32Array(rotatedImageData.data.buffer);
+            for (let i = 0; i < dst.length; i++) {
+                dst[i] = srсDegrees[i];
+                }
+            })  
+    }
+
+    //Записываем информацию на Canvas
+    function putImage(width, height, func) {
+        const outImagen = ctxImagenData.createImageData(width, height);
+        const dst = new Uint32Array(outImagen.data.buffer);
+        func(dst);
+        //выводим измения 
+        ctxImagenData.putImageData(outImagen, 0,0);
+    }
+//Метод ближайшего соседа !!!!!!!!
+//Поворот пикселей К СОЖЕЛЕНИЮ НЕТ ТОЧНОСТИ В ПОВОРОТЕ !!!!!!!!
+//Формула с книги
+//х* = х * cos (а) - у * sin (а);
+//У * = у * cos(a) + х * sin (а);
+
+//Формула от AI  
+//против часовой стрелки
+//rotatedX = cos(θ) * (x - cx) - sin(θ) * (y - cy) + cx
+//rotatedY = sin(θ) * (x - cx) + cos(θ) * (y - cy) + cy
+//по часовой стрелке 
+//rotatedX = cos(θ) * (x - cx) + sin(θ) * (y - cy) + cx
+//rotatedY = -sin(θ) * (x - cx) + cos(θ) * (y - cy) + cy
+
+let clickPixels = document.getElementById("clickPixels");
+clickPixels.addEventListener("input", ()=>{
+    let degrees = clickPixels.value;
+        rotateCanvasArbitrary(imagenPixels, Number(degrees));
+    })
+
+function rotateCanvasArbitrary(originalCanvas, degrees) {
+    const radians = degrees * (Math.PI / 180);
+    //Подготовка к повороту
+    //Перевод в рвдианы
+    let TO_RADIANS = Math.PI/180;
+    //Определенние начальных даннных
+    let originalWidth = imagenPixels.width;                
+    let originalHeight = imagenPixels.height;
+
+    //Создаем болванку для работы с пикселями - поворот
+    const rotatedCanvas = document.createElement('canvas');
+    rotatedCanvas.width = originalWidth;
+    rotatedCanvas.height = originalHeight;
+    const rotatedCtx = rotatedCanvas.getContext('2d');
+    
+    //Копируем пиксели с созданого канваса
+    const imageData = ctxPexelsRotate.getImageData(0, 0, originalWidth, originalHeight);
+    const originalData = new Uint32Array(imageData.data.buffer);
+    
+    //Создаем холст на котором будем поварачивать пиксели
+    const rotatedImageData = rotatedCtx.createImageData(originalWidth, originalHeight);
+    const rotatedData = new Uint32Array(rotatedImageData.data.buffer);
+    
+    //Определяем центр оригального изображения
+    const centerX = originalWidth / 2;
+    const centerY = originalHeight / 2;
+
+    for (let y = 0; y < originalHeight; y++) {
+        for (let x = 0; x < originalWidth; x++) {
+            const offsetX = x - centerX;
+            const offsetY = y - centerY;
+            const rotatedX = centerX + offsetX * Math.cos(radians) + offsetY * Math.sin(radians);
+            const rotatedY = centerY + offsetX * - Math.sin(radians) + offsetY * Math.cos(radians);
+            //Проверка на наличие пикселей
+            if (rotatedX >= 0 && rotatedX < originalWidth && rotatedY >= 0 && rotatedY < originalHeight) {
+                const srcIndex = y* rotatedCanvas.width + x;
+                const destIndex = Math.floor(rotatedY) * rotatedCanvas.width + Math.floor(rotatedX);
+                rotatedData[destIndex] = originalData[srcIndex];
+                rotatedData[destIndex + 1] = originalData[srcIndex + 1];
+                rotatedData[destIndex + 2] = originalData[srcIndex + 2];
+                rotatedData[destIndex + 3] = originalData[srcIndex + 3];
+                /*
+                const sourceIndex = y * originalWidth + x;  // Индекс текущего пикселя в оригинальном изображении
+                const targetIndex = Math.floor(rotatedY) * originalWidth + Math.floor(rotatedX);
+                rotatedData[targetIndex] = originalData[sourceIndex];
+                */
+            }    
+        }
+    }
+    //рисуем данные из заданного ImageData
+    rotatedCtx.putImageData(rotatedImageData, 0, 0);
+    // Затираем исходный холст перед отображением повернутой версии
+    ctxPexelsRotate.clearRect(0, 0, originalWidth, originalHeight);
+    originalCanvas.width = originalWidth;
+    originalCanvas.height = originalHeight;
+    // Отображаем повернутый холст на исходном холсте
+    ctxPexelsRotate.drawImage(rotatedCanvas, 0, 0);
+}
+
+
+//аффинное преобразование.
+//Этот код реализует билинейную интерполяцию для определения цветов пикселей после поворота
+function bilinearInterpolation(x, y, imageData) {
+            const { width, height, data } = imageData;
+
+            const xFloor = Math.floor(x);
+            const yFloor = Math.floor(y);
+            const xCeil = Math.ceil(x);
+            const yCeil = Math.ceil(y);
+
+            const topLeft = (yFloor * width + xFloor) * 4;
+            const topRight = (yFloor * width + xCeil) * 4;
+            const bottomLeft = (yCeil * width + xFloor) * 4;
+            const bottomRight = (yCeil * width + xCeil) * 4;
+
+            const xFraction = x - xFloor;
+            const yFraction = y - yFloor;
+
+            const topAverage = [];
+            const bottomAverage = [];
+
+            for (let i = 0; i < 4; i++) {
+                topAverage[i] = data[topLeft + i] * (1 - xFraction) + data[topRight + i] * xFraction;
+                bottomAverage[i] = data[bottomLeft + i] * (1 - xFraction) + data[bottomRight + i] * xFraction;
+            }
+
+            const result = [];
+            for (let i = 0; i < 4; i++) {
+                result[i] = topAverage[i] * (1 - yFraction) + bottomAverage[i] * yFraction;
+            }
+
+            return result; 
+        }
+//Функция поворота
+function rotateImage(imageData, angle) { 
+            const cosTheta = Math.cos(angle);
+            const sinTheta = Math.sin(angle);
+            const width = imageData.width;
+            const height  = imageData.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const rotatedImageData = new Uint8ClampedArray(width * height * 4);
+
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+
+                    const rotatedX = centerX + (x - centerX) * cosTheta - (y - centerY) * sinTheta;
+                    const rotatedY = centerY + (x - centerX) * sinTheta + (y - centerY) * cosTheta;
+                
+                    if (rotatedX >= 0 && rotatedX < width && rotatedY >= 0 && rotatedY < height) {
+                        const interpolatedColor = bilinearInterpolation(rotatedX, rotatedY, imageData);
+                    
+                        const index = (y * width + x) * 4;
+                        rotatedImageData[index] = interpolatedColor[0];
+                        rotatedImageData[index + 1] = interpolatedColor[1];
+                        rotatedImageData[index + 2] = interpolatedColor[2];
+                        rotatedImageData[index + 3] = interpolatedColor[3];
+                    }
+                }
+            }
+            console.log(rotatedImageData);
+
+            return new ImageData(rotatedImageData, width, height);
+}
+
+
+const canvase = document.getElementById('canvase');
+const context = canvase.getContext('2d');
+const image = new Image();
+image.src = './kiza.jpeg';
+context.width =image.width;
+context.height = image.height;
+image.onload = () => {
+    canvase.width = image.width;
+    canvase.height = image.height;
+    context.drawImage(image, 0, 0);
+}
+const angleInput = document.getElementById('clickAfine');
+angleInput.addEventListener('input', () => {
+    const angle = (parseInt(angleInput.value) || 0) * Math.PI / 180; // Преобразование градусов в радиан
+ 
+    image.onload = () => {
+        context.clearRect(0, 0, canvase.width, canvase.height);
+
+        context.drawImage(image, 0, 0);
+
+        const imageData = context.getImageData(0, 0, canvase.width, canvase.height);
+        const rotatedImageData = rotateImage(imageData, angle);
+        context.clearRect(0, 0, canvase.width, canvase.height);
+        context.putImageData(rotatedImageData, 0, 0);
+        
+    };
+
+    image.src = './kiza.jpeg';
+
+});
+        
+        
+
+        
+
 
 </script>

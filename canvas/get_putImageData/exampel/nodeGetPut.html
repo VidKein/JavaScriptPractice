@@ -357,30 +357,32 @@ input[type = "number"] {
             //Rotate Degress
             if (clickItem == "degrees") {
               console.log(clickItem ,clickValue);
-                let TO_RADIANS = Math.PI/180; 
+              
                 putImage(width, height, function (dst) {
-                    let New_Height = Math.round(width * Math.abs(Math.sin(angle*TO_RADIANS)) + height * Math.abs(Math.cos(angle*TO_RADIANS)));
-                    let New_Width = Math.round(width * Math.abs(Math.cos(angle*TO_RADIANS)) + height * Math.abs(Math.sin(angle*TO_RADIANS)));                
-                    canvas.width = New_Width;
-                    canvas.height = New_Height;  
-                    let x = Math.round(New_Width/2);
-                    let y = Math.round(New_Height/2);
-                    //Создаем временный холст и контекст для поворота
-                    let tempCanvas = document.createElement("canvas");
-                    let tempContext = tempCanvas.getContext("2d");
-                    tempCanvas.width = canvas.width;
-                    tempCanvas.height = canvas.height;   
-                    //Заполняем временный холст исходными данными ImageData
-                    tempContext.putImageData(inCanvas, 0, 0);
-                    //Поворачиваем временный холст
-                    tempContext.translate(x,y);
-                    tempContext.rotate(angle * TO_RADIANS);
-                    let rotatedImageData = tempContext.getImageData(0, 0, inCanvas.width, inCanvas.height);
-                    let srсDegrees = new Uint32Array(rotatedImageData.data.buffer);
-                    for (let i = 0; i < dst.length; i++) {
-                        dst[i] = srсDegrees[i];
+                    //Метод ближайшего соседа(не самій лучший)
+                    const imageData = inCanvas;
+                    const cosTheta = Math.cos(clickValue* (Math.PI / 180));
+                    const sinTheta = Math.sin(clickValue* (Math.PI / 180));
+                    const width = imageData.width;
+                    const height  = imageData.height;
+                    const centerX = width / 2;
+                    const centerY = height / 2;
+                    for (let y = 0; y < height; y++) {
+                        for (let x = 0; x < width; x++) {
+                            const rotatedX = centerX + (x - centerX) * cosTheta - (y - centerY) * sinTheta;
+                            const rotatedY = centerY + (x - centerX) * sinTheta + (y - centerY) * cosTheta;
+                            if (rotatedX >= 0 && rotatedX < width && rotatedY >= 0 && rotatedY < height) {
+                              const srcIndex = y* width + x;
+                              const destIndex = Math.floor(rotatedY) * width + Math.floor(rotatedX);
+                              dst[destIndex] = src[srcIndex];
+                              dst[destIndex + 1] = src[srcIndex + 1];
+                              dst[destIndex + 2] = src[srcIndex + 2];
+                              dst[destIndex + 3] = src[srcIndex + 3];
+                            }
                         }
-                })         
+                    }           
+
+                })        
             }
             //Rotate flip    
             //Resize
@@ -548,6 +550,7 @@ input[type = "number"] {
         const outImagen = ctx.createImageData(width, height);
         const dst = new Uint32Array(outImagen.data.buffer);
         func(dst);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         //выводим измения 
         ctx.putImageData(outImagen, 0,0);
     }
