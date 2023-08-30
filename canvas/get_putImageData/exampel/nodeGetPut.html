@@ -357,31 +357,32 @@ input[type = "number"] {
             //Rotate Degress
             if (clickItem == "degrees") {
               console.log(clickItem ,clickValue);
-              
-                putImage(width, height, function (dst) {
-                    //Метод ближайшего соседа(не самій лучший)
-                    const imageData = inCanvas;
                     const cosTheta = Math.cos(clickValue* (Math.PI / 180));
                     const sinTheta = Math.sin(clickValue* (Math.PI / 180));
-                    const width = imageData.width;
-                    const height  = imageData.height;
-                    const centerX = width / 2;
-                    const centerY = height / 2;
-                    for (let y = 0; y < height; y++) {
-                        for (let x = 0; x < width; x++) {
-                            const rotatedX = centerX + (x - centerX) * cosTheta - (y - centerY) * sinTheta;
-                            const rotatedY = centerY + (x - centerX) * sinTheta + (y - centerY) * cosTheta;
+                    //Расчет изменяюшейся ширины и высоты
+                    const newWidth = Math.round(Math.abs(width * cosTheta) + Math.abs(height * sinTheta));
+                    const newHeight = Math.round(Math.abs(width * sinTheta) + Math.abs(height * cosTheta));
+                    canvas.width = newWidth;
+                    canvas.height = newHeight;
+                putImage(newWidth, newHeight, function (dst) {
+                    //Метод ближайшего соседа(не самій лучший)
+                    const centerX = newWidth / 2;
+                    const centerY = newHeight / 2;
+                    for (let y = 0; y < newHeight; y++) {
+                        for (let x = 0; x < newWidth; x++) {
+                            const destIndex = y* newWidth + x;
+                            const rotatedX = Math.round((x - centerX) * cosTheta - (y - centerY) * sinTheta + width / 2);
+                            const rotatedY = Math.round((x - centerX) * sinTheta + (y - centerY) * cosTheta + height / 2);
                             if (rotatedX >= 0 && rotatedX < width && rotatedY >= 0 && rotatedY < height) {
-                              const srcIndex = y* width + x;
-                              const destIndex = Math.floor(rotatedY) * width + Math.floor(rotatedX);
+                              const srcIndex = rotatedY * width + rotatedX;
                               dst[destIndex] = src[srcIndex];
                               dst[destIndex + 1] = src[srcIndex + 1];
                               dst[destIndex + 2] = src[srcIndex + 2];
                               dst[destIndex + 3] = src[srcIndex + 3];
                             }
                         }
-                    }  
-                })       
+                    }
+                })      
             }
             //Rotate flip    
             //Resize
@@ -549,10 +550,12 @@ input[type = "number"] {
         const outImagen = ctx.createImageData(width, height);
         const dst = new Uint32Array(outImagen.data.buffer);
         func(dst);
+        //Очишаем холст
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         //выводим измения 
         ctx.putImageData(outImagen, 0,0);
     }
+    
     
     //Собирем переменные для редоктирования картинки
     //Действия при нажатии 
