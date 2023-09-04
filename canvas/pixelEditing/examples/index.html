@@ -14,6 +14,7 @@
     }
     #canvasEdihion{
       margin: auto;
+      background-color: gray;
     }
     .histogram{
       display: flex;
@@ -59,7 +60,7 @@
 .activeAccord:after {
     content: "\2796";
 }
-.effects{
+.effect > .links{
     display: none;
     background-color: white;
     overflow: hidden;
@@ -87,209 +88,211 @@
 
 
 
-<div class="editFoto">
+<div class="editFoto" id="editFoto">
 
-<div class="editFotoPixels" id="editFotoPixels">
-  <h3>Edit Foto Pixels</h3>
-    <p>Brightness</p>
-    <div>
+    <div class="editColor" id="editColor">
+        <h3>Color correction</h3>
+
+        <div class="links" id="contrast">
+          <p>Contrast</p>
+          <label>
+            <input id="rangeContrast" type="range" name="contrast" min="-255" max="255" value="0" /> 
+          </label>
+          <span id="valueContrast" name="numberColor">0</span>
+        </div>
+        
+        <div class="links" id="brightness">
+          <p>Brightness</p>
+          <label>
+            <input id="rangeBrightness" type="range" name="brightness" min="-255" max="255" value="0" />
+          </label>
+          <span id="valueBrightness" name="numberColor">0</span>
+        </div>
+      
+        <div class="links" id="saturation">
+          <p>Saturation</p>
+          <label>
+            <input id="rangeSaturation" type="range"  name="saturation" min="-255" max="255" value="0" />
+          </label>  
+          <span id="valueSaturation" name="numberColor">0</span>                
+        </div>
+
+        <div class="links" id="sharp">
+          <p>Sharp</p>
+          <label>
+            <input id="rangeSharp" type="range"  name="sharp" min="0" max="100" step="0.01" value="0" />           
+          </label>
+          <span id="valueSharp" name="numberColor">0</span>  
+        </div>
+      
+    </div>
+    
+    <div class="links" id="resize">
+      <h3>Resize:</h3>
+      <label id="inputScale">
+        <input id="numWidth" type="number" name="resize" value="0"/>x<input class="closet" id="numHeight" type="number" name="resize" value="0" disabled/>
+      </label>
+      <div>
+        <input id="cbProportions" type="checkbox" name="resize" checked/>Proportions
+        <p>Choosing an interpolation algorithm</p>
+        <select id="scaleVersion" name="resize" size="1">
+          <option value="neighbor"  selected>Nearest neighbor scaling</option>
+          <option value="bilinear">Bilinear scaling</option>
+          <option value="lanczos">Lanczos scaling</option>
+        </select>
+       </div>
+     </div>
+
+    <div class="links" id="rotate">
+      <h3>Rotate</h3>
       <label>
-        <input id="rangeBrightness" type="range" name = "range" min="-255" max="255" value="0" />
-        <span id="valueBrightness" name="number">0</span>
+        <p><input type="radio" name="rotate" id="0" min="0" value="0" title="rotate 0deg" checked> - 0&#176;</p>
+        <p><input type="radio" name="rotate" id="90l" value="90" title="rotate 90deg left"> - 90&#176;</p>
+        <p><input type="radio" name="rotate" id="90r" value="-90" title="rotate 90deg right"> - 270&#176;</p>
+        <p><input type="radio" name="rotate" id="180" value="180" title="rotate 180deg left"> - 180&#176;</p>
+        <p><input type="radio" name="rotate" id="flip" value="270" title="mirror reflection"> - mirror</p>
+        <p><input type="radio" name="rotate" id="arbitrary" value="0" title="arbitrary"> - <input type="number" name="rotate" id="degrees" placeholder="&#177;0-90&#176;" value="0" minlength="1" maxlength="3" min="-90"  max="90" disabled></p>
       </label>
     </div>
-    <p>Contrast</p>
-    <div>
-      <label>
-        <input id="rangeContrast" type="range" name = "range" min="-255" max="255" value="0" />
-        <span id="valueContrast" name="number">0</span>
-      </label>
-    </div>
-    <p>Saturation</p>
-    <div>
-      <label>
-        <input id="rangeSaturation" type="range"  name="range" min="-255" max="255" value="0" />
-        <span id="valueSaturation" name="number">0</span>                
-      </label>  
-    </div>
-    <p>Sharp</p>
-    <div>
-      <label>
-        <input id="rangeSharp" type="range"  name="range" min="0.1" max="100" step="0.01" value="0" />
-        <span id="valueSharp" name="number">0</span>                
-      </label>  
-    </div>
-    <p>Resize:</p>
-                <div id="inputScale">
-                <input id="numWidth" type="number" name="rangeScale" value="0"/>x<input class="closet" id="numHeight" type="number" name="rangeScale" value="0" disabled/>
-                </div>
-                <div>
-                  <label>
-                    <input id="cbProportions" type="checkbox" checked/>Proportions
-                  </label>
-                </div>
-                <div>
-                  <p>Scale methods:</p>
-                  <select name="scaleVersion" id="scaleVersion" size="1">
-                    <option value="neighbor" selected>Nearest neighbor scaling</option>
-                    <option value="bilinear">Bilinear scaling</option>
-                    <option value="lanczos">Lanczos scaling</option>
-                  </select>    
-                </div>
-  </div>
 
-<div class="editFotoMethods">
-    <h3>Edit foto using methods</h3>
-    <p>Rotate</p>
-    <div class="radioBlock" id="radioBlock">
-      <p><input type="radio" name="rotate" id="0" min="0" value="0" title="rotate 0deg" checked> - 0&#176;</p>
-      <p><input type="radio" name="rotate" id="90l" value="90" title="rotate 90deg left"> - 90&#176;</p>
-      <p><input type="radio" name="rotate" id="90r" value="-90" title="rotate 90deg right"> - 270&#176;</p>
-      <p><input type="radio" name="rotate" id="180" value="180" title="rotate 180deg left"> - 180&#176;</p>
-      <p><input type="radio" name="rotate" id="flip" value="270" title="mirror reflection"> - mirror</p>
-      <p><input type="radio" name="rotate" id="arbitrary" value="arbitrary" title="arbitrary"> - <input type="number" name="degrees" id="degrees" placeholder="&#177;0-90&#176;" value="0" minlength="1" maxlength="3" min="-90"  max="90" disabled></p>
-    </div>
-</div>
+    <div class="effect" id="effect">
+      <button type="button" class="accordion" name="negative">Negative effect</button>
+      <div class="links" id="negative" name="effects">
+        <label><input type="checkbox" checked id="cbRed" name="cd">Red</label>
+        <label><input type="checkbox" id="cbGreen" name="cd">Green</label>
+        <label><input type="checkbox" id="cbBlue" name="cd">Blue</label>
+        <label><input type="checkbox" id="cbAlpha" name="cd">Alpha</label>
+      </div>
+                                      
+      <button type="button" class="accordion" name="discoloration">Discoloration (black and white)</button>
+      <div class="links" id="discoloration" name="effects"><p>Discoloration (black and white)</p></div>    
 
-<div class="effect" id="effect">
-  <button type="button" class="accordion" id="negative">Negative effect</button>
-  <div class="effects">
-    <label><input type="checkbox" checked id="cbRed" name="cd">Red</label>
-    <label><input type="checkbox" id="cbGreen" name="cd">Green</label>
-    <label><input type="checkbox" id="cbBlue" name="cd">Blue</label>
-    <label><input type="checkbox" id="cbAlpha" name="cd">Alpha</label>
-  </div>
-                                  
-  <button type="button" class="accordion" id="discoloration">Discoloration (black and white)</button>
-  <div class="effects"><p>Discoloration (black and white)</p></div>
-
-  <button type="button" class="accordion" id="rgbCor">RGB correction</button>
-  <div class="effects">
+      <button type="button" class="accordion" name="rgbCor">RGB correction</button>
+      <div class="links" id="rgbCor" name="effects">
     <label>
       <span style="color: red">R</span>:
-      <input id="rangeR" type="range" min="-255" max="255" value="0" name="range"/>
-      <span id="valueR" name="number">0</span>
+      <input id="rangeR" type="range" min="-255" max="255" value="0" name="rangeEffect"/>
+      <span id="valueR" name="numberEffect">0</span>
     </label>
     <br/>
     <label>
       <span style="color: green">G</span>:
-      <input id="rangeG" type="range" min="-255" max="255" value="0" name="range"/>
-      <span id="valueG" name ="number">0</span>
+      <input id="rangeG" type="range" min="-255" max="255" value="0" name="rangeEffect"/>
+      <span id="valueG" name ="numberEffect">0</span>
     </label>
     <br/>
     <label>
       <span style="color: blue">B</span>:
-      <input id="rangeB" type="range" min="-255" max="255" value="0" name="range"/>
-      <span id="valueB" name="number">0</span>
+      <input id="rangeB" type="range" min="-255" max="255" value="0" name="rangeEffect"/>
+      <span id="valueB" name="numberEffect">0</span>
     </label>
-  </div>
+      </div>    
 
-  <button type="button" class="accordion" id="hslCor">HSL correction</button>
-  <div class="effects">
+      <button type="button" class="accordion" name="hslCor">HSL correction</button>
+      <div class="links" id="hslCor" name="effects">
     <label>
       H:
-      <input id="rangeH" type="range" min="-180" max="180" value="0" name="range"/>
-      <span id="valueH" name="number">0</span>°
+      <input id="rangeH" type="range" min="-180" max="180" value="0" name="rangeEffect"/>
+      <span id="valueH" name="numberEffect">0</span>°
     </label>
     <br/>
     <label>
       S:
-      <input id="rangeS" type="range" min="-100" max="100" value="0" name="range"/>
-      <span id="valueS" name="number">0</span>
+      <input id="rangeS" type="range" min="-100" max="100" value="0" name="rangeEffect"/>
+      <span id="valueS" name="numberEffect">0</span>
     </label>
     <br/>
     <label>
       L:
-      <input id="rangeL" type="range" min="-100" max="100" value="0" name="range"/>
-      <span id="valueL" name="number">0</span>
+      <input id="rangeL" type="range" min="-100" max="100" value="0" name="rangeEffect"/>
+      <span id="valueL" name="numberEffect">0</span>
     </label>
-  </div>
+      </div>    
 
-  <button type="button" class="accordion" id="gammaCor">Gamma correction</button>
-  <div class="effects">
+      <button type="button" class="accordion" name="gammaCor">Gamma correction</button>
+      <div class="links" id="gammaCor" name="effects">
     <label>
-      <input id="rangeGamma" type="range" min="1" max="600" value="100" name="range"/>
-      <span id="valueGamma" name="number">0</span>
+      <input id="rangeGamma" type="range" min="1" max="600" value="100" name="rangeEffect"/>
+      <span id="valueGamma" name="numberEffect">0</span>
     </label>
-  </div>
+      </div>    
 
-  <button type="button" class="accordion" id="blur1">Blur</button>
-  <div class="effects">
+      <button type="button" class="accordion" name="blur1">Blur</button>
+      <div class="links" id="blur1" name="effects">
     <label>
-      <input id="rangeSize" type="range" min="0" max="3" value="1" name="range"/>
-      <span id="valueSize" name="number">0</span>
+      <input id="rangeSize" type="range" min="0" max="3" value="1" name="rangeEffect"/>
+      <span id="valueSize" name="numberEffect">0</span>
     </label>
-  </div>
+      </div>    
 
-  <button type="button" class="accordion" id="blur2">Blur(H/V)</button>
-  <div class="effects">
+      <button type="button" class="accordion" name="blur2">Blur(H/V)</button>
+      <div class="links" id="blur2" name="effects">
     <label> 
       <span>H</span>: 
-      <input id="rangeHRadius" type="range" min="0" max="25" value="1" name="range"/>
-      <span id="valueHRadius" name="number">0</span>
+      <input id="rangeHRadius" type="range" min="0" max="25" value="1" name="rangeEffect"/>
+      <span id="valueHRadius" name="numberEffect">0</span>
     </label>
     <br>
     <label>
       <span>V</span>:
-      <input id="rangeVRadius" type="range" min="0" max="25" value="1" name="range"/>
-      <span id="valueVRadius" name="number">0</span>
+      <input id="rangeVRadius" type="range" min="0" max="25" value="1" name="rangeEffect"/>
+      <span id="valueVRadius" name="numberEffect">0</span>
     </label>
     <br>
     <label>
       <input id="cbLink" type="checkbox" name="cd"/>
       Link
     </label>
-  </div>
+      </div>
 
-</div>  
+    </div>  
 
 </div>
 <script>
 /*Загружаем изображение*/
 let img = new Image();
+let canvas = document.getElementById("canvasEdihion");
+let ctx = canvas.getContext("2d");
     img.src = "./kiza.jpeg"
-    img.onload = update;  
+    img.onload = initImg;  
+//Размер Resize
+let checked = document.getElementById("cbProportions");
+let numWidth = document.getElementById("numWidth");
+let numHeight = document.getElementById("numHeight");  
+let inputScale = document.getElementById("inputScale"); 
+let scaleVersion = document.getElementById("scaleVersion"); 
+let nameScaleVersion;
+//Основные блоки
+let editColor = document.getElementById("editColor");
+let resize = document.getElementById("resize");
+let rotate = document.getElementById("rotate");
+let effect = document.getElementById("effect");
+//Переключатель Resize+Proportions
+checked.addEventListener('click',function(){         
+        if (numHeight.className =="open") {
+          numHeight.className = "closet";
+          numHeight.disabled = true;            
+        } else {
+          numHeight.className = "open";  
+          numHeight.disabled = false;           
+        } 
+   })
+//Обьект с изменениями
+let clicks = {};   
+//Действия после загрузки картинки
+function initImg() {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+    //Выводим размеры картинки в Размер/Resize
+    numWidth.value = img.width;
+    numHeight.value = img.height;
+    histogram(new Uint32Array(getImage().data.buffer));
+}
 
-/*Функционал ввода данных*/        
-//переключатель для изменения размера пропорций
-document.getElementById("cbProportions").addEventListener('click',function(){ 
-  if (numHeight.className =="open") {
-    numHeight.className = "closet";
-    numHeight.disabled = true;            
-  } else {
-    numHeight.className = "open";  
-    numHeight.disabled = false;           
-  }
-})
-//Изменение положение картинки(Поворот)
-let degrees = document.getElementById("degrees"),
-    radioBlock = document.getElementById("radioBlock"),
-    inputRotation = radioBlock.getElementsByTagName("input"),
-    angle = 0;
-   for (let i = 0; i < inputRotation.length; i++) {        
-      inputRotation[i].addEventListener('change',function (){  
-          if (inputRotation[i].value == "arbitrary" || inputRotation[i].id == "degrees") {              
-              inputRotation["degrees"].removeAttribute("disabled");
-              inputRotation["degrees"].addEventListener('input',function (){
-              angle = inputRotation["degrees"].value;
-              //добавляем стили для canvas
-              document.getElementById("canvasEdihion").style.margin = "auto";  
-              document.getElementById("canvasEdihion").style.backgroundColor = "grey"; 
-            });              
-          } else {
-            angle = parseInt(inputRotation[i].value);
-            inputRotation["degrees"].setAttribute("disabled","");
-            //удаляем стили для canvas
-            document.getElementById("canvasEdihion").style.margin = "";  
-            document.getElementById("canvasEdihion").style.backgroundColor = ""; 
-          }            
-      });  
-    }
 //Effects анимация accordion
-var acc = document.getElementsByClassName("accordion");
-var i;
-  
-  for (i = 0; i < acc.length; i++) {
+let acc = document.getElementsByClassName("accordion");
+  for (let i = 0; i < acc.length; i++) {
     acc[i].addEventListener("click", function() {
     //Toggle between adding and removing the "active" class to highlight the option that controls the panel
     this.classList.toggle("activeAccord");
@@ -302,283 +305,409 @@ var i;
       }
     });
   }
-
-/*Редоктируем canvas*/
-function editCanvas(inImagen, clickItem, clickValue) {
-  const width = inImagen.width,
-        height = inImagen.height,
-        src = new Uint32Array(inImagen.data.buffer);
-  //Изменяем canvas      
-  //src - пиксельная информация canvas
-  //dst - болванка для проведения изменений
- updateCanvasPixel(width, height , function(dst) {
-  //сбор параметров для оброботки
-      let brightness = parseInt(document.getElementById("rangeBrightness").value), 
-          contrast = parseInt(document.getElementById("rangeContrast").value)/255,
-          saturation = parseInt(document.getElementById("rangeSaturation").value),
-          maxSaturation = (saturation < 0) ? 255 :128,
-          mix = (parseInt(document.getElementById("rangeSharp").value))*0.01;
-  //отображение параметров
-  //edit foto pixel
-      document.getElementById("valueBrightness").innerText = brightness;
-      document.getElementById("valueContrast").innerText = document.getElementById("rangeContrast").value;
-      document.getElementById("valueSaturation").innerText = saturation;
-      document.getElementById("valueSharp").innerText = document.getElementById("rangeSharp").value;
-  //Effect
-      document.getElementById("valueR").innerText = document.getElementById("rangeR").value;
-      document.getElementById("valueG").innerText = document.getElementById("rangeG").value;
-      document.getElementById("valueB").innerText = document.getElementById("rangeB").value;
-      document.getElementById("valueH").innerText = document.getElementById("rangeH").value;
-      document.getElementById("valueS").innerText = document.getElementById("rangeS").value;
-      document.getElementById("valueL").innerText = document.getElementById("rangeL").value;
-      document.getElementById("valueGamma").innerText = document.getElementById("rangeGamma").value;
-      document.getElementById("valueSize").innerText = document.getElementById("rangeSize").value;
-      document.getElementById("valueHRadius").innerText = document.getElementById("rangeHRadius").value;
-      document.getElementById("valueVRadius").innerText = document.getElementById("rangeVRadius").value;
-
-    //Начальная загрузка
-    if (clickItem === undefined) {
-      for (let i = 0; i < dst.length; i++) {
-        dst[i] = src[i];
-      }
-    }
-
-    //Contrast, Brightness, Saturation
-    if (clickItem == "rangeBrightness" || clickItem == "rangeContrast" || clickItem == "rangeSaturation") {
-      
-    let avgGray = 0;
-      for (let i = 0; i < dst.length; i++) {
-        let r = src[i] & 0xFF;
-        let g = (src[i] >> 8) & 0xFF;
-        let b = (src[i] >> 16) & 0xFF;
-        avgGray += (r * 0.2126 + g * 0.7152 + b * 0.0722);
-      }
-      avgGray /= dst.length;
-      
-      for (let i = 0; i < dst.length; i++) {
-        let r = src[i] & 0xFF;
-        let g = (src[i] >> 8) & 0xFF;
-        let b = (src[i] >> 16) & 0xFF;
-        
-        // Contrast
-        r += (r - avgGray) * contrast;
-        g += (g - avgGray) * contrast;
-        b += (b - avgGray) * contrast;
-
-        // Brightness
-        r += brightness;
-        g += brightness;
-        b += brightness;
-        //Saturation
-        r += (r - avgGray) * saturation / maxSaturation;
-        g += (g - avgGray) * saturation / maxSaturation;
-        b += (b - avgGray) * saturation / maxSaturation;
-
-        if (r > 255) r = 255;
-        else if (r < 0) r = 0;
-        if (g > 255) g = 255;
-        else if (g < 0) g = 0;
-        if (b > 255) b = 255;
-        else if (b < 0) b = 0;
-        
-        dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
-      }        
-    }      
-    
-    //Sharp
-    if (clickItem =="rangeSharp") {
-      //Все для работы с матрицей
-    let kernel = [[0, -1, 0],//матрица
-                 [-1, 5, -1],
-                 [0, -1, 0]],
-        katet = Math.round(Math.sqrt(kernel.length))+1,//корень 9=3
-        half = (katet * 0.5) | 0,//3*0.5=1.5 отбрасываем значения после запятой
-        offset = 0,//offset - коэффициент
-        div = 1.0;//div - делитель        
-    //обработка пикселей
-    let dstIndex = 0;
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          let r = 0, g = 0, b = 0;
-          for (let sy = 0; sy < katet; sy++) {
-            const yy = Math.min(height - 1, Math.max(0, y + sy - half));
-            for (let sx = 0; sx < katet; sx++) {
-              const xx = Math.min(width - 1, Math.max(0, x + sx - half));
-              let pix = src[yy * width + xx];//обробатываем информацию                     
-              r += ((pix & 0xFF) * kernel[sy][sx]);
-              g += ((((pix) >> 8) & 0xFF) * kernel[sy][sx]);
-              b += ((((pix) >> 16) & 0xFF) * kernel[sy][sx]);
-            }
-          }          
-          red = Math.min(255,Math.max(0, (r*mix)+((src[y * width + x] )&0xFF)*(1-mix) ))&0xFF;
-          green = Math.min(255, Math.max(0, (g*mix)+(((src[y * width + x])>> 8)&0xFF)*(1-mix) ))&0xFF;
-          blue = Math.min(255, Math.max(0, (b*mix)+(((src[y * width + x])>> 16)&0xFF)*(1-mix) ))&0xFF;
-          const alfa = src[y * width + x] & 0xFF000000;//обробатываем информацию
-          dst[dstIndex++] = red | ((green) << 8) | ((blue) << 16) | alfa ;//заполняем изменениями            
+//Редоктируем картинку
+function editPicter(inCanvas, clickItem, clickValue) { 
+        let src = new Uint32Array(inCanvas.data.buffer);
+        let width = inCanvas.width;
+        let height = inCanvas.height;
+        let contrast = 0;
+        let brightness = 0;
+        let saturation = 0;
+        let maxSaturation = 0;
+        let mix = 0.01;
+        let newWidth = numWidth.value;
+        if (numHeight.className =="closet") {numHeight.value = Math.round(img.height * numWidth.value / img.width);}
+        let newHeight = numHeight.value; 
+        let angle;
+        //Определяем тип обработки Resize          
+        scaleVersion.addEventListener("change", function () {nameScaleVersion = scaleVersion.value;});
+        if (clickItem == "rangeContrast") {contrast = parseInt(clickValue)/255;}
+        else if(clickItem == "rangeBrightness"){brightness = parseInt(clickValue);}
+        else if(clickItem == "rangeSaturation"){
+          saturation = parseInt(clickValue);
+          maxSaturation = (clickValue < 0) ? 255 :128;
         }
-      }
-    }
-    
-    //Resize
-    if (clickItem =="numWidth" || clickItem =="numHeight") {
-      if (numHeight.className =="closet") {numHeight.value = Math.round(img.height * numWidth.value / img.width);} 
-      const newWidth = numWidth.value;
-      const newHeight = numHeight.value;  
-      const nameScaleVersion = scaleVersion.value;
-      document.getElementById("canvasEdihion").width= newWidth;
-      document.getElementById("canvasEdihion").height= newHeight;
-        if (nameScaleVersion == "bilinear") {
-          //Bilinear scaling  
-          function interpolate(a, b, c, d, width, height) {
-          return a * (1 - width) * (1 - height)
-              + b * width * (1 - height)
-              + c * (1 - width) * height
-              + d * width * height;
-          }
-          const xMax = (width - 1);
-          const yMax = (height - 1);
-          const dx = (xMax + 0.5) / newWidth;
-          const dy = (yMax + 0.5) / newHeight;
-          let dstOffset = 0;
-          for (let i = 0; i < newHeight; i++) {
-            for (let j = 0; j < newWidth; j++) {
-              const x = (dx * j) >> 0;
-              const y = (dy * i) >> 0;
-              const xDiff = (dx * j) - x;
-              const yDiff = (dy * i) - y;
-              const index = y * width + x;
-              // a b
-              // c d
-              const a = src[index];
-              const b = (x >= xMax) ? a : src[index + 1];
-              const c = (y >= yMax) ? a : src[index + width];
-              const d = (y >= yMax) ? b
-                  : ((x >= xMax) ? c : (src[index + width + 1]));
+        else if(clickItem == "rangeSharp"){mix = (clickValue)*0.01;}     
+        else if(clickItem == "degrees"){angle = Number(clickValue);}     
+            
+            //Contrast
+            if (clickItem == "rangeContrast" ) {
+                putImage(width, height, function (dst) {
+                  let avgGray = 0;
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+                    avgGray += (r * 0.2126 + g * 0.7152 + b * 0.0722);
+                  }
+                  avgGray /= dst.length;
 
-              const red = interpolate(
-                  a & 0xff, b & 0xff,
-                  c & 0xff, d & 0xff,
-                  xDiff, yDiff) >> 0;
-              const green = interpolate(
-                  (a >> 8) & 0xff, (b >> 8) & 0xff,
-                  (c >> 8) & 0xff, (d >> 8) & 0xff,
-                  xDiff, yDiff) >> 0;
-              const blue = interpolate(
-                  (a >> 16) & 0xff, (b >> 16) & 0xff,
-                  (c >> 16) & 0xff, (d >> 16) & 0xff,
-                  xDiff, yDiff) >> 0;
-              const alpha = interpolate(
-                  (a >> 24) & 0xff, (b >> 24) & 0xff,
-                  (c >> 24) & 0xff, (d >> 24) & 0xff,
-                  xDiff, yDiff) >> 0;
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
 
-              dst[dstOffset++] = (alpha << 24) | (blue << 16) | (green << 8) | red;
+                    // Contrast
+                    r += (r - avgGray) * contrast;
+                    g += (g - avgGray) * contrast;
+                    b += (b - avgGray) * contrast;
+                    
+                    if (r > 255) r = 255;
+                    else if (r < 0) r = 0;
+                    if (g > 255) g = 255;
+                    else if (g < 0) g = 0;
+                    if (b > 255) b = 255;
+                    else if (b < 0) b = 0;
+
+                    dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
+                  } 
+                  histogram(dst);    
+                })
             }
-          }
-        } 
-        else if(nameScaleVersion == "lanczos"){
-         //Lanczos scaling 
-         let filterSize = 1;//меняется 1,2,3
-         function lanczos(size, x) {
-           if (x >= size || x <= -size) return 0;
-           if (x === 0) return 1;
-           const xpi = x * Math.PI;
-           return size * Math.sin(xpi) * Math.sin(xpi / size) / (xpi * xpi);
-         }
-         function createCache(cachePrecision, filterSize) {
-         const cache = {};
-         const max = filterSize * filterSize * cachePrecision;
-         const iPrecision = 1.0 / cachePrecision;
-         for (let cacheKey = 0; cacheKey < max; cacheKey++) {
-           const value = lanczos(filterSize, Math.sqrt(cacheKey * iPrecision));
-           cache[cacheKey] = value < 0 ? 0 : value;
-         }
-          return cache;
-         };
-         const values = [];
-         const sx = newWidth / width;
-         const sy = newHeight / height;
-         const xMax = width - 1;
-         const yMax = height - 1;
-         const csx = Math.min(1, sx) * Math.min(1, sx);
-         const csy = Math.min(1, sy) * Math.min(1, sy);
-         const cachePrecision = 1000;
-         const cache = createCache(cachePrecision, filterSize);
-         let x1et, y1et;
-         let y = newHeight;
-         while (y--) {
-           const sourcePixelY = (y + 0.5) * (1.0 / sy);
-           let y1b = sourcePixelY - filterSize;
-           if (y1b < 0) y1b = 0;
-           let y1e = y1et = sourcePixelY + filterSize;
-           if (y1e != y1et) y1e = y1et + 1;
-           if (y1e > yMax) y1e = yMax;
-           const cy = y * (1.0 / newHeight) - sourcePixelY;
-           const y3 = y * newWidth;
-           let x = newWidth;
-            while (x--) {
-              const sourcePixelX = (x + 0.5) * (1.0 / sx);
-              let x1b = sourcePixelX - filterSize;
-              if (x1b < 0) x1b = 0;
-              let x1e = x1et = sourcePixelX + filterSize;
-              if (x1e != x1et) x1e = x1et + 1;
-              if (x1e > xMax) x1e = xMax;
-              const cx = x * (1.0 / newWidth) - sourcePixelX;
-              ///
-              let total = 0;
-              let i = 0;
-              for (let y1 = y1b >> 0; y1 <= y1e; y1++) {
-                const distanceY = (y1 + cy) * (y1 + cy) * csy;
-                for (let x1 = x1b >> 0; x1 <= x1e; x1++) {
-                  total += values[i++] = cache[(((x1 + cx) * (x1 + cx) * csx + distanceY) * cachePrecision) >> 0] || 0;
+            //Brightness
+            if ( clickItem == "rangeBrightness") {
+                putImage(width, height, function (dst) {
+                  let avgGray = 0;
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+                    avgGray += (r * 0.2126 + g * 0.7152 + b * 0.0722);
+                  }
+                  avgGray /= dst.length;
+
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+
+
+                    // Brightness
+                    r += brightness;
+                    g += brightness;
+                    b += brightness;
+
+
+                    if (r > 255) r = 255;
+                    else if (r < 0) r = 0;
+                    if (g > 255) g = 255;
+                    else if (g < 0) g = 0;
+                    if (b > 255) b = 255;
+                    else if (b < 0) b = 0;
+
+                    dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
+                  }  
+                  histogram(dst);   
+                })
+            }
+            //Saturation
+            if (clickItem == "rangeSaturation") {
+                putImage(width, height, function (dst) {
+                  let avgGray = 0;
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+                    avgGray += (r * 0.2126 + g * 0.7152 + b * 0.0722);
+                  }
+                  avgGray /= dst.length;
+
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+
+                    //Saturation
+                    r += (r - avgGray) * saturation / maxSaturation;
+                    g += (g - avgGray) * saturation / maxSaturation;
+                    b += (b - avgGray) * saturation / maxSaturation;
+
+                    if (r > 255) r = 255;
+                    else if (r < 0) r = 0;
+                    if (g > 255) g = 255;
+                    else if (g < 0) g = 0;
+                    if (b > 255) b = 255;
+                    else if (b < 0) b = 0;
+
+                    dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
+                  } 
+                  histogram(dst);    
+                })
+            }
+            //Sharp
+            if (clickItem == "rangeSharp") {  
+              putImage(width, height, function (dst) {
+              //Все для работы с матрицей
+              let kernel = [[0, -1, 0],//матрица
+                           [-1, 5, -1],
+                           [0, -1, 0]],
+                  katet = Math.round(Math.sqrt(kernel.length))+1,//корень 9=3
+                  half = (katet * 0.5) | 0,//3*0.5=1.5 отбрасываем значения после запятой
+                  offset = 0,//offset - коэффициент
+                  div = 1.0;//div - делитель        
+              //обработка пикселей
+              let dstIndex = 0;
+                for (let y = 0; y < height; y++) {
+                  for (let x = 0; x < width; x++) {
+                    let r = 0, g = 0, b = 0;
+                    for (let sy = 0; sy < katet; sy++) {
+                      const yy = Math.min(height - 1, Math.max(0, y + sy - half));
+                      for (let sx = 0; sx < katet; sx++) {
+                        const xx = Math.min(width - 1, Math.max(0, x + sx - half));
+                        let pix = src[yy * width + xx];//обробатываем информацию                     
+                        r += ((pix & 0xFF) * kernel[sy][sx]);
+                        g += ((((pix) >> 8) & 0xFF) * kernel[sy][sx]);
+                        b += ((((pix) >> 16) & 0xFF) * kernel[sy][sx]);
+                      }
+                    }          
+                    red = Math.min(255,Math.max(0, (r*mix)+((src[y * width + x] )&0xFF)*(1-mix) ))&0xFF;
+                    green = Math.min(255, Math.max(0, (g*mix)+(((src[y * width + x])>> 8)&0xFF)*(1-mix) ))&0xFF;
+                    blue = Math.min(255, Math.max(0, (b*mix)+(((src[y * width + x])>> 16)&0xFF)*(1-mix) ))&0xFF;
+                    const alfa = src[y * width + x] & 0xFF000000;//обробатываем информацию
+                    dst[dstIndex++] = red | ((green) << 8) | ((blue) << 16) | alfa ;//заполняем изменениями            
+                  }
                 }
-              }
-              total = 1.0 / total;
-              ///
-              let a = 0;
-              let r = 0;
-              let g = 0;
-              let b = 0;
-              i = 0;
-              for (let y1 = y1b >> 0; y1 <= y1e; y1++) {
-                const y2 = y1 * width;
-                for (let x1 = x1b >> 0; x1 <= x1e; x1++) {
-                  const value = values[i++] * total;
-                  const pix = src[((y2 + x1) >> 0)];
-                  r += (pix & 0xFF) * value;
-                  g += ((pix >> 8) & 0xFF) * value;
-                  b += ((pix >> 16) & 0xFF) * value;
-                  a += (((pix >> 24) & 0xFF)) * value;
-                }
-              }
-              dst[((x + y3) >> 0)] = (a << 24) | (b << 16) | (g << 8) | r;
+                histogram(dst); 
+              })
             }
-          }   
-        }
-        else{//Nearest neighbor scaling
-        const dx = width / newWidth;
-        const dy = height / newHeight;
-        for (let y = 0; y < newHeight; y++) {
-          let srcY = (y * dy) >> 0;    
-          for (let x = 0; x < newWidth; x++) {
-            let srcX = (x * dx) >> 0;            
-            dst[y * newWidth + x] = src[srcY * width + srcX];                       
-          }
-        }
-        }
-      
-    } 
-    
-    //Histogram 
-    histogram(dst); 
-  });
-
+            //Rotate 0
+            if (clickItem == "0") {
+                putImage(width, height, function (dst) {
+                for (let i = 0; i < dst.length; i++) {
+                dst[i] = src[i];
+                }
+                })
+            }
+            //Rotate 90
+            if (clickItem == "90") {
+                putImage(height, width, function (dst) {
+                let newWidth = height;
+                let newHeight = width;
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                for (let y = 0; y < newHeight; y++) {
+                  for (let x = 0; x < newWidth; x++) {
+                    dst[y * newWidth + x] = src[(height - x - 1) * width + y];
+                  }
+                }                  
+               })
+            }
+            //Rotate 270
+            if (clickItem == "-90") {
+                putImage(height, width, function (dst) {
+                let newWidth = height;
+                let newHeight = width;
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                for (let y = 0; y < newHeight; y++) {
+                  for (let x = 0; x < newWidth; x++) {
+                    dst[y * newWidth + x] = src[x * width + y];
+                  }
+                }
+                })
+            }
+            //Rotate 180
+            if (clickItem == "180") {
+                putImage(width, height, function (dst) {
+                for (let y = 0; y < height; y++) {
+                  for (let x = 0; x < width; x++) {
+                    dst[y * width + x] = src[(height - y - 1)  * width + x];
+                  }
+                }               
+                })
+            }   
+            //Rotate flip
+            if (clickItem == "270") {
+                putImage(width, height, function (dst) {
+               for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    dst[y * width + x] = src[y * width + (width - x - 1)];
+                  }
+                }          
+                })         
+            }
+            //Rotate Degress
+            if (clickItem == "degrees") {
+                    const cosTheta = Math.cos(clickValue* (Math.PI / 180));
+                    const sinTheta = Math.sin(clickValue* (Math.PI / 180));
+                    //Расчет изменяюшейся ширины и высоты
+                    const newWidth = Math.round(Math.abs(width * cosTheta) + Math.abs(height * sinTheta));
+                    const newHeight = Math.round(Math.abs(width * sinTheta) + Math.abs(height * cosTheta));
+                    canvas.width = newWidth;
+                    canvas.height = newHeight;
+                putImage(newWidth, newHeight, function (dst) {
+                    //Метод ближайшего соседа(не самій лучший)
+                    const centerX = newWidth / 2;
+                    const centerY = newHeight / 2;
+                    for (let y = 0; y < newHeight; y++) {
+                        for (let x = 0; x < newWidth; x++) {
+                            const destIndex = y* newWidth + x;
+                            const rotatedX = Math.round((x - centerX) * cosTheta - (y - centerY) * sinTheta + width / 2);
+                            const rotatedY = Math.round((x - centerX) * sinTheta + (y - centerY) * cosTheta + height / 2);
+                            if (rotatedX >= 0 && rotatedX < width && rotatedY >= 0 && rotatedY < height) {
+                              const srcIndex = rotatedY * width + rotatedX;
+                              dst[destIndex] = src[srcIndex];
+                              dst[destIndex + 1] = src[srcIndex + 1];
+                              dst[destIndex + 2] = src[srcIndex + 2];
+                              dst[destIndex + 3] = src[srcIndex + 3];
+                            }
+                        }
+                    }
+                })      
+            }
+            //Rotate flip    
+            //Resize
+            if (clickItem == "numWidth" || clickItem == "numHeight") {
+              canvas.width = newWidth;
+              canvas.height = newHeight;
+              putImage(newWidth, newHeight, function (dst) {
+                if (nameScaleVersion == "bilinear") {
+                    //Bilinear scaling
+                    function interpolate(a, b, c, d, width, height) {
+                    return a * (1 - width) * (1 - height)
+                        + b * width * (1 - height)
+                        + c * (1 - width) * height
+                        + d * width * height;
+                    }
+                    const xMax = (width - 1);
+                    const yMax = (height - 1);
+                    const dx = (xMax + 0.5) / newWidth;
+                    const dy = (yMax + 0.5) / newHeight;
+                    let dstOffset = 0;
+                    for (let i = 0; i < newHeight; i++) {
+                      for (let j = 0; j < newWidth; j++) {
+                        const x = (dx * j) >> 0;
+                        const y = (dy * i) >> 0;
+                        const xDiff = (dx * j) - x;
+                        const yDiff = (dy * i) - y;
+                        const index = y * width + x;
+                        // a b
+                        // c d
+                        const a = src[index];
+                        const b = (x >= xMax) ? a : src[index + 1];
+                        const c = (y >= yMax) ? a : src[index + width];
+                        const d = (y >= yMax) ? b
+                            : ((x >= xMax) ? c : (src[index + width + 1]))
+                        const red = interpolate(
+                            a & 0xff, b & 0xff,
+                            c & 0xff, d & 0xff,
+                            xDiff, yDiff) >> 0;
+                        const green = interpolate(
+                            (a >> 8) & 0xff, (b >> 8) & 0xff,
+                            (c >> 8) & 0xff, (d >> 8) & 0xff,
+                            xDiff, yDiff) >> 0;
+                        const blue = interpolate(
+                            (a >> 16) & 0xff, (b >> 16) & 0xff,
+                            (c >> 16) & 0xff, (d >> 16) & 0xff,
+                            xDiff, yDiff) >> 0;
+                        const alpha = interpolate(
+                            (a >> 24) & 0xff, (b >> 24) & 0xff,
+                            (c >> 24) & 0xff, (d >> 24) & 0xff,
+                            xDiff, yDiff) >> 0
+                        dst[dstOffset++] = (alpha << 24) | (blue << 16) | (green << 8) | red;
+                      }
+                    } 
+              }else if(nameScaleVersion == "lanczos") {
+                    //Lanczos scaling
+                    let filterSize = 1;//меняется 1,2,3
+                    function lanczos(size, x) {
+                      if (x >= size || x <= -size) return 0;
+                      if (x === 0) return 1;
+                      const xpi = x * Math.PI;
+                      return size * Math.sin(xpi) * Math.sin(xpi / size) / (xpi * xpi);
+                    }
+                    function createCache(cachePrecision, filterSize) {
+                    const cache = {};
+                    const max = filterSize * filterSize * cachePrecision;
+                    const iPrecision = 1.0 / cachePrecision;
+                    for (let cacheKey = 0; cacheKey < max; cacheKey++) {
+                      const value = lanczos(filterSize, Math.sqrt(cacheKey * iPrecision));
+                      cache[cacheKey] = value < 0 ? 0 : value;
+                    }
+                     return cache;
+                    };
+                    const values = [];
+                    const sx = newWidth / width;
+                    const sy = newHeight / height;
+                    const xMax = width - 1;
+                    const yMax = height - 1;
+                    const csx = Math.min(1, sx) * Math.min(1, sx);
+                    const csy = Math.min(1, sy) * Math.min(1, sy);
+                    const cachePrecision = 1000;
+                    const cache = createCache(cachePrecision, filterSize);
+                    let x1et, y1et;
+                    let y = newHeight;
+                    while (y--) {
+                      const sourcePixelY = (y + 0.5) * (1.0 / sy);
+                      let y1b = sourcePixelY - filterSize;
+                      if (y1b < 0) y1b = 0;
+                      let y1e = y1et = sourcePixelY + filterSize;
+                      if (y1e != y1et) y1e = y1et + 1;
+                      if (y1e > yMax) y1e = yMax;
+                      const cy = y * (1.0 / newHeight) - sourcePixelY;
+                      const y3 = y * newWidth;
+                      let x = newWidth;
+                      while (x--) {
+                        const sourcePixelX = (x + 0.5) * (1.0 / sx);
+                        let x1b = sourcePixelX - filterSize;
+                        if (x1b < 0) x1b = 0;
+                        let x1e = x1et = sourcePixelX + filterSize;
+                        if (x1e != x1et) x1e = x1et + 1;
+                        if (x1e > xMax) x1e = xMax;
+                        const cx = x * (1.0 / newWidth) - sourcePixelX;
+                        ///
+                        let total = 0;
+                        let i = 0;
+                        for (let y1 = y1b >> 0; y1 <= y1e; y1++) {
+                          const distanceY = (y1 + cy) * (y1 + cy) * csy;
+                          for (let x1 = x1b >> 0; x1 <= x1e; x1++) {
+                            total += values[i++] = cache[(((x1 + cx) * (x1 + cx) * csx + distanceY) * cachePrecision) >> 0] || 0;
+                          }
+                        }
+                        total = 1.0 / total;
+                        ///
+                        let a = 0;
+                        let r = 0;
+                        let g = 0;
+                        let b = 0;
+                        i = 0;
+                        for (let y1 = y1b >> 0; y1 <= y1e; y1++) {
+                          const y2 = y1 * width;
+                          for (let x1 = x1b >> 0; x1 <= x1e; x1++) {
+                            const value = values[i++] * total;
+                            const pix = src[((y2 + x1) >> 0)];
+                            r += (pix & 0xFF) * value;
+                            g += ((pix >> 8) & 0xFF) * value;
+                            b += ((pix >> 16) & 0xFF) * value;
+                            a += (((pix >> 24) & 0xFF)) * value;
+                          }
+                        }
+                        dst[((x + y3) >> 0)] = (a << 24) | (b << 16) | (g << 8) | r;
+                      }
+                    } 
+                }else{
+                      //Nearest neighbor scaling
+                      const dx = width / newWidth;
+                        const dy = height / newHeight;
+                        for (let y = 0; y < newHeight; y++) {
+                          let srcY = (y * dy) >> 0;
+                          for (let x = 0; x < newWidth; x++) {
+                            let srcX = (x * dx) >> 0;
+                            dst[y * newWidth + x] = src[srcY * width + srcX];
+                          }
+                      }
+                }
+                
+              })
+            }
+     
+          
 }
 
-/*Гистограмма*/
+//Гистограмма
 function histogram(dst) {
-  //переключаем отображения гистограммы
-  const isValueHistogram = document.getElementById('typeValue').checked;   
+    //переключаем отображения гистограммы
+    const isValueHistogram = document.getElementById('typeValue').checked; 
     let histBrightness = (new Array(256)).fill(0);
     let histR = (new Array(256)).fill(0);
     let histG = (new Array(256)).fill(0);
@@ -664,93 +793,271 @@ function histogram(dst) {
       ctx.lineTo(x, canvas.height);
       ctx.closePath();
       ctx.stroke(); 
-    }
+    }  
 }
-
-
-//переключатель для гистограммы ч-б/цветное
-let switchHistogram = document.getElementsByName("rType");
-for (let i = 0; i < switchHistogram.length; i++) { 
-  switchHistogram[i].addEventListener('change',()=>{  
-    update(switchHistogram[i]);  
-  });
-}
-
-/*Выводим картнку + копируем информацию о картинке*/
-function getImageData() {
-  //Создаем поле для Canvas           
-  const canvas = document.getElementById("canvasEdihion");
-  const ctx = canvas.getContext("2d");    
+ 
+//Собираем информацию с Canvas
+ function getImage() {
   canvas.width = img.width;
   canvas.height = img.height;
-  //выводим конвас
   ctx.drawImage(img, 0, 0);
   //Передаем информацию в функцию для редоктирования картинки    
-  return ctx.getImageData(0, 0, img.width, img.height);  
+  return ctx.getImageData(0, 0, canvas.width, canvas.height);      
+}
+//Собираем информацию с Canvas после внесения изменений
+function getImageSave() {
+    //Передаем информацию в функцию для редоктирования картинки
+    return ctx.getImageData(0, 0, canvas.width, canvas.height);    
+}
+//Записываем информацию на Canvas
+function putImage(width, height, func) {
+    const outImagen = ctx.createImageData(width, height);
+    const dst = new Uint32Array(outImagen.data.buffer);
+    func(dst);
+    //Очишаем холст
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //выводим измения 
+    ctx.putImageData(outImagen, 0,0); 
 }
 
-/*Вносим изменения в canvas*/
-function updateCanvasPixel(width, height, func) {
-  const canvas = document.getElementById("canvasEdihion");
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext("2d");
-  const outImagen = ctx.createImageData(width,height);
-  const dst = new Uint32Array(outImagen.data.buffer);
-  func(dst);
-  ctx.putImageData(outImagen, 0,0);
-}
-
-/*Оброботчик canvas*/
-function update() {
-    //Старт
-    editCanvas(getImageData());
-
-    //Параметры для изменения editFotoPixels 
-    document.getElementById("editFotoPixels").addEventListener("input", clickActions, false);
-    //Параметры для врашения editFotoMethods 
-    document.getElementById("radioBlock").addEventListener("click", clickActions, false);
-    //Параметры для Effect 
-    document.getElementById("effect").addEventListener("click", clickActions, false);
-    function clickActions(e) {
-      if (e.target != e.currentTarget) {
-        let clickItem  = e.target.id,
-            clickValue  = e.target.value;
-            editCanvas(getImageData(), clickItem, clickValue);
-            //Добовляем маркер изменения картинки - имя файла
-            document.getElementById("canvasEdihion").className = img.src.match(/([^/]+)\.[^\.]+$/)[0];
-      }  
+  //Собирем переменные для редоктирования картинки
+  //Действия при нажатии 
+  let tablinks = document.getElementById("editFoto");
+  for (let i = 0; i < tablinks.children.length; i++) {
+    let childrenElement = tablinks.children[i];
+    childrenElement.addEventListener("click", clickActions);
+    childrenElement.addEventListener("input", clickActionsSave,true);
+  }
+  //Функция для прослушивания событий для сбора информации
+  function clickActions(e) {
+    //Получите все элементы с class="links" и удалите "активный" класс
+    //editColor
+    for (let i = 0; i < editColor.children.length; i++) {
+      if (editColor.children[i].className) {
+        editColor.children[i].className = editColor.children[i].className.replace(" active", "")
+      }
     }
-
-    //отображение размера в поле изменения размера
-    let numWidth = document.getElementById("numWidth"),
-        numHeight = document.getElementById("numHeight"),
-        scaleVersion = document.getElementById("scaleVersion");
-        numWidth.value = img.width;
-        numHeight.value = img.height;
-}
-
-/*Reset*/
-let resetPages = document.getElementById("resetEdit");
-  resetPages.addEventListener('click',function (){   
-    let inputSize = document.getElementsByName("range"),
-    inputNumber = document.getElementsByName("number"),
-    inputRangeScale = document.getElementsByName("rangeScale"),
-    inputRangeCd = document.getElementsByName("cd"),
-    divEffects = document.getElementsByClassName("effects");     
-    for (let i = 0; i <= inputSize.length; i++) 
-    { 
-      if(inputSize[i].value !== 0 || inputNumber[i].innerText !== 0 && inputRangeScale[i].value !== 0){
-        //main+effect
-        inputSize[i].value = 0;
-        inputNumber[i].innerText = 0;
-        //scale
-        inputRangeScale[0].value = document.getElementById("canvasEdihion").width;
-        inputRangeScale[1].value = document.getElementById("canvasEdihion").height; 
+    //resize
+    resize.className = resize.className.replace(" active", "");
+    //rotate
+    rotate.className = rotate.className.replace(" active", "");
+    //effect
+    for (let i = 0; i < effect.children.length; i++) {
+      if (effect.children[i].className == "links active") {
+        effect.children[i].className = effect.children[i].className.replace(" active", "")
+      }
+    }
+      //Добавить класс «активный» к кнопке, которая открыла вкладку        
+      if (document.getElementById(e.target.name) !== null)
+      {
+        document.getElementById(e.target.name).className += " active";
       }
       
-      document.getElementById("cbProportions").checked =true;
-      document.getElementById("scaleVersion")[0].selected = true;
+      //Выводим информацию по input
+      //editColor    
+      if (e.target.id == "rangeContrast") {
+          document.getElementById("valueContrast").innerText = e.target.value;
+        }
+      if (e.target.id == "rangeBrightness") {
+          document.getElementById("valueBrightness").innerText = e.target.value;
+        }
+      if (e.target.id == "rangeSaturation") {
+          document.getElementById("valueSaturation").innerText = e.target.value;
+        }
+      if (e.target.id == "rangeContrast") {
+          document.getElementById("valueContrast").innerText = e.target.value;
+        }
+      if (e.target.id == "rangeSharp") {
+          document.getElementById("valueSharp").innerText = e.target.value;
+        } 
+      //rotate  
+      if ( document.getElementById("arbitrary").checked || e.target.id == "degrees") {
+        document.getElementById("degrees").disabled = false;
+      }else{
+        document.getElementById("degrees").disabled = true;
+      }
+      //resize
+      if (numHeight.className =="closet") {numHeight.value = Math.round(img.height * numWidth.value / img.width);}  
+      //effect 
+      //rgbCor
+      if (e.target.id == "rangeR") {
+        document.getElementById("valueR").innerText = e.target.value;
+      }
+      if (e.target.id == "rangeG") {
+        document.getElementById("valueG").innerText = e.target.value;
+      }
+      if (e.target.id == "rangeB") {
+        document.getElementById("valueB").innerText = e.target.value;
+      }
+      //hslCor
+      if (e.target.id == "rangeH") {
+        document.getElementById("valueH").innerText = e.target.value;
+      }
+      if (e.target.id == "rangeS") {
+        document.getElementById("valueS").innerText = e.target.value;
+      }
+      if (e.target.id == "rangeL") {
+        document.getElementById("valueL").innerText = e.target.value;
+      }
+      //gammaCor 
+      if (e.target.id == "rangeGamma") {
+        document.getElementById("valueGamma").innerText = e.target.value;
+      }
+      //blur1 
+      if (e.target.id == "rangeSize") {
+        document.getElementById("valueSize").innerText = e.target.value;
+      }
+      //blur2
+      if (e.target.id == "rangeHRadius") {
+        document.getElementById("valueHRadius").innerText = e.target.value;
+      }
+      if (e.target.id == "rangeVRadius") {
+        document.getElementById("valueVRadius").innerText = e.target.value;
+      }
+      //Добавляем маркер для определения перехода между типами input
+      if (e.target.id == "resize" || e.target.id =="rotate" || e.currentTarget.id =="editColor") {
+         canvas.setAttribute('class', e.target.id);  
+      } else {
+        canvas.setAttribute('class', e.target.name);
+      }
+      
+    }
+   
+  //Функция событий, алгоритм выполнения после изменений
+  function clickActionsSave() {
+      for (let i = 0; i < tablinks.children.length; i++) {
+          let rozdil = tablinks.children[i];
+          if (rozdil.id == "editColor") {
+            let podrozdil = rozdil.children;
+            for (let i = 0; i < podrozdil.length; i++) {
+              if (podrozdil[i].id) {
+                clicks[podrozdil[i].getElementsByTagName('input')[0].id] = podrozdil[i].getElementsByTagName('input')[0].value;
+              }
+            }
+          }     
+          if (rozdil.id == "resize") {
+            let podrozdil = rozdil.children[1]; 
+            for (let i = 0; i < podrozdil.children.length; i++) {
+              clicks[podrozdil.children[0].id] = podrozdil.children[0].value;
+              clicks[podrozdil.children[1].id] =  String(Math.round(img.height * numWidth.value / img.width));
+            }
+          } 
+          if (rozdil.id == "rotate") {
+            let podrozdil = rozdil.children[1];
+            for (let i = 0; i < podrozdil.children.length+1; i++) {
+              if (podrozdil.getElementsByTagName('input')[i].checked) {
+                clicks[podrozdil.getElementsByTagName('input')[i].name] = podrozdil.getElementsByTagName('input')[i].value;
+              }
+              if (podrozdil.getElementsByTagName('input')[i].id == "degrees") {
+                clicks.degrees = podrozdil.getElementsByTagName('input')[i].value;
+              }
+            }  
+          }
+          if (rozdil.id == "effect") {
+            let podrozdil = rozdil.children;
+            for (let i = 0; i < podrozdil.length; i++) {
+                if (podrozdil[i].id) {
+                      if (podrozdil[i].id == "rgbCor") {
+                        clicks[podrozdil[i].getElementsByTagName('input')[0].id] = podrozdil[i].getElementsByTagName('input')[0].value;
+                        clicks[podrozdil[i].getElementsByTagName('input')[1].id] = podrozdil[i].getElementsByTagName('input')[1].value;
+                        clicks[podrozdil[i].getElementsByTagName('input')[2].id] = podrozdil[i].getElementsByTagName('input')[2].value;
+                      }
+                      if (podrozdil[i].id == "hslCor") {
+                        clicks[podrozdil[i].getElementsByTagName('input')[0].id] = podrozdil[i].getElementsByTagName('input')[0].value;
+                        clicks[podrozdil[i].getElementsByTagName('input')[1].id] = podrozdil[i].getElementsByTagName('input')[1].value;
+                        clicks[podrozdil[i].getElementsByTagName('input')[2].id] = podrozdil[i].getElementsByTagName('input')[2].value;
+                      }
+                      if (podrozdil[i].id == "gammaCor") {
+                        clicks[podrozdil[i].getElementsByTagName('input')[0].id] = podrozdil[i].getElementsByTagName('input')[0].value;
+                      }
+                      if (podrozdil[i].id == "blur1") {
+                        clicks[podrozdil[i].getElementsByTagName('input')[0].id] = podrozdil[i].getElementsByTagName('input')[0].value;
+                      }
+                      if (podrozdil[i].id == "blur2") {
+                        clicks[podrozdil[i].getElementsByTagName('input')[0].id] = podrozdil[i].getElementsByTagName('input')[0].value;
+                        clicks[podrozdil[i].getElementsByTagName('input')[1].id] = podrozdil[i].getElementsByTagName('input')[1].value;
+                      }
+                }
+            }       
+          }
+
+        } 
+console.log(clicks);
+        for (let index in clicks) {
+          let clickItem = index, 
+              clickValue = clicks[index];
+              if (clickItem == "rangeContrast") {
+                editPicter(getImage(), clickItem, clickValue); 
+              }
+              if (clickItem == "rangeBrightness") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if (clickItem == "rangeSaturation") {
+                editPicter(getImageSave(), clickItem, clickValue);
+              }
+              if (clickItem == "rangeSharp") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if(clickItem == "rotate") {
+                editPicter(getImageSave(), clickValue, clickValue); 
+              }
+              if(clickItem == "degrees") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if(clickItem == "numWidth") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if(clickItem == "numHeight") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              
+        } 
+    }  
+    
+//++++++++++++++++++++++++++++++++++++++++++
+/*console.log(document.querySelectorAll("[type='range']"));
+console.log(document.querySelectorAll("[type='number']"));
+console.log(document.querySelectorAll("[type='radio']"));
+console.log(document.querySelectorAll("[type='checkbox']"));
+console.log(document.getElementsByTagName('input'));
+console.log(document.querySelectorAll('.links'));
+console.log(document.querySelectorAll(".histogram > label")[0].children);*/
+//Reset
+let resetPages = document.
+getElementById("resetEdit");
+  resetPages.addEventListener('click',function (){   
+    let inputSizeColor = editColor.getElementsByTagName('input'),
+    inputNumberColor = document.getElementsByName("numberColor"), 
+    inputSizeEffect = document.getElementsByName("rangeEffect"),
+    inputNumberEffect = document.getElementsByName("numberEffect"),
+    inputRangeScale = document.getElementsByName("resize"),
+    inputRotation = rotate.getElementsByTagName("input"),
+    inputRangeCd = document.getElementsByName("cd"),
+    divEffects = document.getElementsByName("effects"); 
+    //Color+scale
+    for (let i = 0; i <= inputSizeColor.length; i++) 
+    {
+      if(inputSizeColor[i]  || inputNumberColor[i]  && inputRangeScale[i] ){
+        //main
+        inputSizeColor[i].value = 0;
+        inputNumberColor[i].innerText = 0;
+
+      }
+    }  
+    //effect
+    for (let i = 0; i <= inputSizeEffect.length; i++) 
+    {   
+      if(inputSizeEffect[i] || inputNumberEffect[i]){
+        //effect
+        inputSizeEffect[i].value = 0;
+        inputNumberEffect[i].innerText = 0;
+      }
+    }  
+      //scale
+      numWidth.value = img.width;
+      numHeight.value = img.height; 
+      checked.checked =true;
+      scaleVersion[0].selected = true;
 
       //rotations
       document.getElementsByName("rotate")[0].checked = true;
@@ -767,16 +1074,12 @@ let resetPages = document.getElementById("resetEdit");
         divEffects[i].style = "display:none";
       }
       for (let i = 0; i < acc.length; i++) {
-        acc[i].className = "accordion";
-        
+        acc[i].className = "accordion"; 
       }
-
-
       //удаляем метку для сохранения картинки
       document.getElementById("canvasEdihion").removeAttribute("class");
-
-      editCanvas(getImageData());
-    } 
+      //Передаем информацию о картинке
+      initImg();
   })
 
 </script>
