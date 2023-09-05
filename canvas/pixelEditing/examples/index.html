@@ -158,7 +158,7 @@
     <div class="effect" id="effect">
       <button type="button" class="accordion" name="negative">Negative effect</button>
       <div class="links" id="negative" name="effects">
-        <label><input type="checkbox" checked id="cbRed" name="cd">Red</label>
+        <label><input type="checkbox" id="cbRed" name="cd">Red</label>
         <label><input type="checkbox" id="cbGreen" name="cd">Green</label>
         <label><input type="checkbox" id="cbBlue" name="cd">Blue</label>
         <label><input type="checkbox" id="cbAlpha" name="cd">Alpha</label>
@@ -220,7 +220,7 @@
       <button type="button" class="accordion" name="blur1">Blur</button>
       <div class="links" id="blur1" name="effects">
     <label>
-      <input id="rangeSize" type="range" min="0" max="3" value="1" name="rangeEffect"/>
+      <input id="rangeSize" type="range" min="0" max="3" value="0" name="rangeEffect"/>
       <span id="valueSize" name="numberEffect">0</span>
     </label>
       </div>    
@@ -229,19 +229,19 @@
       <div class="links" id="blur2" name="effects">
     <label> 
       <span>H</span>: 
-      <input id="rangeHRadius" type="range" min="0" max="25" value="1" name="rangeEffect"/>
-      <span id="valueHRadius" name="numberEffect">0</span>
+      <input id="rangeHRadius" type="range" min="0" max="25" value="0" name="rangeEffect"/>
+      <span id="valueHRadius" name="numberEffect">00</span>
     </label>
     <br>
     <label>
       <span>V</span>:
-      <input id="rangeVRadius" type="range" min="0" max="25" value="1" name="rangeEffect"/>
-      <span id="valueVRadius" name="numberEffect">0</span>
+      <input id="rangeVRadius" type="range" min="0" max="25" value="0" name="rangeEffect"/>
+      <span id="valueVRadius" name="numberEffect">00</span>
     </label>
     <br>
     <label>
       <input id="cbLink" type="checkbox" name="cd"/>
-      Link
+      Link two
     </label>
       </div>
 
@@ -277,6 +277,16 @@ checked.addEventListener('click',function(){
           numHeight.disabled = false;           
         } 
    })
+//Переключатель 
+//Неготив
+let cbRed = document.getElementById("cbRed");
+let cbGreen = document.getElementById("cbGreen");
+let cbBlue = document.getElementById("cbBlue");
+let cbAlpha = document.getElementById("cbAlpha");
+//Blur H/V   
+let cbLink = document.getElementById("cbLink");
+
+
 //Обьект с изменениями
 let clicks = {};   
 //Действия после загрузки картинки
@@ -289,7 +299,14 @@ function initImg() {
     numHeight.value = img.height;
     histogram(new Uint32Array(getImage().data.buffer));
 }
-
+//переключатель для гистограммы ч-б/цветное
+let switchHistogram = document.getElementsByName("rType");
+for (let i = 0; i < switchHistogram.length; i++) { 
+  switchHistogram[i].addEventListener('change',()=>{  
+    clickActionsSave();
+  });
+}
+            
 //Effects анимация accordion
 let acc = document.getElementsByClassName("accordion");
   for (let i = 0; i < acc.length; i++) {
@@ -319,6 +336,16 @@ function editPicter(inCanvas, clickItem, clickValue) {
         if (numHeight.className =="closet") {numHeight.value = Math.round(img.height * numWidth.value / img.width);}
         let newHeight = numHeight.value; 
         let angle;
+        let deltaR = 0;
+        let deltaG = 0;
+        let deltaB = 0;
+        let deltaH = 0;
+        let deltaS = 0;
+        let deltaL = 0;
+        let gamma = 100; 
+        let size = 0;
+        let hRadius = 0;
+        let vRadius = 0;
         //Определяем тип обработки Resize          
         scaleVersion.addEventListener("change", function () {nameScaleVersion = scaleVersion.value;});
         if (clickItem == "rangeContrast") {contrast = parseInt(clickValue)/255;}
@@ -328,8 +355,43 @@ function editPicter(inCanvas, clickItem, clickValue) {
           maxSaturation = (clickValue < 0) ? 255 :128;
         }
         else if(clickItem == "rangeSharp"){mix = (clickValue)*0.01;}     
-        else if(clickItem == "degrees"){angle = Number(clickValue);}     
-            
+        else if(clickItem == "degrees"){angle = Number(clickValue);} 
+        //rgbCor
+        else if(clickItem == "rangeR"){
+          deltaR = parseInt(clickValue);
+        }
+        else if(clickItem == "rangeG"){
+          deltaG = parseInt(clickValue);
+        }  
+        else if(clickItem == "rangeB"){
+          deltaB = parseInt(clickValue);
+        }
+        //hslCor
+        else if(clickItem == "rangeH"){
+          deltaH = parseInt(clickValue)/ 180.0;
+        }
+        else if(clickItem == "rangeS"){
+          deltaS = parseInt(clickValue)/ 180.0;
+        }  
+        else if(clickItem == "rangeL"){
+          deltaL = parseInt(clickValue)/ 180.0;
+        } 
+        //gammaCor       
+        else if(clickItem == "rangeGamma"){
+          gamma = parseInt(clickValue);
+        }
+        //blur1
+        else if(clickItem == "rangeSize"){
+          size = parseInt(clickValue);
+        }
+        //blur2
+        else if(clickItem == "rangeHRadius"){
+           hRadius = parseInt(clickValue);
+        }
+        else if(clickItem == "rangeVRadius"){
+          vRadius = parseInt(clickValue);
+        }
+
             //Contrast
             if (clickItem == "rangeContrast" ) {
                 putImage(width, height, function (dst) {
@@ -555,7 +617,6 @@ function editPicter(inCanvas, clickItem, clickValue) {
                     }
                 })      
             }
-            //Rotate flip    
             //Resize
             if (clickItem == "numWidth" || clickItem == "numHeight") {
               canvas.width = newWidth;
@@ -700,8 +761,231 @@ function editPicter(inCanvas, clickItem, clickValue) {
                 
               })
             }
-     
-          
+            //negative
+            if (clickItem == "negative") {
+              
+            }
+            //discoloration
+            if (clickItem == "discoloration") {
+              
+            }
+            //rgbCor
+            if (clickItem == "rangeR" || clickItem == "rangeG" || clickItem == "rangeB") {
+              putImage(width, height, function (dst) {
+                for (let i = 0; i < dst.length; i++) {
+                  let r = src[i] & 0xFF;
+                  let g = (src[i] >> 8) & 0xFF;
+                  let b = (src[i] >> 16) & 0xFF;
+
+                  r += deltaR;
+                  g += deltaG;
+                  b += deltaB;
+                  if (r > 255) r = 255;
+                  else if (r < 0) r = 0;
+                  if (g > 255) g = 255;
+                  else if (g < 0) g = 0;
+                  if (b > 255) b = 255;
+                  else if (b < 0) b = 0;
+
+                  dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
+                }
+                histogram(dst); 
+              })
+            }
+            //hslCor
+            if (clickItem == "rangeH" || clickItem == "rangeS" || clickItem == "rangeL") {
+              putImage(width, height, function (dst) {
+                  for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+
+                    // RGB to HSL
+                    let hsl = rgbToHsl(r / 255, g / 255, b / 255);
+                    let h = hsl[0];
+                    let s = hsl[1]
+                    let l = hsl[2];
+
+                    h += deltaH;
+                    s += deltaS;
+                    l += deltaL;
+                    if (h > 1) h -= 1;
+                    else if (h < 0) h += 1;
+                    if (s > 1) s = 1;
+                    else if (s < 0) s = 0;
+                    if (l > 1) l = 1;
+                    else if (l < 0) l = 0;
+
+                    // HSL to RGB
+                    let rgb = hslToRgb(h, s, l);
+                    r = rgb[0] * 255;
+                    g = rgb[1] * 255;
+                    b = rgb[2] * 255;
+
+                    dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
+                  }
+                  histogram(dst);
+              })
+              function rgbToHsl(r, g, b) {
+                let max = Math.max(r, g, b);
+                let min = Math.min(r, g, b);
+                let l = (max + min) / 2;              
+
+                if (max == min) {
+                  return [0, 0, l];
+                }
+                let h, s;
+                let d = max - min;
+                if (l > 0.5) {
+                  s = d / (2 - max - min);
+                } else {
+                  s = d / (max + min);
+                }
+                switch (max) {
+                  case r:
+                    h = (g - b) / d + (g < b ? 6 : 0);
+                    break;
+                  case g:
+                    h = (b - r) / d + 2;
+                    break;
+                  case b:
+                    h = (r - g) / d + 4;
+                    break;
+                }
+                h /= 6;
+                return [h, s, l];
+              }             
+              function hue2rgb(p, q, t) {
+                if (t < 0) t += 1;
+                else if (t > 1) t -= 1;
+                if (t < 1/6) return p + (q - p) * 6 * t;
+                if (t < 1/2) return q;
+                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+              }
+              function hslToRgb(h, s, l) {
+                if (s == 0) {
+                  return [l, l, l];
+                }
+                let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                let p = 2 * l - q;              
+
+                let r = hue2rgb(p, q, h + 1/3);
+                let g = hue2rgb(p, q, h);
+                let b = hue2rgb(p, q, h - 1/3);
+                return [r, g, b];
+              }
+            }
+            //gammaCor
+            if (clickItem == "rangeGamma") {
+              let level =  1.0 / (gamma / 100.0);
+              let pow = [];
+              putImage(width, height, function (dst) {
+                for (let i = 0; i < 256; i++) {
+                 let value = (255 * Math.pow(i / 255.0, level) + 0.5);
+                 if (value > 255) value = 255;
+                 else if (value < 0) value = 0;
+                 else value = Math.floor(value);
+                 pow.push(value);
+               }
+
+               for (let i = 0; i < dst.length; i++) {
+                 let r = src[i] & 0xFF;
+                 let g = (src[i] >> 8) & 0xFF;
+                 let b = (src[i] >> 16) & 0xFF;
+
+                 r = pow[r];
+                 g = pow[g];
+                 b = pow[b];
+
+                 dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
+               }
+               histogram(dst);
+              })
+            }
+            //blur1
+            if (clickItem == "rangeSize") {
+              let dstIndex = 0;
+              putImage(width, height, function (dst) {
+              for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                  let a = 0, r = 0, g = 0, b = 0, count = 0;
+                  for (let sy = y - size; sy <= y + size; sy++) {
+                    const yy = Math.min(height - 1, Math.max(0, sy));
+                    for (let sx = x - size; sx <= x + size; sx++) {
+                      const xx = Math.min(width - 1, Math.max(0, sx));
+                      let pix = src[yy * width + xx];
+                      r += pix & 0xFF;
+                      g += (pix >> 8) & 0xFF;
+                      b += (pix >> 16) & 0xFF;
+                      a += (pix >> 24) & 0xFF;
+                      count++;
+                    }
+                  }
+
+                  a = (a / count) & 0xFF;
+                  r = (r / count) & 0xFF;
+                  g = (g / count) & 0xFF;
+                  b = (b / count) & 0xFF;
+
+                  dst[dstIndex++] = (a << 24) | (b << 16) | (g << 8) | r;
+                }
+              }
+            })
+            }
+            //blur2
+            if (clickItem == "rangeHRadius" || clickItem == "rangeVRadius") {
+              function boxBlur(src, dst, width, height, radius) {
+                      let tableSize = 2 * radius + 1;
+                      let tableLength = 256 * tableSize;
+                      let divTable = new Array(tableLength).fill(0);
+                      for (let i = 0; i < tableLength; i++) {
+                        divTable[i] = (i / tableSize) >> 0;
+                      }
+
+                      let widthMax = width - 1;
+                      let inIndex = 0;
+                      for (let y = 0; y < height; y++) {
+                        const index = y * width;
+                        let a = 0, r = 0, g = 0, b = 0;
+                        for (let i = -radius; i <= radius; i++) {
+                          let pix = src[inIndex + Math.max(0, Math.min(i, widthMax))];
+                          r += pix & 0xFF;
+                          g += (pix >> 8) & 0xFF;
+                          b += (pix >> 16) & 0xFF;
+                          a += (pix >> 24) & 0xFF;
+                        }
+
+                        let outIndex = y;
+                        for (let x = 0; x < width; x++) {
+                          dst[outIndex] = (divTable[a] << 24) | (divTable[b] << 16) | (divTable[g] << 8) | divTable[r];
+
+                          let pos1 = x + radius + 1;
+                          if (pos1 > widthMax) pos1 = widthMax;
+                          let pix1 = src[inIndex + pos1];
+
+                          let pos2 = x - radius;
+                          if (pos2 < 0) pos2 = 0;
+                          let pix2 = src[inIndex + pos2];
+
+                          r += ((pix1 & 0x000000FF) - (pix2 & 0x000000FF));
+                          g += ((pix1 & 0x0000FF00) - (pix2 & 0x0000FF00)) >> 8;
+                          b += ((pix1 & 0x00FF0000) - (pix2 & 0x00FF0000)) >> 16;
+                          a += ((pix1 & 0xFF000000) - (pix2 & 0xFF000000)) >> 24;
+                          outIndex += height;
+                        }
+                        inIndex += width;
+                      }
+                      return dst;
+                    }
+              putImage(width, height, function (dst) {
+                let tmp = new Uint32Array(width * height);
+                // horizontal
+                boxBlur(src, tmp, width, height, hRadius);
+                // vertical
+                boxBlur(tmp, dst, height, width, vRadius);
+              })
+            }
 }
 
 //Гистограмма
@@ -908,13 +1192,28 @@ function putImage(width, height, func) {
         document.getElementById("valueSize").innerText = e.target.value;
       }
       //blur2
-      if (e.target.id == "rangeHRadius") {
-        document.getElementById("valueHRadius").innerText = e.target.value;
+      //Добавляем ноль
+      //Переключатель Blur H/V c одного на два
+      function format(v) {
+        return (v >= 0 && v < 10) ? ('0' + v) : v;
       }
-      if (e.target.id == "rangeVRadius") {
-        document.getElementById("valueVRadius").innerText = e.target.value;
+      if (cbLink.checked) {
+          document.getElementById("rangeVRadius").value = document.getElementById("rangeHRadius").value;
+          document.getElementById("rangeVRadius").disabled = true;
+          document.getElementById("valueHRadius").innerText = format(document.getElementById("rangeHRadius").value);
+          document.getElementById("valueVRadius").innerText = format(document.getElementById("rangeHRadius").value);
+      } else {
+          document.getElementById("rangeVRadius").disabled = false;
+          if (e.target.id == "rangeHRadius") {
+          document.getElementById("valueHRadius").innerText = format(e.target.value);
+          }
+          if (e.target.id == "rangeVRadius") {
+            document.getElementById("valueVRadius").innerText = format(e.target.value);
+          }
       }
-      //Добавляем маркер для определения перехода между типами input
+      
+
+      //Добавляем маркер для определения перехода между типами input на CANVAS
       if (e.target.id == "resize" || e.target.id =="rotate" || e.currentTarget.id =="editColor") {
          canvas.setAttribute('class', e.target.id);  
       } else {
@@ -974,8 +1273,13 @@ function putImage(width, height, func) {
                         clicks[podrozdil[i].getElementsByTagName('input')[0].id] = podrozdil[i].getElementsByTagName('input')[0].value;
                       }
                       if (podrozdil[i].id == "blur2") {
-                        clicks[podrozdil[i].getElementsByTagName('input')[0].id] = podrozdil[i].getElementsByTagName('input')[0].value;
-                        clicks[podrozdil[i].getElementsByTagName('input')[1].id] = podrozdil[i].getElementsByTagName('input')[1].value;
+                        if (cbLink.checked) {
+                          clicks[podrozdil[i].getElementsByTagName('input')[0].id] = podrozdil[i].getElementsByTagName('input')[0].value;
+                          clicks[podrozdil[i].getElementsByTagName('input')[1].id] = podrozdil[i].getElementsByTagName('input')[0].value;
+                        } else {
+                          clicks[podrozdil[i].getElementsByTagName('input')[0].id] = podrozdil[i].getElementsByTagName('input')[0].value;
+                          clicks[podrozdil[i].getElementsByTagName('input')[1].id] = podrozdil[i].getElementsByTagName('input')[1].value;
+                        }
                       }
                 }
             }       
@@ -1010,6 +1314,22 @@ console.log(clicks);
               if(clickItem == "numHeight") {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
+              if (clickItem == "rangeR" || clickItem == "rangeG" || clickItem == "rangeB" ) {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if (clickItem == "rangeH" || clickItem == "rangeS" || clickItem == "rangeL" ) {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if (clickItem == "rangeGamma") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if (clickItem == "rangeSize") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if (clickItem == "rangeHRadius" || clickItem == "rangeVRadius") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+ 
               
         } 
     }  
@@ -1049,8 +1369,13 @@ getElementById("resetEdit");
     {   
       if(inputSizeEffect[i] || inputNumberEffect[i]){
         //effect
-        inputSizeEffect[i].value = 0;
-        inputNumberEffect[i].innerText = 0;
+        if (inputSizeEffect[i].id == "rangeGamma") {
+          inputSizeEffect[i].value = 100;
+          inputNumberEffect[i].innerText = 100;
+        } else {
+          inputSizeEffect[i].value = 0;
+          inputNumberEffect[i].innerText = 0;
+        }
       }
     }  
       //scale
@@ -1064,12 +1389,11 @@ getElementById("resetEdit");
       inputRotation[6].setAttribute("disabled","");
       inputRotation[6].value = 0;
 
-      //effect
-      inputRangeCd[0].checked = true;
-      inputRangeCd[1].checked = false;
-      inputRangeCd[2].checked = false;
-      inputRangeCd[3].checked = false;
-      inputRangeCd[4].checked = false;
+      //effect checkbox
+      for (let i = 0; i < inputRangeCd.length; i++) {
+        inputRangeCd[i].checked = false;
+      }
+
       for (let i = 0; i < divEffects.length; i++) {
         divEffects[i].style = "display:none";
       }
