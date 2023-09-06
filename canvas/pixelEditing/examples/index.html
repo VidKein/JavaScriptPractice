@@ -14,7 +14,7 @@
     }
     #canvasEdihion{
       margin: auto;
-      background-color: gray;
+      background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"%3E%3Cg fill="%239C92AC" fill-opacity="0.4"%3E%3Cpath fill-rule="evenodd" d="M0 0h4v4H0V0zm4 4h4v4H4V4z"/%3E%3C/g%3E%3C/svg%3E');;
     }
     .histogram{
       display: flex;
@@ -164,8 +164,8 @@
         <label><input type="checkbox" id="cbAlpha" name="cd">Alpha</label>
       </div>
                                       
-      <button type="button" class="accordion" name="discoloration">Discoloration (black and white)</button>
-      <div class="links" id="discoloration" name="effects"><p>Discoloration (black and white)</p></div>    
+      <button type="button" class="accordion" name="discoloration">Discoloration</button>
+      <div class="links" id="discoloration" name="effects"><label><input type="checkbox" id="discolorationClick" name="cd">(black and white)</label></div>    
 
       <button type="button" class="accordion" name="rgbCor">RGB correction</button>
       <div class="links" id="rgbCor" name="effects">
@@ -277,15 +277,13 @@ checked.addEventListener('click',function(){
           numHeight.disabled = false;           
         } 
    })
-//Переключатель 
-//Неготив
-let cbRed = document.getElementById("cbRed");
-let cbGreen = document.getElementById("cbGreen");
-let cbBlue = document.getElementById("cbBlue");
-let cbAlpha = document.getElementById("cbAlpha");
+//Переключатели 
+//Негатив
+let negative = document.getElementById("negative");
 //Blur H/V   
 let cbLink = document.getElementById("cbLink");
-
+//discoloration
+let discolorationClick = document.getElementById("discolorationClick");
 
 //Обьект с изменениями
 let clicks = {};   
@@ -762,12 +760,34 @@ function editPicter(inCanvas, clickItem, clickValue) {
               })
             }
             //negative
-            if (clickItem == "negative") {
-              
+            if (clickItem == "cbRed" && clickValue == true || clickItem == "cbGreen" && clickValue == true || clickItem == "cbBlue" && clickValue == true || clickItem == "cbAlpha" && clickValue == true) {
+              putImage(width, height, function (dst) {
+                for (let i = 0; i < dst.length; i++) {
+                  let r = src[i] & 0xFF;
+                  let g = (src[i] >> 8) & 0xFF;
+                  let b = (src[i] >> 16) & 0xFF;
+                  let a = (src[i] >> 24) & 0xFF;
+
+                  if (clickItem == "cbRed" && clickValue == true) r = 255 - r;
+                  if (clickItem == "cbGreen" && clickValue == true) g = 255 - g;
+                  if (clickItem == "cbBlue" && clickValue == true) b = 255 - b;
+                  if (clickItem == "cbAlpha" && clickValue == true) a = 255 - a;
+
+                  dst[i] = (a << 24) | (b << 16) | (g << 8) | r;
+                }
+              });
             }
             //discoloration
-            if (clickItem == "discoloration") {
-              
+            if (clickItem == "discolorationClick" && clickValue == true ){
+              putImage(width, height, function (dst) {
+                for (let i = 0; i < dst.length; i++) {
+                    let r = src[i] & 0xFF;
+                    let g = (src[i] >> 8) & 0xFF;
+                    let b = (src[i] >> 16) & 0xFF;
+                    let gray = (r * 0.2126 + g * 0.7152 + b * 0.0722);
+                    dst[i] = (src[i] & 0xFF000000) | (gray << 16) | (gray << 8) | gray;
+                  }
+              })
             }
             //rgbCor
             if (clickItem == "rangeR" || clickItem == "rangeG" || clickItem == "rangeB") {
@@ -790,8 +810,8 @@ function editPicter(inCanvas, clickItem, clickValue) {
                   dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
                 }
                 histogram(dst); 
-              })
-            }
+              });
+            } 
             //hslCor
             if (clickItem == "rangeH" || clickItem == "rangeS" || clickItem == "rangeL") {
               putImage(width, height, function (dst) {
@@ -876,6 +896,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
                 return [r, g, b];
               }
             }
+            
             //gammaCor
             if (clickItem == "rangeGamma") {
               let level =  1.0 / (gamma / 100.0);
@@ -986,6 +1007,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
                 boxBlur(tmp, dst, height, width, vRadius);
               })
             }
+            
 }
 
 //Гистограмма
@@ -1256,6 +1278,16 @@ function putImage(width, height, func) {
             let podrozdil = rozdil.children;
             for (let i = 0; i < podrozdil.length; i++) {
                 if (podrozdil[i].id) {
+                      if (podrozdil[i].id == "negative") {
+                        let inputNegativ = negative.getElementsByTagName("input");
+                        for (let i = 0; i < inputNegativ.length; i++) {
+                          clicks[inputNegativ[i].id] = inputNegativ[i].checked;
+                        } 
+                      }
+                      if (podrozdil[i].id == "discoloration") {
+                        let inputNegativ = negative.getElementsByTagName("input");
+                          clicks[discolorationClick.id] = discolorationClick.checked;
+                      }
                       if (podrozdil[i].id == "rgbCor") {
                         clicks[podrozdil[i].getElementsByTagName('input')[0].id] = podrozdil[i].getElementsByTagName('input')[0].value;
                         clicks[podrozdil[i].getElementsByTagName('input')[1].id] = podrozdil[i].getElementsByTagName('input')[1].value;
@@ -1312,6 +1344,12 @@ console.log(clicks);
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if(clickItem == "numHeight") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if (clickItem == "cbRed" || clickItem == "cbGreen" || clickItem == "cbBlue" || clickItem == "cbAlpha" ) {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
+              if (clickItem == "discolorationClick") {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if (clickItem == "rangeR" || clickItem == "rangeG" || clickItem == "rangeB" ) {
