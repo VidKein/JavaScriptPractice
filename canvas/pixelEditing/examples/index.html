@@ -596,7 +596,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
                     canvas.width = newWidth;
                     canvas.height = newHeight;
                 putImage(newWidth, newHeight, function (dst) {
-                    //Метод ближайшего соседа(не самій лучший)
+                    //Метод ближайшего соседа(не самый лучший)
                     const centerX = newWidth / 2;
                     const centerY = newHeight / 2;
                     for (let y = 0; y < newHeight; y++) {
@@ -813,7 +813,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
               });
             } 
             //hslCor
-            if (clickItem == "rangeH" || clickItem == "rangeS" || clickItem == "rangeL") {
+            if (clickItem == "rangeH" && clickValue > 0 || clickItem == "rangeS" && clickValue > 0 || clickItem == "rangeL" && clickValue > 0) {
               putImage(width, height, function (dst) {
                   for (let i = 0; i < dst.length; i++) {
                     let r = src[i] & 0xFF;
@@ -844,7 +844,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
 
                     dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
                   }
-                  histogram(dst);
+                  
               })
               function rgbToHsl(r, g, b) {
                 let max = Math.max(r, g, b);
@@ -896,7 +896,6 @@ function editPicter(inCanvas, clickItem, clickValue) {
                 return [r, g, b];
               }
             }
-            
             //gammaCor
             if (clickItem == "rangeGamma") {
               let level =  1.0 / (gamma / 100.0);
@@ -955,7 +954,14 @@ function editPicter(inCanvas, clickItem, clickValue) {
             })
             }
             //blur2
-            if (clickItem == "rangeHRadius" || clickItem == "rangeVRadius") {
+            if (clickItem == "rangeHRadius" && clickValue > 0  || clickItem == "rangeVRadius" && clickValue > 0 ) {
+              putImage(width, height, function (dst) {
+                let tmp = new Uint32Array(width * height);
+                // horizontal
+                boxBlur(src, tmp, width, height, hRadius);
+                // vertical
+                boxBlur(tmp, dst, height, width, vRadius);
+              })
               function boxBlur(src, dst, width, height, radius) {
                       let tableSize = 2 * radius + 1;
                       let tableLength = 256 * tableSize;
@@ -999,13 +1005,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
                       }
                       return dst;
                     }
-              putImage(width, height, function (dst) {
-                let tmp = new Uint32Array(width * height);
-                // horizontal
-                boxBlur(src, tmp, width, height, hRadius);
-                // vertical
-                boxBlur(tmp, dst, height, width, vRadius);
-              })
+              
             }
             
 }
