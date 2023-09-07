@@ -86,8 +86,6 @@
     </div>
 </div>
 
-
-
 <div class="editFoto" id="editFoto">
 
     <div class="editColor" id="editColor">
@@ -157,92 +155,92 @@
 
     <div class="effect" id="effect">
       <button type="button" class="accordion" name="negative">Negative effect</button>
-      <div class="links" id="negative" name="effects">
-        <label><input type="checkbox" id="cbRed" name="cd">Red</label>
-        <label><input type="checkbox" id="cbGreen" name="cd">Green</label>
-        <label><input type="checkbox" id="cbBlue" name="cd">Blue</label>
-        <label><input type="checkbox" id="cbAlpha" name="cd">Alpha</label>
-      </div>
+        <div class="links" id="negative" name="effects">
+          <label><input type="checkbox" id="cbRed"  name="negative">Red</label>
+          <label><input type="checkbox" id="cbGreen"  name="negative">Green</label>
+          <label><input type="checkbox" id="cbBlue"  name="negative">Blue</label>
+          <label><input type="checkbox" id="cbAlpha"  name="negative">Alpha</label>
+        </div>
                                       
       <button type="button" class="accordion" name="discoloration">Discoloration</button>
-      <div class="links" id="discoloration" name="effects"><label><input type="checkbox" id="discolorationClick" name="cd">(black and white)</label></div>    
+        <div class="links" id="discoloration" name="effects"><label><input type="checkbox" id="discolorationClick" name="discoloration">(black and white)</label></div>    
 
       <button type="button" class="accordion" name="rgbCor">RGB correction</button>
       <div class="links" id="rgbCor" name="effects">
-    <label>
-      <span style="color: red">R</span>:
-      <input id="rangeR" type="range" min="-255" max="255" value="0" name="rangeEffect"/>
-      <span id="valueR" name="numberEffect">0</span>
-    </label>
-    <br/>
-    <label>
-      <span style="color: green">G</span>:
-      <input id="rangeG" type="range" min="-255" max="255" value="0" name="rangeEffect"/>
-      <span id="valueG" name ="numberEffect">0</span>
-    </label>
-    <br/>
-    <label>
-      <span style="color: blue">B</span>:
-      <input id="rangeB" type="range" min="-255" max="255" value="0" name="rangeEffect"/>
-      <span id="valueB" name="numberEffect">0</span>
-    </label>
+        <label>
+          <span style="color: red">R</span>:
+          <input id="rangeR" type="range" min="-255" max="255" value="0" name="rgbCor"/>
+          <span id="valueR" name="numberEffect">0</span>
+        </label>
+        <br/>
+        <label>
+          <span style="color: green">G</span>:
+          <input id="rangeG" type="range" min="-255" max="255" value="0" name="rgbCor"/>
+          <span id="valueG" name ="numberEffect">0</span>
+        </label>
+        <br/>
+        <label>
+          <span style="color: blue">B</span>:
+          <input id="rangeB" type="range" min="-255" max="255" value="0" name="rgbCor"/>
+          <span id="valueB" name="numberEffect">0</span>
+        </label>
       </div>    
 
       <button type="button" class="accordion" name="hslCor">HSL correction</button>
       <div class="links" id="hslCor" name="effects">
-    <label>
-      H:
-      <input id="rangeH" type="range" min="-180" max="180" value="0" name="rangeEffect"/>
-      <span id="valueH" name="numberEffect">0</span>°
-    </label>
-    <br/>
-    <label>
-      S:
-      <input id="rangeS" type="range" min="-100" max="100" value="0" name="rangeEffect"/>
-      <span id="valueS" name="numberEffect">0</span>
-    </label>
-    <br/>
-    <label>
-      L:
-      <input id="rangeL" type="range" min="-100" max="100" value="0" name="rangeEffect"/>
-      <span id="valueL" name="numberEffect">0</span>
-    </label>
+        <label>
+          H:
+          <input id="rangeH" type="range" min="-180" max="180" value="0" name="hslCor"/>
+          <span id="valueH" name="numberEffect">0</span>°
+        </label>
+        <br/>
+        <label>
+          S:
+          <input id="rangeS" type="range" min="-100" max="100" value="0" name="hslCor"/>
+          <span id="valueS" name="numberEffect">0</span>
+        </label>
+        <br/>
+        <label>
+          L:
+          <input id="rangeL" type="range" min="-100" max="100" value="0" name="hslCor"/>
+          <span id="valueL" name="numberEffect">0</span>
+        </label>
       </div>    
 
       <button type="button" class="accordion" name="gammaCor">Gamma correction</button>
       <div class="links" id="gammaCor" name="effects">
-    <label>
-      <input id="rangeGamma" type="range" min="1" max="600" value="100" name="rangeEffect"/>
-      <span id="valueGamma" name="numberEffect">0</span>
-    </label>
+        <label>
+          <input id="rangeGamma" type="range" min="1" max="600" value="100" name="gammaCor"/>
+          <span id="valueGamma" name="numberEffect">0</span>
+        </label>
       </div>    
 
       <button type="button" class="accordion" name="blur1">Blur</button>
       <div class="links" id="blur1" name="effects">
-    <label>
-      <input id="rangeSize" type="range" min="0" max="3" value="0" name="rangeEffect"/>
-      <span id="valueSize" name="numberEffect">0</span>
-    </label>
+        <label>
+          <input id="rangeSize" type="range" min="0" max="3" value="0" name="blur1"/>
+          <span id="valueSize" name="numberEffect">0</span>
+        </label>
       </div>    
 
       <button type="button" class="accordion" name="blur2">Blur(H/V)</button>
       <div class="links" id="blur2" name="effects">
-    <label> 
-      <span>H</span>: 
-      <input id="rangeHRadius" type="range" min="0" max="25" value="0" name="rangeEffect"/>
-      <span id="valueHRadius" name="numberEffect">00</span>
-    </label>
-    <br>
-    <label>
-      <span>V</span>:
-      <input id="rangeVRadius" type="range" min="0" max="25" value="0" name="rangeEffect"/>
-      <span id="valueVRadius" name="numberEffect">00</span>
-    </label>
-    <br>
-    <label>
-      <input id="cbLink" type="checkbox" name="cd"/>
-      Link two
-    </label>
+          <label> 
+            <span>H</span>: 
+            <input id="rangeHRadius" type="range" min="0" max="25" value="0" name="blur2"/>
+            <span id="valueHRadius" name="numberEffect">00</span>
+          </label>
+          <br>
+          <label>
+            <span>V</span>:
+            <input id="rangeVRadius" type="range" min="0" max="25" value="0" name="blur2"/>
+            <span id="valueVRadius" name="numberEffect">00</span>
+          </label>
+          <br>
+          <label>
+            <input id="cbLink" type="checkbox" name="blur2"/>
+            Link two
+          </label>
       </div>
 
     </div>  
@@ -1386,11 +1384,11 @@ getElementById("resetEdit");
   resetPages.addEventListener('click',function (){   
     let inputSizeColor = editColor.getElementsByTagName('input'),
     inputNumberColor = document.getElementsByName("numberColor"), 
-    inputSizeEffect = document.getElementsByName("rangeEffect"),
+    inputSizeEffect = effect.querySelectorAll("[type='range']"),
     inputNumberEffect = document.getElementsByName("numberEffect"),
     inputRangeScale = document.getElementsByName("resize"),
     inputRotation = rotate.getElementsByTagName("input"),
-    inputRangeCd = document.getElementsByName("cd"),
+    inputRangeCd = document.querySelectorAll("[type='checkbox']"),
     divEffects = document.getElementsByName("effects"); 
     //Color+scale
     for (let i = 0; i <= inputSizeColor.length; i++) 
