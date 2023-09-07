@@ -189,19 +189,19 @@
       <button type="button" class="accordion" name="hslCor">HSL correction</button>
       <div class="links" id="hslCor" name="effects">
         <label>
-          H:
+          <span title="hue">H:</span>
           <input id="rangeH" type="range" min="-180" max="180" value="0" name="hslCor"/>
           <span id="valueH" name="numberEffect">0</span>°
         </label>
         <br/>
         <label>
-          S:
+          <span title="saturation">S:</span>
           <input id="rangeS" type="range" min="-100" max="100" value="0" name="hslCor"/>
           <span id="valueS" name="numberEffect">0</span>
         </label>
         <br/>
         <label>
-          L:
+          <span title="lightness">L:</span>
           <input id="rangeL" type="range" min="-100" max="100" value="0" name="hslCor"/>
           <span id="valueL" name="numberEffect">0</span>
         </label>
@@ -610,7 +610,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
                               dst[destIndex + 3] = src[srcIndex + 3];
                             }
                         }
-                    }
+                    } 
                 })      
             }
             //Resize
@@ -1129,17 +1129,19 @@ function putImage(width, height, func) {
   let tablinks = document.getElementById("editFoto");
   for (let i = 0; i < tablinks.children.length; i++) {
     let childrenElement = tablinks.children[i];
-    childrenElement.addEventListener("click", clickActions);
+    childrenElement.addEventListener("click", clickActionsEffect);
+    childrenElement.addEventListener("input", clickActions);
     childrenElement.addEventListener("input", clickActionsSave,true);
   }
   //Функция для прослушивания событий для сбора информации
-  function clickActions(e) {
+  function clickActionsEffect(e) {
     //Получите все элементы с class="links" и удалите "активный" класс
+    
     //editColor
     for (let i = 0; i < editColor.children.length; i++) {
-      if (editColor.children[i].className) {
-        editColor.children[i].className = editColor.children[i].className.replace(" active", "")
-      }
+        if (editColor.children[i].className) {
+            editColor.children[i].className = editColor.children[i].className.replace(" active", "")
+          }
     }
     //resize
     resize.className = resize.className.replace(" active", "");
@@ -1147,16 +1149,17 @@ function putImage(width, height, func) {
     rotate.className = rotate.className.replace(" active", "");
     //effect
     for (let i = 0; i < effect.children.length; i++) {
-      if (effect.children[i].className == "links active") {
-        effect.children[i].className = effect.children[i].className.replace(" active", "")
-      }
+       if (effect.children[i].className == "links active") {
+         effect.children[i].className = effect.children[i].className.replace(" active", "")
+       }
     }
-      //Добавить класс «активный» к кнопке, которая открыла вкладку        
-      if (document.getElementById(e.target.name) !== null)
-      {
-        document.getElementById(e.target.name).className += " active";
-      }
-      
+    //Добавить класс «активный» к кнопке, которая открыла вкладку   
+    if (document.getElementById(e.target.name) !== null)
+    {
+      document.getElementById(e.target.name).className += " active";
+    }
+  }
+  function clickActions(e) {
       //Выводим информацию по input
       //editColor    
       if (e.target.id == "rangeContrast") {
