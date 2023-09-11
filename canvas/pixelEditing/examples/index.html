@@ -223,18 +223,18 @@
         </label>
       </div>    
 
-      <button type="button" class="accordion" name="blur2">Blur(H/V)</button>
+      <button type="button" class="accordion" name="blur2">Blur Gaussian(H/V)</button>
       <div class="links" id="blur2" name="effects">
           <label> 
             <span>H</span>: 
-            <input id="rangeHRadius" type="range" min="0" max="25" value="0" name="blur2"/>
-            <span id="valueHRadius" name="numberEffect">00</span>
+            <input id="rangeHRadius" type="range" min="1" max="25" value="1" name="blur2"/>
+            <span id="valueHRadius" name="numberEffect">1</span>
           </label>
           <br>
           <label>
             <span>V</span>:
-            <input id="rangeVRadius" type="range" min="0" max="25" value="0" name="blur2"/>
-            <span id="valueVRadius" name="numberEffect">00</span>
+            <input id="rangeVRadius" type="range" min="1" max="25" value="1" name="blur2"/>
+            <span id="valueVRadius" name="numberEffect">1</span>
           </label>
           <br>
           <label>
@@ -340,8 +340,8 @@ function editPicter(inCanvas, clickItem, clickValue) {
         let deltaL = 0;
         let gamma = 100; 
         let size = 0;
-        let hRadius = 0;
-        let vRadius = 0;
+        let hRadius = 1;
+        let vRadius = 1;
         //Определяем тип обработки Resize          
         scaleVersion.addEventListener("change", function () {nameScaleVersion = scaleVersion.value;});
         if (clickItem == "rangeContrast") {contrast = parseInt(clickValue)/255;}
@@ -380,14 +380,14 @@ function editPicter(inCanvas, clickItem, clickValue) {
         else if(clickItem == "rangeSize"){
           size = parseInt(clickValue);
         }
-        //blur2
+        //blurGaussa
         else if(clickItem == "rangeHRadius"){
            hRadius = parseInt(clickValue);
         }
         else if(clickItem == "rangeVRadius"){
           vRadius = parseInt(clickValue);
         }
-
+        
             //Contrast
             if (clickItem == "rangeContrast" ) {
                 putImage(width, height, function (dst) {
@@ -585,7 +585,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
                 })         
             }
             //Rotate Degress
-            if (clickItem == "degrees") {
+            if (clickItem == "degrees" ) {
                     const cosTheta = Math.cos(clickValue* (Math.PI / 180));
                     const sinTheta = Math.sin(clickValue* (Math.PI / 180));
                     //Расчет изменяюшейся ширины и высоты
@@ -594,24 +594,28 @@ function editPicter(inCanvas, clickItem, clickValue) {
                     canvas.width = newWidth;
                     canvas.height = newHeight;
                 putImage(newWidth, newHeight, function (dst) {
+                  rotateDegress(newWidth, newHeight, cosTheta, sinTheta, dst, src);
+                }) 
+                  function rotateDegress(newWidth, newHeight, cosTheta, sinTheta, dst, src) {
                     //Метод ближайшего соседа(не самый лучший)
                     const centerX = newWidth / 2;
-                    const centerY = newHeight / 2;
-                    for (let y = 0; y < newHeight; y++) {
-                        for (let x = 0; x < newWidth; x++) {
-                            const destIndex = y* newWidth + x;
-                            const rotatedX = Math.round((x - centerX) * cosTheta - (y - centerY) * sinTheta + width / 2);
-                            const rotatedY = Math.round((x - centerX) * sinTheta + (y - centerY) * cosTheta + height / 2);
-                            if (rotatedX >= 0 && rotatedX < width && rotatedY >= 0 && rotatedY < height) {
-                              const srcIndex = rotatedY * width + rotatedX;
-                              dst[destIndex] = src[srcIndex];
-                              dst[destIndex + 1] = src[srcIndex + 1];
-                              dst[destIndex + 2] = src[srcIndex + 2];
-                              dst[destIndex + 3] = src[srcIndex + 3];
-                            }
-                        }
-                    } 
-                })      
+                      const centerY = newHeight / 2;
+                      for (let y = 0; y < newHeight; y++) {
+                          for (let x = 0; x < newWidth; x++) {
+                              const destIndex = y* newWidth + x;
+                              const rotatedX = Math.round((x - centerX) * cosTheta - (y - centerY) * sinTheta + width / 2);
+                              const rotatedY = Math.round((x - centerX) * sinTheta + (y - centerY) * cosTheta + height / 2);
+                              if (rotatedX >= 0 && rotatedX < width && rotatedY >= 0 && rotatedY < height) {
+                                const srcIndex = rotatedY * width + rotatedX;
+                                dst[destIndex] = src[srcIndex];
+                                dst[destIndex + 1] = src[srcIndex + 1];
+                                dst[destIndex + 2] = src[srcIndex + 2];
+                                dst[destIndex + 3] = src[srcIndex + 3];
+                              }
+                          }
+                      } 
+                      return dst;
+                  }     
             }
             //Resize
             if (clickItem == "numWidth" || clickItem == "numHeight") {
@@ -951,61 +955,127 @@ function editPicter(inCanvas, clickItem, clickValue) {
               }
             })
             }
-            //blur2
-            if (clickItem == "rangeHRadius" && clickValue > 0  || clickItem == "rangeVRadius" && clickValue > 0 ) {
-              putImage(width, height, function (dst) {
-                let tmp = new Uint32Array(width * height);
-                // horizontal
-                boxBlur(src, tmp, width, height, hRadius);
-                // vertical
-                boxBlur(tmp, dst, height, width, vRadius);
-              })
-              function boxBlur(src, dst, width, height, radius) {
-                      let tableSize = 2 * radius + 1;
-                      let tableLength = 256 * tableSize;
-                      let divTable = new Array(tableLength).fill(0);
-                      for (let i = 0; i < tableLength; i++) {
-                        divTable[i] = (i / tableSize) >> 0;
+            //blurGaussa
+            if (clickItem == "rangeHRadius" && hRadius > 1) { 
+            putImage(width, height, function (dst) {
+              //Создаем ядра Гауссиана для горизонтального размытия
+              const horizontalKernel = generateGaussianKernel(hRadius);
+              // Применяем Гауссовское размытие к изображению сначала по горизонтали, затем по вертикали
+              applyGaussianBlurToPixels(src, width, height, horizontalKernel);//горизонтальное
+              // Функция для применения Гауссовского размытия к пикселям
+              function applyGaussianBlurToPixels(pixels, width, height, kernel) {
+                  // Проходим по каждому пикселю изображения
+                  for (let y = 0; y < height; y++) {
+                      for (let x = 0; x < width; x++) {
+                          let red = 0;
+                          let green = 0;
+                          let blue = 0;
+                          let alpha = 0;
+                      
+                          // Проходим по каждому элементу ядра Гауссиана
+                          for (let i = 0; i < kernel.length; i++) {
+                              // Определяем смещение для горизонтального и вертикального размытия
+                              const offset =  i - Math.floor(kernel.length / 2) ;
+                              const position =  x + offset ;
+
+                              // Проверяем, находится ли позиция в пределах изображения
+                              if (position >= 0 && position <  width ) {
+                                  // Вычисляем индекс для текущего пикселя
+                                  const pixelIndex =  (y * width + position) ;
+
+                                  // Вычленяем цветовые компоненты из пикселя
+                                  const pixel = pixels[pixelIndex];
+                              
+                                  // Получаем значение из ядра Гауссиана для текущего элемента
+                                  const kernelValue = kernel[i];
+                              
+                                  // Умножаем цветовые компоненты на значение ядра
+                                  alpha += ((pixel >> 24) & 0xFF) * kernelValue;
+                                  blue += ((pixel >> 16) & 0xFF) * kernelValue;
+                                  green += ((pixel >> 8) & 0xFF) * kernelValue;
+                                  red += (pixel & 0xFF) * kernelValue;
+                              }
+                          }
+                          // Вычисляем индекс текущего пикселя
+                          const pixelIndex = (y * width + x);
+                          // Записываем размытый пиксель в массив размытых пикселей
+                          dst[pixelIndex] = ((alpha >> 0) << 24) | ((blue >> 0) << 16) | ((green >> 0) << 8) | (red >> 0);
                       }
-
-                      let widthMax = width - 1;
-                      let inIndex = 0;
-                      for (let y = 0; y < height; y++) {
-                        const index = y * width;
-                        let a = 0, r = 0, g = 0, b = 0;
-                        for (let i = -radius; i <= radius; i++) {
-                          let pix = src[inIndex + Math.max(0, Math.min(i, widthMax))];
-                          r += pix & 0xFF;
-                          g += (pix >> 8) & 0xFF;
-                          b += (pix >> 16) & 0xFF;
-                          a += (pix >> 24) & 0xFF;
-                        }
-
-                        let outIndex = y;
-                        for (let x = 0; x < width; x++) {
-                          dst[outIndex] = (divTable[a] << 24) | (divTable[b] << 16) | (divTable[g] << 8) | divTable[r];
-
-                          let pos1 = x + radius + 1;
-                          if (pos1 > widthMax) pos1 = widthMax;
-                          let pix1 = src[inIndex + pos1];
-
-                          let pos2 = x - radius;
-                          if (pos2 < 0) pos2 = 0;
-                          let pix2 = src[inIndex + pos2];
-
-                          r += ((pix1 & 0x000000FF) - (pix2 & 0x000000FF));
-                          g += ((pix1 & 0x0000FF00) - (pix2 & 0x0000FF00)) >> 8;
-                          b += ((pix1 & 0x00FF0000) - (pix2 & 0x00FF0000)) >> 16;
-                          a += ((pix1 & 0xFF000000) - (pix2 & 0xFF000000)) >> 24;
-                          outIndex += height;
-                        }
-                        inIndex += width;
-                      }
-                      return dst;
-                    }
-              
+                  } 
+              } 
+            })
             }
-            
+            if (clickItem == "rangeVRadius" && vRadius > 1) {
+              putImage(width, height, function (dst) {
+              //Создаем ядра Гауссиана для вертикального размытия
+              const verticalKernel = generateGaussianKernel(vRadius); 
+              // Применяем Гауссовское размытие к изображению сначала по горизонтали, затем по вертикали
+              applyGaussianBlurToPixels(src, width, height, verticalKernel);//вертикальное            
+              // Функция для применения Гауссовского размытия к пикселям
+              function applyGaussianBlurToPixels(pixels, width, height, kernel) {
+                  // Проходим по каждому пикселю изображения
+                  for (let y = 0; y < height; y++) {
+                      for (let x = 0; x < width; x++) {
+                          let red = 0;
+                          let green = 0;
+                          let blue = 0;
+                          let alpha = 0;
+                      
+                          // Проходим по каждому элементу ядра Гауссиана
+                          for (let i = 0; i < kernel.length; i++) {
+                              // Определяем смещение для горизонтального и вертикального размытия
+                              const offset =  Math.floor(kernel.length / 2) - i;
+                              const position =  y + offset;
+
+                              // Проверяем, находится ли позиция в пределах изображения
+                              if (position >= 0 && position <  height) {
+                                  // Вычисляем индекс для текущего пикселя
+                                  const pixelIndex = (position * width + x);
+
+                                  // Вычленяем цветовые компоненты из пикселя
+                                  const pixel = pixels[pixelIndex];
+                              
+                                  // Получаем значение из ядра Гауссиана для текущего элемента
+                                  const kernelValue = kernel[i];
+                              
+                                  // Умножаем цветовые компоненты на значение ядра
+                                  alpha += ((pixel >> 24) & 0xFF) * kernelValue;
+                                  blue += ((pixel >> 16) & 0xFF) * kernelValue;
+                                  green += ((pixel >> 8) & 0xFF) * kernelValue;
+                                  red += (pixel & 0xFF) * kernelValue;
+                              }
+                          }
+                          // Вычисляем индекс текущего пикселя
+                          const pixelIndex = (y * width + x);
+                          // Записываем размытый пиксель в массив размытых пикселей
+                          dst[pixelIndex] = ((alpha >> 0) << 24) | ((blue >> 0) << 16) | ((green >> 0) << 8) | (red >> 0);
+                      }
+                  } 
+              } 
+              })
+            }
+            //Генерация ядра Гауссиана+blurGaussa
+            function generateGaussianKernel(radius) {
+                   const size = 2 * radius + 1;
+                   const kernel = new Array(size);
+                   //Радиус, можно менять (оптимальное 10) 
+                   const sigma = radius / 10.0;
+                   const sigma2 = 2 * sigma * sigma;
+                   const piSigma2 = Math.PI * sigma2;
+                   let total = 0;
+
+                   for (let x = -radius, i = 0; x <= radius; x++, i++) {
+                     const g = Math.exp(-(x * x) / sigma2) / piSigma2;
+                     kernel[i] = g;
+                     total += g;
+                   }
+                 
+                   // Нормализуем ядро, чтобы сумма была равна 1
+                   for (let i = 0; i < size; i++) {
+                     kernel[i] /= total;
+                   }
+                   return kernel;
+                 }
 }
 
 //Гистограмма
@@ -1214,24 +1284,21 @@ function putImage(width, height, func) {
       if (e.target.id == "rangeSize") {
         document.getElementById("valueSize").innerText = e.target.value;
       }
-      //blur2
+      //blurGaussa
       //Добавляем ноль
       //Переключатель Blur H/V c одного на два
-      function format(v) {
-        return (v >= 0 && v < 10) ? ('0' + v) : v;
-      }
       if (cbLink.checked) {
           document.getElementById("rangeVRadius").value = document.getElementById("rangeHRadius").value;
           document.getElementById("rangeVRadius").disabled = true;
-          document.getElementById("valueHRadius").innerText = format(document.getElementById("rangeHRadius").value);
-          document.getElementById("valueVRadius").innerText = format(document.getElementById("rangeHRadius").value);
+          document.getElementById("valueHRadius").innerText = document.getElementById("rangeHRadius").value;
+          document.getElementById("valueVRadius").innerText = document.getElementById("rangeHRadius").value;
       } else {
           document.getElementById("rangeVRadius").disabled = false;
           if (e.target.id == "rangeHRadius") {
-          document.getElementById("valueHRadius").innerText = format(e.target.value);
+          document.getElementById("valueHRadius").innerText = e.target.value;
           }
           if (e.target.id == "rangeVRadius") {
-            document.getElementById("valueVRadius").innerText = format(e.target.value);
+            document.getElementById("valueVRadius").innerText = e.target.value;
           }
       }
       
@@ -1365,10 +1432,12 @@ console.log(clicks);
               if (clickItem == "rangeSize") {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeHRadius" || clickItem == "rangeVRadius") {
+              if (clickItem == "rangeHRadius") {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
- 
+              if (clickItem == "rangeVRadius") {
+                editPicter(getImageSave(), clickItem, clickValue); 
+              }
               
         } 
     }  
@@ -1411,7 +1480,11 @@ getElementById("resetEdit");
         if (inputSizeEffect[i].id == "rangeGamma") {
           inputSizeEffect[i].value = 100;
           inputNumberEffect[i].innerText = 100;
-        } else {
+        } else if(inputSizeEffect[i].id == "rangeHRadius" || inputSizeEffect[i].id == "rangeVRadius") {
+          inputSizeEffect[i].value = 1;
+          inputNumberEffect[i].innerText = 1;
+          document.getElementById("rangeVRadius").disabled = false;
+        }else{
           inputSizeEffect[i].value = 0;
           inputNumberEffect[i].innerText = 0;
         }
@@ -1430,8 +1503,9 @@ getElementById("resetEdit");
 
       //effect checkbox
       for (let i = 0; i < inputRangeCd.length; i++) {
-        inputRangeCd[i].checked = false;
+        if (inputRangeCd[i].id !== "cbProportions") {inputRangeCd[i].checked = false;}
       }
+  
 
       for (let i = 0; i < divEffects.length; i++) {
         divEffects[i].style = "display:none";

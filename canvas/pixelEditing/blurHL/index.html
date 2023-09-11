@@ -1,0 +1,275 @@
+<style>
+  p{
+    margin: 0;
+    padding: 0;
+  }
+</style>
+<p>Размытия изображения по горизонтали и вертикали (не качественное)</p>
+<canvas id="canvasEdihion"></canvas>
+<div id="rangeHL">
+  <p>H:<input type="range"  id="rangeH" name="rangeH" min="0" max="25" value="0"><span id="H"></span></p>
+  <p></p>L:<input type="range"  id="rangeL" name="rangeL" min="0" max="25" value="0"><span id="L"></span></p>
+</div>
+
+<script>
+//Розмытие по горизонтали и вертикали (не качественное)+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//Загружаем изображение
+let img = new Image();
+let canvas = document.getElementById("canvasEdihion");
+let ctx = canvas.getContext("2d");
+    img.src = "./kiza.jpeg";
+    img.onload = applyBlurToImage;
+var blurRadiusH = 0;
+var blurRadiusL = 0;
+document.getElementById("rangeHL").addEventListener("input", (e)=>{
+  if (e.target.id == "rangeH") {
+   document.getElementById("H").innerText = e.target.value;
+   blurRadiusH = e.target.value; // Радиус размытия (можете изменить по вашему усмотрению)
+  }else{
+   document.getElementById("L").innerText = e.target.value; 
+   blurRadiusL = e.target.value; // Радиус размытия (можете изменить по вашему усмотрению)    
+  }
+  applyBlurToImage(blurRadiusH,blurRadiusL);
+})
+
+// Функция для размытия изображения по горизонтали и вертикали
+function applyBlurToImage(blurRadiusH,blurRadiusL) {
+  // Устанавливаем размер canvas таким же, как у изображения
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  // Рисуем изображение на canvas
+  ctx.drawImage(img, 0, 0);
+
+  // Применяем размытие по горизонтали
+  applyHorizontalBlur(ctx, blurRadiusH);
+
+  // Применяем размытие по вертикали
+  applyVerticalBlur(ctx, blurRadiusL);
+
+}
+
+// Функция для применения горизонтального размытия
+function applyHorizontalBlur(ctx, blurRadius) {
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const pixels = imageData.data;
+  const width = canvas.width;
+  const height = canvas.height;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = blurRadius; x < width - blurRadius; x++) {
+      let red = 0;
+      let green = 0;
+      let blue = 0;
+      let alpha = 0;
+
+      for (let i = -blurRadius; i <= blurRadius; i++) {
+        const offsetX = x + i;
+        const pixelIndex = (y * width + offsetX) * 4;
+        red += pixels[pixelIndex];
+        green += pixels[pixelIndex + 1];
+        blue += pixels[pixelIndex + 2];
+        alpha += pixels[pixelIndex + 3];
+      }
+
+      const pixelIndex = (y * width + x) * 4;
+      pixels[pixelIndex] = red / (2 * blurRadius + 1);
+      pixels[pixelIndex + 1] = green / (2 * blurRadius + 1);
+      pixels[pixelIndex + 2] = blue / (2 * blurRadius + 1);
+      pixels[pixelIndex + 3] = alpha;
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+}
+
+// Функция для применения вертикального размытия
+function applyVerticalBlur(ctx, blurRadius) {
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const pixels = imageData.data;
+  const width = canvas.width;
+  const height = canvas.height;
+
+  for (let x = 0; x < width; x++) {
+    for (let y = blurRadius; y < height - blurRadius; y++) {
+      let red = 0;
+      let green = 0;
+      let blue = 0;
+      let alpha = 0;
+
+      for (let i = -blurRadius; i <= blurRadius; i++) {
+        const offsetY = y + i;
+        const pixelIndex = (offsetY * width + x) * 4;
+        red += pixels[pixelIndex];
+        green += pixels[pixelIndex + 1];
+        blue += pixels[pixelIndex + 2];
+        alpha += pixels[pixelIndex + 3];
+      }
+
+      const pixelIndex = (y * width + x) * 4;
+      pixels[pixelIndex] = red / (2 * blurRadius + 1);
+      pixels[pixelIndex + 1] = green / (2 * blurRadius + 1);
+      pixels[pixelIndex + 2] = blue / (2 * blurRadius + 1);
+      pixels[pixelIndex + 3] = alpha;
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+}
+</script>
+
+<p>Гауссовое размытие</p>
+<canvas id="gausBlue"></canvas>
+<div id="rangeHLG">
+  <p>H:<input type="range"  id="rangeHG" name="rangeHG" min="1" max="25" value="1"><span id="HG"></span></p>
+  <p>L:<input type="range"  id="rangeLG" name="rangeLG" min="1" max="25" value="1"><span id="LG"></span></p>
+  <label>
+    <input id="cbLink" type="checkbox" name="blur2"/>
+    Link two
+  </label>
+</div>
+<script>
+//Гаусовое размытие******************************************************
+//Загружаем изображение
+let imgG = new Image();
+let canvasGaus = document.getElementById("gausBlue");
+let ctxGaus = canvasGaus.getContext("2d");
+    imgG.src = "./kiza.jpeg";
+    imgG.onload = applyGaussianBlurToImage; 
+var blurRadiusHG = 1;
+var blurRadiusLG = 1;
+//Blur H/V   
+let cbLink = document.getElementById("cbLink");
+document.getElementById("rangeHLG").addEventListener("input", (e)=>{
+  if (cbLink.checked && e.target.value > 0) {
+      document.getElementById("HG").innerText = e.target.value;
+      document.getElementById("LG").innerText = e.target.value;
+      document.getElementById("rangeHG").value = e.target.value;
+      document.getElementById("rangeLG").value = e.target.value;
+      blurRadiusHG = e.target.value;
+      blurRadiusLG = e.target.value; 
+      document.getElementById("rangeLG").disabled = true;
+  } else {
+    document.getElementById("rangeLG").disabled = false;
+    if (e.target.id == "rangeHG" && e.target.value > 0 ) {
+       document.getElementById("HG").innerText = e.target.value;
+       blurRadiusHG = e.target.value;
+      }else if(e.target.id == "rangeLG" && e.target.value > 0){
+       document.getElementById("LG").innerText = e.target.value;
+       blurRadiusLG = e.target.value; 
+      }
+  } 
+  applyGaussianBlurToImage(blurRadiusHG,blurRadiusLG);
+})
+
+// Функция для размытия изображения по горизонтали и вертикали с использованием Гауссовского размытия
+function applyGaussianBlurToImage(blurRadiusHG,blurRadiusLG) {
+  // Устанавливаем размер canvas таким же, как у изображения
+  canvasGaus.width = imgG.width;
+  canvasGaus.height = imgG.height;
+  //Поворот
+  ctxGaus.translate(canvasGaus.width/2, canvasGaus.height/2);
+  ctxGaus.rotate((15* Math.PI) / 180);
+  ctxGaus.translate(-canvasGaus.width/2, -canvasGaus.height/2)
+  // Рисуем изображение на canvas
+  ctxGaus.drawImage(imgG, 0, 0);
+ 
+  
+  // Получаем пиксельные данные изображения
+  const imageData = ctxGaus.getImageData(0, 0,  canvasGaus.width,  canvasGaus.height);
+  const pixels = new Uint32Array(imageData.data.buffer);
+
+
+  // Создаем ядра Гауссиана для горизонтального и вертикального размытия
+  const horizontalKernel = generateGaussianKernel(blurRadiusHG);
+  const verticalKernel = generateGaussianKernel(blurRadiusLG);
+
+  // Применяем Гауссовское размытие к изображению сначала по горизонтали, затем по вертикали
+  applyGaussianBlurToPixels(pixels, canvasGaus.width, canvasGaus.height, horizontalKernel, true);
+  applyGaussianBlurToPixels(pixels, canvasGaus.width, canvasGaus.height, verticalKernel, false);
+
+
+
+  // Обновляем изображение с размытыми данными
+  ctxGaus.putImageData(new ImageData(new Uint8ClampedArray(pixels.buffer), canvasGaus.width, canvasGaus.height), 0, 0);
+  //поворачиваем
+  
+}
+
+// Генерация ядра Гауссиана
+function generateGaussianKernel(radius) {
+  const size = 2 * radius + 1;
+  const kernel = new Array(size);
+  //Радиус, можно менять (оптимальное 10)
+  const sigma = radius / 10.0;
+  const sigma2 = 2 * sigma * sigma;
+  const piSigma2 = Math.PI * sigma2;
+  let total = 0;
+
+  for (let x = -radius, i = 0; x <= radius; x++, i++) {
+    const g = Math.exp(-(x * x) / sigma2) / piSigma2;
+    kernel[i] = g;
+    total += g;
+  }
+
+  // Нормализуем ядро, чтобы сумма была равна 1
+  for (let i = 0; i < size; i++) {
+    kernel[i] /= total;
+  }
+
+  return kernel;
+}
+
+
+// Применение Гауссовского размытия к пикселям
+function applyGaussianBlurToPixels(pixels, width, height, kernel, isHorizontal) {
+  // Создаем новый массив для размытых пикселей
+  const blurredPixels = new Uint32Array(pixels.length);
+           
+           // Проходим по каждому пикселю изображения
+           for (let y = 0; y < height; y++) {
+               for (let x = 0; x < width; x++) {
+                   let red = 0;
+                   let green = 0;
+                   let blue = 0;
+                   let alpha = 0;
+               
+                   // Проходим по каждому элементу ядра Гауссиана
+                   for (let i = 0; i < kernel.length; i++) {
+                       // Определяем смещение для горизонтального и вертикального размытия
+                       const offset = isHorizontal ? i - Math.floor(kernel.length / 2) : Math.floor(kernel.length / 2) - i;
+                       const position = isHorizontal ? x + offset : y + offset;
+                   
+                       // Проверяем, находится ли позиция в пределах изображения
+                       if (position >= 0 && position < (isHorizontal ? width : height)) {
+                           // Вычисляем индекс для текущего пикселя
+                           const pixelIndex = isHorizontal ? (y * width + position) : (position * width + x);
+                       
+                           // Вычленяем цветовые компоненты из пикселя
+                           const pixel = pixels[pixelIndex];
+                       
+                           // Получаем значение из ядра Гауссиана для текущего элемента
+                           const kernelValue = kernel[i];
+                       
+                           // Умножаем цветовые компоненты на значение ядра
+                           alpha += ((pixel >> 24) & 0xFF) * kernelValue;
+                           blue += ((pixel >> 16) & 0xFF) * kernelValue;
+                           green += ((pixel >> 8) & 0xFF) * kernelValue;
+                           red += (pixel & 0xFF) * kernelValue;
+                       }
+                   }
+                 
+                   // Вычисляем индекс текущего пикселя
+                   const pixelIndex = (y * width + x);
+                 
+                   // Записываем размытый пиксель в массив размытых пикселей
+                   blurredPixels[pixelIndex] = ((alpha >> 0) << 24) | ((blue >> 0) << 16) | ((green >> 0) << 8) | (red >> 0);
+               }
+           }
+
+  for (let i = 0; i < pixels.length; i++) {
+    pixels[i] = blurredPixels[i];
+  }
+
+}
+</script>
