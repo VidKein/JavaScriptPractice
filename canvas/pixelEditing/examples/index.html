@@ -6,6 +6,17 @@
       margin: 0;
       position: absolute;
     }
+    #inputPhoto{
+      padding: 5px;
+    }
+    #closetImg{
+    position: absolute;
+    top: 9px;
+    right: 15px;
+    padding: 4px;
+    cursor: pointer;
+    background-color: red;
+    }
     .fotoBlock{
       display: flex;
       flex-direction: row;
@@ -74,6 +85,9 @@
   <canvas id="canvasEdihion"></canvas>
 
       <div class="histogram">
+        <div id="closetImg">
+          <p title="закрыть">X</p> 
+        </div>
         <p>Histogram</p>
         <label>
           <input name="rType" type="radio" id="typeValue"  checked/> Black-white
@@ -83,6 +97,7 @@
         </label>        
       
       <canvas id="canvasHistogram" width="256" height="150"></canvas>
+      <input id="inputPhoto" type="file" />
     </div>
 </div>
 
@@ -247,12 +262,24 @@
 
 </div>
 <script>
-/*Загружаем изображение*/
+//Загружаем изображение
 let img = new Image();
 let canvas = document.getElementById("canvasEdihion");
 let ctx = canvas.getContext("2d");
     img.src = "./kiza.jpeg"
-    img.onload = initImg;  
+    img.onload = initImg;
+//Дополнительная загрузка
+let inputPhoto = document.getElementById("inputPhoto");
+inputPhoto.addEventListener('change', function() {    
+    if (this.files && this.files[0]) {      
+      img.src = URL.createObjectURL(this.files[0]);      
+    }
+}); 
+//кнопка перезагрузки
+let closetImg = document.getElementById("closetImg");
+closetImg.addEventListener("click",()=>{
+  window.location.reload();  
+})
 //Размер Resize
 let checked = document.getElementById("cbProportions");
 let numWidth = document.getElementById("numWidth");
@@ -287,8 +314,6 @@ let discolorationClick = document.getElementById("discolorationClick");
 let clicks = {};   
 //Действия после загрузки картинки
 function initImg() {
-    canvas.width = img.width;
-    canvas.height = img.height;
     ctx.drawImage(img, 0, 0);
     //Выводим размеры картинки в Размер/Resize
     numWidth.value = img.width;
