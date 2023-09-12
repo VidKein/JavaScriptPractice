@@ -268,13 +268,16 @@ let canvas = document.getElementById("canvasEdihion");
 let ctx = canvas.getContext("2d");
     img.src = "./kiza.jpeg"
     img.onload = initImg;
+//Определяюшие размер фотоблока
+let pageWidth = document.querySelector(".fotoBlock").offsetWidth-document.querySelector(".histogram").offsetWidth;
+let pageHeight = document.querySelector(".fotoBlock").offsetHeight; 
 //Дополнительная загрузка
 let inputPhoto = document.getElementById("inputPhoto");
-inputPhoto.addEventListener('change', function() {    
+inputPhoto.addEventListener('change', function() {   
     if (this.files && this.files[0]) {      
-      img.src = URL.createObjectURL(this.files[0]);      
-    }
-}); 
+      img.src = URL.createObjectURL(this.files[0]);
+    }           
+})
 //кнопка перезагрузки
 let closetImg = document.getElementById("closetImg");
 closetImg.addEventListener("click",()=>{
@@ -318,8 +321,29 @@ function initImg() {
     //Выводим размеры картинки в Размер/Resize
     numWidth.value = img.width;
     numHeight.value = img.height;
-    histogram(new Uint32Array(getImage().data.buffer));
+    histogram(new Uint32Array(getImage().data.buffer)); 
+ 
+    //приводим размер холста к соответствуюшему размеру экрана
+    if(img.width > img.height){/*horizontal img*/
+      if (img.height >= pageHeight) {
+        canvas.style.width = "auto";
+        canvas.style.height = pageHeight;  
+        }else{
+          canvas.style.width  = img.width;
+          canvas.style.height= img.height;
+        } 
+    }else{/*vertical img*/
+      if (img.height >= pageHeight) {
+        canvas.style.width = "auto";
+        canvas.style.height = pageHeight;  
+        }else{
+          canvas.style.width  = img.width;
+          canvas.style.height= img.height;
+        } 
+    }
+
 }
+
 //переключатель для гистограммы ч-б/цветное
 let switchHistogram = document.getElementsByName("rType");
 for (let i = 0; i < switchHistogram.length; i++) { 
@@ -1084,7 +1108,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
                    const size = 2 * radius + 1;
                    const kernel = new Array(size);
                    //Радиус, можно менять (оптимальное 10) 
-                   const sigma = radius / 10.0;
+                   const sigma = radius / 5.0;
                    const sigma2 = 2 * sigma * sigma;
                    const piSigma2 = Math.PI * sigma2;
                    let total = 0;
