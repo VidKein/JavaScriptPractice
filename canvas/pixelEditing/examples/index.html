@@ -77,6 +77,7 @@
     overflow: hidden;
     width: 100%;
 }
+
 </style>
 <div class="actionManagement">
   <button id="resetEdit">Reset</button>
@@ -257,25 +258,24 @@
             Link two
           </label>
       </div>
-
     </div>  
-
 </div>
 <script>
 //Загружаем изображение
 let img = new Image();
-let canvas = document.getElementById("canvasEdihion");
+let canvas = document.getElementById("canvasEdihion");    
 let ctx = canvas.getContext("2d");
-    img.src = "./kiza.jpeg"
+    img.src = "./kiza01.jpeg";
     img.onload = initImg;
 //Определяюшие размер фотоблока
 let pageWidth = document.querySelector(".fotoBlock").offsetWidth-document.querySelector(".histogram").offsetWidth;
 let pageHeight = document.querySelector(".fotoBlock").offsetHeight; 
 //Дополнительная загрузка
 let inputPhoto = document.getElementById("inputPhoto");
-inputPhoto.addEventListener('change', function() {   
+inputPhoto.addEventListener('change', function() {
     if (this.files && this.files[0]) {      
       img.src = URL.createObjectURL(this.files[0]);
+      canvas.className = this.files[0].name;
     }           
 })
 //кнопка перезагрузки
@@ -322,25 +322,24 @@ function initImg() {
     numWidth.value = img.width;
     numHeight.value = img.height;
     histogram(new Uint32Array(getImage().data.buffer)); 
- 
     //приводим размер холста к соответствуюшему размеру экрана
-    if(img.width > img.height){/*horizontal img*/
-      if (img.height >= pageHeight) {
-        canvas.style.width = "auto";
-        canvas.style.height = pageHeight;  
-        }else{
-          canvas.style.width  = img.width;
-          canvas.style.height= img.height;
+      if(img.width > img.height){//horizontal img
+          if (img.height >= pageHeight) {
+            canvas.style.width = "auto";
+            canvas.style.height = pageHeight;  
+            }else{
+              canvas.style.width  = "";
+              canvas.style.height = "";
+            } 
+        }else{//vertical img
+          if (img.height >= pageHeight) {
+            canvas.style.width = "auto";
+            canvas.style.height = pageHeight;  
+            }else{
+              canvas.style.width  = "";
+              canvas.style.height = "";
+            } 
         } 
-    }else{/*vertical img*/
-      if (img.height >= pageHeight) {
-        canvas.style.width = "auto";
-        canvas.style.height = pageHeight;  
-        }else{
-          canvas.style.width  = img.width;
-          canvas.style.height= img.height;
-        } 
-    }
 
 }
 
@@ -369,6 +368,9 @@ let acc = document.getElementsByClassName("accordion");
   }
 //Редоктируем картинку
 function editPicter(inCanvas, clickItem, clickValue) { 
+  // Определите время начала выполнения функции
+  let startTime = new Date().getTime();
+
         let src = new Uint32Array(inCanvas.data.buffer);
         let width = inCanvas.width;
         let height = inCanvas.height;
@@ -592,6 +594,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
                 let newHeight = width;
                 canvas.width = newWidth;
                 canvas.height = newHeight;
+                
                 for (let y = 0; y < newHeight; y++) {
                   for (let x = 0; x < newWidth; x++) {
                     dst[y * newWidth + x] = src[(height - x - 1) * width + y];
@@ -664,7 +667,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
                           }
                       } 
                       return dst;
-                  }     
+                  }   
             }
             //Resize
             if (clickItem == "numWidth" || clickItem == "numHeight") {
@@ -1125,6 +1128,13 @@ function editPicter(inCanvas, clickItem, clickValue) {
                    }
                    return kernel;
                  }
+
+// Определите время завершения выполнения функции
+let endTime = new Date().getTime();
+// Вычислите время выполнения функции в миллисекундах
+let executionTime = endTime - startTime;
+// Выведите время выполнения функции в консоль
+console.log(' Время выполнения функции '+ clickItem +' : ' + executionTime + ' миллисекунд');
 }
 
 //Гистограмма
@@ -1253,7 +1263,7 @@ function putImage(width, height, func) {
     childrenElement.addEventListener("input", clickActionsSave,true);
   }
   //Функция для прослушивания событий для сбора информации
-  function clickActionsEffect(e) {
+  function clickActionsEffect(e) { 
     //Получите все элементы с class="links" и удалите "активный" класс
     
     //editColor
@@ -1358,11 +1368,10 @@ function putImage(width, height, func) {
       } else {
         canvas.setAttribute('class', e.target.name);
       }
-      
     }
    
   //Функция событий, алгоритм выполнения после изменений
-  function clickActionsSave() {
+  function clickActionsSave() { 
       for (let i = 0; i < tablinks.children.length; i++) {
           let rozdil = tablinks.children[i];
           if (rozdil.id == "editColor") {
@@ -1435,7 +1444,7 @@ function putImage(width, height, func) {
           }
 
         } 
-console.log(clicks);
+        console.log(clicks);
         for (let index in clicks) {
           let clickItem = index, 
               clickValue = clicks[index];
@@ -1486,8 +1495,7 @@ console.log(clicks);
               }
               if (clickItem == "rangeVRadius") {
                 editPicter(getImageSave(), clickItem, clickValue); 
-              }
-              
+              }   
         } 
     }  
     
@@ -1567,5 +1575,4 @@ getElementById("resetEdit");
       //Передаем информацию о картинке
       initImg();
   })
-
 </script>
