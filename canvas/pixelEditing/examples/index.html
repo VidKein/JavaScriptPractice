@@ -1451,19 +1451,19 @@ function putImage(width, height, func) {
               if (clickItem == "rangeContrast") {
                 editPicter(getImage(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeBrightness") {
+              if (clickItem == "rangeBrightness"  && clickValue > 0) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeSaturation") {
+              if (clickItem == "rangeSaturation"  && clickValue > 0) {
                 editPicter(getImageSave(), clickItem, clickValue);
               }
-              if (clickItem == "rangeSharp") {
+              if (clickItem == "rangeSharp"  && clickValue > 0) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if(clickItem == "rotate") {
                 editPicter(getImageSave(), clickValue, clickValue); 
               }
-              if(clickItem == "degrees") {
+              if(clickItem == "degrees"  && clickValue > 0) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if(clickItem == "numWidth") {
@@ -1478,22 +1478,22 @@ function putImage(width, height, func) {
               if (clickItem == "discolorationClick") {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeR" || clickItem == "rangeG" || clickItem == "rangeB" ) {
+              if (clickItem == "rangeR"  && clickValue > 0 || clickItem == "rangeG"  && clickValue > 0 || clickItem == "rangeB"  && clickValue > 0 ) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeH" || clickItem == "rangeS" || clickItem == "rangeL" ) {
+              if (clickItem == "rangeH"  && clickValue > 0 || clickItem == "rangeS"  && clickValue > 0 || clickItem == "rangeL"  && clickValue > 0 ) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeGamma") {
+              if (clickItem == "rangeGamma"  && clickValue !== 100) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeSize") {
+              if (clickItem == "rangeSize"  && clickValue > 0) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeHRadius") {
+              if (clickItem == "rangeHRadius"  && clickValue > 1) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeVRadius") {
+              if (clickItem == "rangeVRadius"  && clickValue > 1) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }   
         } 
