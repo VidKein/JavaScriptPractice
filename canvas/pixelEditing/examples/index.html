@@ -80,6 +80,7 @@
 
 </style>
 <div class="actionManagement">
+  <button id="saveIMGBrauser">Save</button>  
   <button id="resetEdit">Reset</button>
 </div>
 <div class="fotoBlock">
@@ -275,8 +276,8 @@ let inputPhoto = document.getElementById("inputPhoto");
 inputPhoto.addEventListener('change', function() {
     if (this.files && this.files[0]) {      
       img.src = URL.createObjectURL(this.files[0]);
-      canvas.className = this.files[0].name;
-    }           
+      canvas.setAttribute("data-img",this.files[0].name);
+    }          
 })
 //кнопка перезагрузки
 let closetImg = document.getElementById("closetImg");
@@ -318,6 +319,8 @@ let clicks = {};
 //Действия после загрузки картинки
 function initImg() {
     ctx.drawImage(img, 0, 0);
+    //data 
+    canvas.setAttribute("data-img","kiza01.jpeg");
     //Выводим размеры картинки в Размер/Resize
     numWidth.value = img.width;
     numHeight.value = img.height;
@@ -1575,4 +1578,20 @@ getElementById("resetEdit");
       //Передаем информацию о картинке
       initImg();
   })
+
+//Сохраняем  картинку в браузере
+var saveIMGBrauser = document.getElementById('saveIMGBrauser');
+//Сохраняем на прямую
+saveIMGBrauser.addEventListener("click", ()=>{saveImg()})
+//Обшая функция сохранения
+function saveImg() {
+  
+    var dataURL = canvas.toDataURL("image/jpeg",1.0);//подгатавливаем данные для передачи  data:[<тип данных>][;base64],<данные>
+    var link = document.createElement("a");//создаем ссылку
+    document.body.appendChild(link); // Firefox требует, чтобы ссылка была в теле :(
+    link.href = dataURL;
+    link.download = canvas.dataset.img;
+    link.click();
+    document.body.removeChild(link);      
+} 
 </script>
