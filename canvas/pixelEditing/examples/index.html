@@ -1464,7 +1464,7 @@ function putImage(width, height, func) {
               if(clickItem == "rotate") {
                 editPicter(getImageSave(), clickValue, clickValue); 
               }
-              if(clickItem == "degrees"  && clickValue > 0) {
+              if(clickItem == "degrees"  && clickValue > 0 || clickValue < 0) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if(clickItem == "numWidth") {
