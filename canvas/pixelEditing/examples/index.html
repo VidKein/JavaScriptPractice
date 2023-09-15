@@ -84,7 +84,7 @@
   <button id="resetEdit">Reset</button>
 </div>
 <div class="fotoBlock">
-  <canvas id="canvasEdihion"></canvas>
+  <canvas id="canvasEdihion" data-img = "kiza01.jpeg"></canvas>
 
       <div class="histogram">
         <div id="closetImg">
@@ -319,8 +319,6 @@ let clicks = {};
 //Действия после загрузки картинки
 function initImg() {
     ctx.drawImage(img, 0, 0);
-    //data 
-    canvas.setAttribute("data-img","kiza01.jpeg");
     //Выводим размеры картинки в Размер/Resize
     numWidth.value = img.width;
     numHeight.value = img.height;
@@ -1475,10 +1473,10 @@ function putImage(width, height, func) {
               if(clickItem == "numHeight") {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "cbRed" || clickItem == "cbGreen" || clickItem == "cbBlue" || clickItem == "cbAlpha" ) {
+              if (clickItem == "cbRed" && clickValue == true || clickItem == "cbGreen" && clickValue == true || clickItem == "cbBlue" && clickValue == true || clickItem == "cbAlpha" && clickValue == true ) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "discolorationClick") {
+              if (clickItem == "discolorationClick" && clickValue == true) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if (clickItem == "rangeR"  && clickValue > 0 || clickItem == "rangeG"  && clickValue > 0 || clickItem == "rangeB"  && clickValue > 0 ) {
@@ -1487,7 +1485,7 @@ function putImage(width, height, func) {
               if (clickItem == "rangeH"  && clickValue > 0 || clickItem == "rangeS"  && clickValue > 0 || clickItem == "rangeL"  && clickValue > 0 ) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeGamma"  && clickValue !== 100) {
+              if (clickItem == "rangeGamma") {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if (clickItem == "rangeSize"  && clickValue > 0) {
