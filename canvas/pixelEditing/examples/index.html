@@ -275,9 +275,11 @@ let pageHeight = document.querySelector(".fotoBlock").offsetHeight;
 let inputPhoto = document.getElementById("inputPhoto");
 inputPhoto.addEventListener('change', function() {
     if (this.files && this.files[0]) {      
+      //сбрасываем все данные
+      reset();
       img.src = URL.createObjectURL(this.files[0]);
-      canvas.setAttribute("data-img",this.files[0].name);
-    }          
+      canvas.setAttribute("data-img",this.files[0].name); 
+    }
 })
 //кнопка перезагрузки
 let closetImg = document.getElementById("closetImg");
@@ -1461,16 +1463,16 @@ function putImage(width, height, func) {
               if (clickItem == "rangeSharp"  && clickValue > 0) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if(clickItem == "rotate") {
+              if(clickItem == "rotate" && clickValue !== "0") {
                 editPicter(getImageSave(), clickValue, clickValue); 
               }
               if(clickItem == "degrees"  && clickValue > 0 || clickValue < 0) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if(clickItem == "numWidth") {
+              if(clickItem == "numWidth" /*&& parseInt(clickValue) !== img.width*/) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if(clickItem == "numHeight") {
+              if(clickItem == "numHeight"  /*&& parseInt(clickValue) !== img.height*/) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if (clickItem == "cbRed" && clickValue == true || clickItem == "cbGreen" && clickValue == true || clickItem == "cbBlue" && clickValue == true || clickItem == "cbAlpha" && clickValue == true ) {
@@ -1485,7 +1487,7 @@ function putImage(width, height, func) {
               if (clickItem == "rangeH"  && clickValue > 0 || clickItem == "rangeS"  && clickValue > 0 || clickItem == "rangeL"  && clickValue > 0 ) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeGamma") {
+              if (clickItem == "rangeGamma" && parseInt(clickValue) !== 100) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if (clickItem == "rangeSize"  && clickValue > 0) {
@@ -1509,9 +1511,9 @@ console.log(document.getElementsByTagName('input'));
 console.log(document.querySelectorAll('.links'));
 console.log(document.querySelectorAll(".histogram > label")[0].children);*/
 //Reset
-let resetPages = document.
-getElementById("resetEdit");
-  resetPages.addEventListener('click',function (){   
+let resetPages = document.getElementById("resetEdit");
+  resetPages.addEventListener('click', reset);
+  function reset(){   
     let inputSizeColor = editColor.getElementsByTagName('input'),
     inputNumberColor = document.getElementsByName("numberColor"), 
     inputSizeEffect = effect.querySelectorAll("[type='range']"),
@@ -1575,8 +1577,7 @@ getElementById("resetEdit");
       document.getElementById("canvasEdihion").removeAttribute("class");
       //Передаем информацию о картинке
       initImg();
-  })
-
+  }  
 //Сохраняем  картинку в браузере
 var saveIMGBrauser = document.getElementById('saveIMGBrauser');
 //Сохраняем на прямую
