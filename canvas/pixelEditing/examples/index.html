@@ -1479,7 +1479,7 @@ function putImage(width, height, func) {
               if (clickItem == "discolorationClick" && clickValue == true) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeR"  && clickValue > 0 || clickItem == "rangeG"  && clickValue > 0 || clickItem == "rangeB"  && clickValue > 0 ) {
+              if (clickItem == "rangeR"  && clickValue !== "0" || clickItem == "rangeG"  && clickValue !== "0" || clickItem == "rangeB"  && clickValue !== "0" ) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if (clickItem == "rangeH" && clickValue !== "0" || clickItem == "rangeS" && clickValue !== "0" || clickItem == "rangeL" && clickValue !== "0" ) {
