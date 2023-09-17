@@ -402,7 +402,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
         else if(clickItem == "rangeBrightness"){brightness = parseInt(clickValue);}
         else if(clickItem == "rangeSaturation"){
           saturation = parseInt(clickValue);
-          maxSaturation = (clickValue < 0) ? 255 :128;
+          maxSaturation = (saturation < 0) ? 255 : 128;
         }
         else if(clickItem == "rangeSharp"){mix = (clickValue)*0.01;}     
         else if(clickItem == "degrees"){angle = Number(clickValue);} 
@@ -515,24 +515,15 @@ function editPicter(inCanvas, clickItem, clickValue) {
             //Saturation
             if (clickItem == "rangeSaturation") {
                 putImage(width, height, function (dst) {
-                  let avgGray = 0;
                   for (let i = 0; i < dst.length; i++) {
                     let r = src[i] & 0xFF;
                     let g = (src[i] >> 8) & 0xFF;
                     let b = (src[i] >> 16) & 0xFF;
-                    avgGray += (r * 0.2126 + g * 0.7152 + b * 0.0722);
-                  }
-                  avgGray /= dst.length;
+                    let gray = (r * 0.2126 + g * 0.7152 + b * 0.0722);
 
-                  for (let i = 0; i < dst.length; i++) {
-                    let r = src[i] & 0xFF;
-                    let g = (src[i] >> 8) & 0xFF;
-                    let b = (src[i] >> 16) & 0xFF;
-
-                    //Saturation
-                    r += (r - avgGray) * saturation / maxSaturation;
-                    g += (g - avgGray) * saturation / maxSaturation;
-                    b += (b - avgGray) * saturation / maxSaturation;
+                    r += (r - gray) * saturation / maxSaturation;
+                    g += (g - gray) * saturation / maxSaturation;
+                    b += (b - gray) * saturation / maxSaturation;
 
                     if (r > 255) r = 255;
                     else if (r < 0) r = 0;
@@ -542,7 +533,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
                     else if (b < 0) b = 0;
 
                     dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
-                  } 
+                  }
                   histogram(dst);    
                 })
             }
@@ -870,7 +861,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
               });
             } 
             //hslCor
-            if (clickItem == "rangeH" && clickValue > 0 || clickItem == "rangeS" && clickValue > 0 || clickItem == "rangeL" && clickValue > 0) {
+            if (clickItem == "rangeH" || clickItem == "rangeS" || clickItem == "rangeL") {
               putImage(width, height, function (dst) {
                   for (let i = 0; i < dst.length; i++) {
                     let r = src[i] & 0xFF;
@@ -1340,7 +1331,7 @@ function putImage(width, height, func) {
       }
       //gammaCor 
       if (e.target.id == "rangeGamma") {
-        document.getElementById("valueGamma").innerText = e.target.value;
+        document.getElementById("valueGamma").innerText = (e.target.value/100).toFixed(2);
       }
       //blur1 
       if (e.target.id == "rangeSize") {
@@ -1374,7 +1365,7 @@ function putImage(width, height, func) {
     }
    
   //Функция событий, алгоритм выполнения после изменений
-  function clickActionsSave() { 
+  function clickActionsSave() {
       for (let i = 0; i < tablinks.children.length; i++) {
           let rozdil = tablinks.children[i];
           if (rozdil.id == "editColor") {
@@ -1387,10 +1378,17 @@ function putImage(width, height, func) {
           }     
           if (rozdil.id == "resize") {
             let podrozdil = rozdil.children[1]; 
-            for (let i = 0; i < podrozdil.children.length; i++) {
+            if (numHeight.className == "closet") {
+              for (let i = 0; i < podrozdil.children.length; i++) {
               clicks[podrozdil.children[0].id] = podrozdil.children[0].value;
               clicks[podrozdil.children[1].id] =  String(Math.round(img.height * numWidth.value / img.width));
-            }
+              }
+            } else {
+              for (let i = 0; i < podrozdil.children.length; i++) {
+              clicks[podrozdil.children[0].id] = podrozdil.children[0].value;
+              clicks[podrozdil.children[1].id] =  podrozdil.children[1].value;
+              }
+            }  
           } 
           if (rozdil.id == "rotate") {
             let podrozdil = rozdil.children[1];
@@ -1454,25 +1452,25 @@ function putImage(width, height, func) {
               if (clickItem == "rangeContrast") {
                 editPicter(getImage(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeBrightness"  && clickValue > 0) {
+              if (clickItem == "rangeBrightness"  && clickValue !== "0") {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeSaturation"  && clickValue > 0) {
+              if (clickItem == "rangeSaturation" && clickValue !== "0") {
                 editPicter(getImageSave(), clickItem, clickValue);
               }
-              if (clickItem == "rangeSharp"  && clickValue > 0) {
+              if (clickItem == "rangeSharp"  && clickValue !== "0") {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if(clickItem == "rotate" && clickValue !== "0") {
                 editPicter(getImageSave(), clickValue, clickValue); 
               }
-              if(clickItem == "degrees"  && clickValue > 0 || clickValue < 0) {
+              if(clickItem == "degrees"  && clickValue !== "0") {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if(clickItem == "numWidth" /*&& parseInt(clickValue) !== img.width*/) {
+              if(clickItem == "numWidth" && parseInt(clickValue) !== img.width) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if(clickItem == "numHeight"  /*&& parseInt(clickValue) !== img.height*/) {
+              if(clickItem == "numHeight"  && parseInt(clickValue) !== img.height) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if (clickItem == "cbRed" && clickValue == true || clickItem == "cbGreen" && clickValue == true || clickItem == "cbBlue" && clickValue == true || clickItem == "cbAlpha" && clickValue == true ) {
@@ -1484,7 +1482,7 @@ function putImage(width, height, func) {
               if (clickItem == "rangeR"  && clickValue > 0 || clickItem == "rangeG"  && clickValue > 0 || clickItem == "rangeB"  && clickValue > 0 ) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if (clickItem == "rangeH"  && clickValue > 0 || clickItem == "rangeS"  && clickValue > 0 || clickItem == "rangeL"  && clickValue > 0 ) {
+              if (clickItem == "rangeH" && clickValue !== "0" || clickItem == "rangeS" && clickValue !== "0" || clickItem == "rangeL" && clickValue !== "0" ) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if (clickItem == "rangeGamma" && parseInt(clickValue) !== 100) {
@@ -1539,7 +1537,7 @@ let resetPages = document.getElementById("resetEdit");
         //effect
         if (inputSizeEffect[i].id == "rangeGamma") {
           inputSizeEffect[i].value = 100;
-          inputNumberEffect[i].innerText = 100;
+          inputNumberEffect[i].innerText = 1.00;
         } else if(inputSizeEffect[i].id == "rangeHRadius" || inputSizeEffect[i].id == "rangeVRadius") {
           inputSizeEffect[i].value = 1;
           inputNumberEffect[i].innerText = 1;
@@ -1553,6 +1551,8 @@ let resetPages = document.getElementById("resetEdit");
       //scale
       numWidth.value = img.width;
       numHeight.value = img.height; 
+      numHeight.className = "closet"; 
+      numHeight.disabled = true;
       checked.checked =true;
       scaleVersion[0].selected = true;
 
@@ -1584,7 +1584,6 @@ var saveIMGBrauser = document.getElementById('saveIMGBrauser');
 saveIMGBrauser.addEventListener("click", ()=>{saveImg()})
 //Обшая функция сохранения
 function saveImg() {
-  
     var dataURL = canvas.toDataURL("image/jpeg",1.0);//подгатавливаем данные для передачи  data:[<тип данных>][;base64],<данные>
     var link = document.createElement("a");//создаем ссылку
     document.body.appendChild(link); // Firefox требует, чтобы ссылка была в теле :(
