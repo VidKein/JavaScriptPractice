@@ -345,7 +345,6 @@ function initImg() {
         } 
 
 }
-
 //переключатель для гистограммы ч-б/цветное
 let switchHistogram = document.getElementsByName("rType");
 for (let i = 0; i < switchHistogram.length; i++) { 
@@ -353,7 +352,8 @@ for (let i = 0; i < switchHistogram.length; i++) {
     clickActionsSave();
   });
 }
-            
+
+
 //Effects анимация accordion
 let acc = document.getElementsByClassName("accordion");
   for (let i = 0; i < acc.length; i++) {
@@ -381,10 +381,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
         let brightness = 0;
         let saturation = 0;
         let maxSaturation = 0;
-        let mix = 0.01;
-        let newWidth = numWidth.value;
-        if (numHeight.className =="closet") {numHeight.value = Math.round(img.height * numWidth.value / img.width);}
-        let newHeight = numHeight.value; 
+        let mix = 0.01; 
         let angle;
         let deltaR = 0;
         let deltaG = 0;
@@ -441,7 +438,6 @@ function editPicter(inCanvas, clickItem, clickValue) {
         else if(clickItem == "rangeVRadius"){
           vRadius = parseInt(clickValue);
         }
-        
             //Contrast
             if (clickItem == "rangeContrast" ) {
                 putImage(width, height, function (dst) {
@@ -583,12 +579,12 @@ function editPicter(inCanvas, clickItem, clickValue) {
             }
             //Rotate 90
             if (clickItem == "90") {
+              
                 putImage(height, width, function (dst) {
                 let newWidth = height;
                 let newHeight = width;
                 canvas.width = newWidth;
                 canvas.height = newHeight;
-                
                 for (let y = 0; y < newHeight; y++) {
                   for (let x = 0; x < newWidth; x++) {
                     dst[y * newWidth + x] = src[(height - x - 1) * width + y];
@@ -665,6 +661,9 @@ function editPicter(inCanvas, clickItem, clickValue) {
             }
             //Resize
             if (clickItem == "numWidth" || clickItem == "numHeight") {
+              let newWidth = numWidth.value;
+              if (numHeight.className =="closet") {numHeight.value = Math.round(img.height * numWidth.value / img.width);}
+              let newHeight = numHeight.value;
               canvas.width = newWidth;
               canvas.height = newHeight;
               putImage(newWidth, newHeight, function (dst) {
@@ -803,8 +802,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
                             dst[y * newWidth + x] = src[srcY * width + srcX];
                           }
                       }
-                }
-                
+                } 
               })
             }
             //negative
@@ -892,7 +890,7 @@ function editPicter(inCanvas, clickItem, clickValue) {
 
                     dst[i] = (src[i] & 0xFF000000) | (b << 16) | (g << 8) | r;
                   }
-                  
+                  histogram(dst);
               })
               function rgbToHsl(r, g, b) {
                 let max = Math.max(r, g, b);
@@ -1259,11 +1257,10 @@ function putImage(width, height, func) {
   //Функция для прослушивания событий для сбора информации
   function clickActionsEffect(e) { 
     //Получите все элементы с class="links" и удалите "активный" класс
-    
     //editColor
     for (let i = 0; i < editColor.children.length; i++) {
         if (editColor.children[i].className) {
-            editColor.children[i].className = editColor.children[i].className.replace(" active", "")
+            editColor.children[i].className = editColor.children[i].className.replace(" active", "");
           }
     }
     //resize
@@ -1307,7 +1304,9 @@ function putImage(width, height, func) {
         document.getElementById("degrees").disabled = true;
       }
       //resize
-      if (numHeight.className =="closet") {numHeight.value = Math.round(img.height * numWidth.value / img.width);}  
+      if (e.target.id == "resize" && numHeight.className =="closet") {
+        numHeight.value = Math.round(img.height * numWidth.value / img.width);
+      }
       //effect 
       //rgbCor
       if (e.target.id == "rangeR") {
@@ -1467,10 +1466,10 @@ function putImage(width, height, func) {
               if(clickItem == "degrees"  && clickValue !== "0") {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if(clickItem == "numWidth" && parseInt(clickValue) !== img.width) {
+              if(clickItem == "numWidth" && parseInt(clickValue) !== canvas.width) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
-              if(clickItem == "numHeight"  && parseInt(clickValue) !== img.height) {
+              if(clickItem == "numHeight"  && parseInt(clickValue) !== canvas.height) {
                 editPicter(getImageSave(), clickItem, clickValue); 
               }
               if (clickItem == "cbRed" && clickValue == true || clickItem == "cbGreen" && clickValue == true || clickItem == "cbBlue" && clickValue == true || clickItem == "cbAlpha" && clickValue == true ) {
