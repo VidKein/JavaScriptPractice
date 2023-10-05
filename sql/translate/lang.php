@@ -1,4 +1,5 @@
 <?php 
+$lang = "ru";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $lang = $_POST["lang"];    
 }
@@ -13,6 +14,7 @@ if (!$con) {
 };
 
 function data_page_row($lang, $con){
+
   $lang_static = "page_value_tage_".$lang;
   $sql_static = "SELECT name_tage, value_tage FROM page_tage,$lang_static 
   WHERE page_tage.id_tage = $lang_static.id_value_tage";
@@ -25,11 +27,13 @@ if (mysqli_num_rows($res_static) > 0) {
 } else {
     echo "Нет данных для отображения.";
 }
+
 $lang_dinamic = "page_dinamic_value_tage_".$lang;
 $sql_dinamic = "SELECT id_value_tage, name_tage_dinamic, url_page, name_button, value_tage 
 FROM page_dinamic_tage, $lang_dinamic 
 WHERE page_dinamic_tage.id_tage = $lang_dinamic.id_value_tage";
 $res_dinamic = mysqli_query($con,$sql_dinamic);
+
 $products_dinamic = array();
 if (mysqli_num_rows($res_dinamic) > 0) {
     while ($row = mysqli_fetch_assoc($res_dinamic)) {
@@ -38,9 +42,10 @@ if (mysqli_num_rows($res_dinamic) > 0) {
 } else {
     echo "Нет данных для отображения.";
 }
+
 $products = array();
 $products = array_merge($products_static, $products_dinamic);
 echo json_encode($products); // Возвращаем данные в формате JSON
 }
-data_page_row($lang, $con)
+data_page_row($lang, $con);
 ?>

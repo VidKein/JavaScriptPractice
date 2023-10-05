@@ -1,6 +1,3 @@
-<?php
-require_once "./lang.php";
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -137,6 +134,8 @@ require_once "./lang.php";
                      // Формируем данные для отправки
                      var data = "lang=" + encodeURIComponent(markerLang);
                      xhr.send(data);
+                     //Изменения адреса, якорь
+                     window.history.pushState(null, null, "#eng-eng");
                      break;
                  case "ru":
                      console.log("Руский");
@@ -145,6 +144,8 @@ require_once "./lang.php";
                     // Формируем данные для отправки
                      var data = "lang=" + encodeURIComponent(markerLang);
                      xhr.send(data);
+                     //Изменения адреса, якорь
+                     window.history.pushState(null, null, "#ru-ru"); 
                      break;
                  case "ua":
                      console.log("Украинский");
@@ -153,6 +154,8 @@ require_once "./lang.php";
                     // Формируем данные для отправки
                      var data = "lang=" + encodeURIComponent(markerLang);
                      xhr.send(data);
+                     //Изменения адреса, якорь
+                     window.history.pushState(null, null, "#ua-ua"); 
                      break;            
                  default: console.log("ничего не выброно");
                      break;
@@ -188,6 +191,5 @@ xhr.onreadystatechange = function() {
         }
     }
 };
-
 </script>   
 </html>
