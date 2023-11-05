@@ -22,21 +22,21 @@ INSERT INTO page_value_tage_ru(value_tage) VALUES
 ('Информация о сайте');
 
 --eng
-CREATE TABLE `page_value_tage_eng`(
+CREATE TABLE `page_value_tage_en`(
 `id_value_tage` INT PRIMARY KEY AUTO_INCREMENT,
 `value_tage` VARCHAR(255) NOT NULL
 );
-INSERT INTO page_value_tage_eng(value_tage) VALUES 
+INSERT INTO page_value_tage_en(value_tage) VALUES 
 ('Website translation'),
 ('Site title'),
 ('Information about the site');
 
 --ua
-CREATE TABLE `page_value_tage_ua`(
+CREATE TABLE `page_value_tage_uk`(
 `id_value_tage` INT PRIMARY KEY AUTO_INCREMENT,
 `value_tage` VARCHAR(255) NOT NULL
 );
-INSERT INTO page_value_tage_ua(value_tage) VALUES 
+INSERT INTO page_value_tage_uk(value_tage) VALUES 
 ('Переклад веб сайту'),
 ('Заголовок сайту'),
 ('Інформація про сайт');
@@ -76,12 +76,12 @@ INSERT INTO page_dinamic_value_tage_ru(name_button, value_tage) VALUES
 Они уравновешены и рассудительны, как настоящие северные жители.');
 
 --eng
-CREATE TABLE `page_dinamic_value_tage_eng`(
+CREATE TABLE `page_dinamic_value_tage_en`(
 `id_value_tage` INT PRIMARY KEY AUTO_INCREMENT,
 `name_button` VARCHAR(10) NOT NULL,
 `value_tage` TEXT NOT NULL
 );
-INSERT INTO page_dinamic_value_tage_eng(name_button, value_tage) VALUES 
+INSERT INTO page_dinamic_value_tage_en(name_button, value_tage) VALUES 
 ('Picture 1','A beautiful fluffy cat with sapphire eyes, thick fur and white paws is a description of the Burmese.
 The history of its origin is covered with beautiful legends. It is still unknown which animals were the ancestors. On the picture
 It is clear that the Burmese is similar in color to the Siamese, but in character it is its complete opposite. Calm, inquisitive
@@ -98,12 +98,12 @@ wool to protect from the cold, athletic build and strong claws to hunt, intellig
 They are balanced and reasonable, like real northern residents.');
 
 --ua
-CREATE TABLE `page_dinamic_value_tage_ua`(
+CREATE TABLE `page_dinamic_value_tage_uk`(
 `id_value_tage` INT PRIMARY KEY AUTO_INCREMENT,
 `name_button` VARCHAR(10) NOT NULL,
 `value_tage` TEXT NOT NULL
 );
-INSERT INTO page_dinamic_value_tage_ua(name_button, value_tage) VALUES 
+INSERT INTO page_dinamic_value_tage_uk(name_button, value_tage) VALUES 
 ('Картинка 1','Гарний пухнастий кіт із сапфіровими очима, густою шерстю та білими лапками – це опис бірманця.
 Історія його походження овіяна гарними легендами. Досі невідомо, які тварини були родоначальниками. На світлині
 видно, що за забарвленням бірманець схожий на сіама, але за характером його повна протилежність. Спокійні, допитливі

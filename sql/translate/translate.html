@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,9 +64,9 @@
 </head>
 <body>
     <ul class="languageSelect" id="languageSelect"> 
-        <li data-lang="ua" id="ua">UA</li>
-        <li class="active" data-lang="ru" id="ru">RU</li> 
-        <li data-lang="eng" id="eng">ENG</li>
+        <li data-lang="uk" id="uk">UA</li>
+        <li data-lang="ru" id="ru">RU</li> 
+        <li data-lang="en" id="en">ENG</li>
     </ul>
     <header>
         <h1 id="title_page">Заголовок сайта</h1>
@@ -107,7 +107,44 @@
     </article>
 </body>
 <script>
-    let markerLang ;
+// Выбираем язык браузера пользователя
+let language = window.navigator.language;
+let languageFistTwo = language.substr(0,2); 
+let currentLocation = document.getElementsByTagName('html')[0];
+//создаем XHR обьект
+let xhr = new XMLHttpRequest();
+//Выбираем переключатель языка
+let le = document.getElementsByTagName("li");
+//Список языков которые использует язык
+let langList =["en","ru","uk"];
+    window.onload = ()=>{    
+        //Устанавливаем язык переключателя
+        if(langList.some(test => test === languageFistTwo)){
+            //меняем локализацию сайта
+            currentLocation.setAttribute('class', currentLocation);
+            document.getElementById(languageFistTwo).className="active";
+              //определяем язак для загрузки
+        xhr.open("post", "lang.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        // Формируем данные для отправки
+        var data = "lang=" + encodeURIComponent(languageFistTwo);
+        xhr.send(data);
+        }else{
+            //меняем локализацию сайта
+            currentLocation.setAttribute('class', "en");
+            document.getElementById("en").className="active";
+              //определяем язак для загрузки
+        xhr.open("post", "lang.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        // Формируем данные для отправки
+        var data = "lang=" + encodeURIComponent("en");
+        xhr.send(data);
+        };
+        console.log("Язык браузера - "+languageFistTwo);
+      
+    };
+ 
+    let markerLang;
     let languageSelect = document.getElementById("languageSelect");
     languageSelect.addEventListener("click",(e)=>{
         if(e.currentTarget.className == "languageSelect open"){
@@ -116,9 +153,7 @@
             e.currentTarget.className += " open";  
         };
     })
-    let le = document.getElementsByTagName("li");
-    //создаем XHR обьект
-    let xhr = new XMLHttpRequest();
+    
     for (let i = 0; i < le.length; i++) {
         le[i].addEventListener("click", (e)=>{
             le[0].removeAttribute("class");
@@ -127,7 +162,7 @@
             e.target.className = "active";
             markerLang = e.target.id;
             switch (markerLang) {
-                 case "eng":
+                 case "en":
                      console.log("Английский");
                      xhr.open("post", "lang.php", true);
                      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -135,7 +170,7 @@
                      var data = "lang=" + encodeURIComponent(markerLang);
                      xhr.send(data);
                      //Изменения адреса, якорь
-                     window.history.pushState(null, null, "#eng-eng");
+                     window.history.pushState(null, null, "#en-US");
                      break;
                  case "ru":
                      console.log("Руский");
@@ -145,9 +180,9 @@
                      var data = "lang=" + encodeURIComponent(markerLang);
                      xhr.send(data);
                      //Изменения адреса, якорь
-                     window.history.pushState(null, null, "#ru-ru"); 
+                     window.history.pushState(null, null, "#ru-RU"); 
                      break;
-                 case "ua":
+                 case "uk":
                      console.log("Украинский");
                      xhr.open("post", "lang.php", true);
                      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -155,7 +190,7 @@
                      var data = "lang=" + encodeURIComponent(markerLang);
                      xhr.send(data);
                      //Изменения адреса, якорь
-                     window.history.pushState(null, null, "#ua-ua"); 
+                     window.history.pushState(null, null, "#uk-UA"); 
                      break;            
                  default: console.log("ничего не выброно");
                      break;
