@@ -215,6 +215,7 @@ xhr.onreadystatechange = function() {
         var response = JSON.parse(xhr.responseText);
         for (var i = 0; i < response.length; i++) {
         var product = response[i];
+        console.log(product);
         if (product.name_tage == "title") {document.title = product.value_tage;}
         else if(product.name_tage == "title_page"){document.getElementById("title_page").innerText = product.value_tage;}
         else if(product.name_tage == "info_site"){document.getElementById("info_site").innerText = product.value_tage;}
