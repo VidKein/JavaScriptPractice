@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Перевод веб сайта</title>
+    <title></title>
     <style>
         .picter1 .active{
             display: block;
@@ -75,151 +75,148 @@
     <article>
           
     </article>
-</body>
-<script>
-// Выбираем язык браузера пользователя
-let language = window.navigator.language;
-let languageFistTwo = language.substr(0,2); 
-let currentLocation = document.getElementsByTagName('html')[0];
-//создаем XHR обьект
-let xhr = new XMLHttpRequest();
-//Выбираем переключатель языка
-let le = document.getElementsByTagName("li");
-//Список языков которые использует язык
-let langList =["en","ru","uk"];
-//Определяем путь файлов с текстами разных языков
-let urlLang = "./lang/";
-//
-let section = document.querySelector('section');
-let article = document.querySelector('article');
-    window.onload = ()=>{    
-        //Устанавливаем язык переключателя
-        if(langList.some(test => test === languageFistTwo)){
-            //меняем локализацию сайта
-            currentLocation.setAttribute('class', currentLocation);
-            document.getElementById(languageFistTwo).className="active";
-            //запрос на извлечение
-            xhr.open("GET", urlLang+languageFistTwo+".json");
-            //Устанавливаем что будем возврашать
-            xhr.responseType = "json";
-            xhr.send();
-            createСontent();
-        }else{
-            //меняем локализацию сайта
-            currentLocation.setAttribute('class', "en");
-            document.getElementById("en").className="active";
-            //запрос на извлечение
-            xhr.open("GET", urlLang+"en.json");
-            //Устанавливаем что будем возврашать
-            xhr.responseType = "json";
-            xhr.send();
-            createСontent();
-        };
-        console.log("Язык браузера - "+languageFistTwo);
-    }
-//Прослыушиваем события выподаюшего меню    
-for (let i = 0; i < le.length; i++) {
-    le[i].addEventListener("click", (e)=>{
-        le[0].removeAttribute("class");
-        le[1].removeAttribute("class");
-        le[2].removeAttribute("class");
-        e.target.className = "active";
-        markerLang = e.target.id;
-        //запрос на извлечение
-        xhr.open("GET", urlLang+markerLang+".json");
-        //Устанавливаем что будем возврашать
-        xhr.responseType = "json";
-        xhr.send();
-        console.log("Установлен язык - "+markerLang);
-        //Заменяем содержание в зависимости от языка
+    <script>
+        // Выбираем язык браузера пользователя
+        let language = window.navigator.language;
+        let languageFistTwo = language.substr(0,2); 
+        let currentLocation = document.getElementsByTagName('html')[0];
+        //создаем XHR обьект
+        let xhr = new XMLHttpRequest();
+        //Выбираем переключатель языка
+        let le = document.getElementsByTagName("li");
+        //Список языков которые использует язык
+        let langList =["en","ru","uk"];
+        //Определяем путь файлов с текстами разных языков
+        let urlLang = "./lang/";
+        //
         let section = document.querySelector('section');
         let article = document.querySelector('article');
-        xhr.onload = ()=>{
-                var responseNew = xhr.response;
-                document.getElementById(responseNew.id_h1).innerText = responseNew.value_tage_h1;
-                document.getElementById(responseNew.id_h3).innerText = responseNew.value_tage_h3;
-                for (const infoCat of responseNew.blok_cat) {
-                    section.children[infoCat.id_value_tage-1].innerText = infoCat.name_button;
-                    article.children[infoCat.id_value_tage-1].querySelectorAll("p")[0].innerText = infoCat.value_tage;        
-                    document.getElementById(infoCat.name_tage_dinamic).src = infoCat.url_page;
-                }
-            }     
-          
-    })        
-}
-//Формируем язык сайта+создаем элементы
-function createСontent() {
-    xhr.onload = ()=>{
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            let respon = xhr.response;
-            //Создаем элементы <h1>, <h3>
-            const titleSait = document.createElement('h1');
-            const infoSate = document.createElement('h3');
-            //Title
-            document.title = respon.value_tage_title;
-            //Текст
-            titleSait.id = respon.id_h1;
-            titleSait.innerText = respon.value_tage_h1;
-            infoSate.id = respon.id_h3;
-            infoSate.innerText = respon.value_tage_h3;
-            //Блок с котами    
-            let blokCat = respon.blok_cat;
-            for (const infoCat of blokCat) {
-                //Создаем элементы <button>,<div>,<img>,<p>
-                const button = document.createElement('button');
-                const infoBloc = document.createElement('div');
-                const image = document.createElement('img');
-                const text = document.createElement('p');
-                //кнопка
-                button.className = "links";
-                button.id = "img"+infoCat.id_value_tage;
-                button.name = "picter"+infoCat.id_value_tage;
-                button.innerText = infoCat.name_button;  
-                //Картинки с информацией
-                if (infoCat.id_value_tage !== 1) {
-                    infoBloc.style = "display:none"; 
-                } 
-                infoBloc.className ="content";
-                infoBloc.id ="picter"+infoCat.id_value_tage;
-                image.id = infoCat.name_tage_dinamic;
-                image.src = infoCat.url_page;
-                text.id = "infoTextPicture"+infoCat.id_value_tage;
-                text.innerText = infoCat.value_tage;
-                //Растовляем єлементы по местам <button>,<div>,<img>,<p>
-                section.appendChild(button);
-                article.appendChild(infoBloc);
-                infoBloc.appendChild(image);
-                infoBloc.appendChild(text); 
+            window.onload = ()=>{    
+                //Устанавливаем язык переключателя
+                if(langList.some(test => test === languageFistTwo)){
+                    //меняем локализацию сайта
+                    currentLocation.setAttribute('class', currentLocation);
+                    document.getElementById(languageFistTwo).className="active";
+                    //запрос на извлечение
+                    xhr.open("GET", urlLang+languageFistTwo+".json");
+                    //Устанавливаем что будем возврашать
+                    xhr.responseType = "json";
+                    xhr.send();
+                    createСontent();
+                }else{
+                    //меняем локализацию сайта
+                    currentLocation.setAttribute('class', "en");
+                    document.getElementById("en").className="active";
+                    //запрос на извлечение
+                    xhr.open("GET", urlLang+"en.json");
+                    //Устанавливаем что будем возврашать
+                    xhr.responseType = "json";
+                    xhr.send();
+                    createСontent();
+                };
+                console.log("Язык браузера - "+languageFistTwo);
             }
-        //Растовляем єлементы по местам <h1>, <h3>
-        document.querySelector("header").appendChild(titleSait);
-        document.querySelector("header").appendChild(infoSate);
-        }    
-    }
-}
+        //Прослыушиваем события выподаюшего меню    
+        for (let i = 0; i < le.length; i++) {
+            le[i].addEventListener("click", (e)=>{
+                for(let langBloc of le){langBloc.removeAttribute("class");}
+                e.target.className = "active";
+                markerLang = e.target.id;
+                //запрос на извлечение
+                xhr.open("GET", urlLang+markerLang+".json");
+                //Устанавливаем что будем возврашать
+                xhr.responseType = "json";
+                xhr.send();
+                console.log("Установлен язык - "+markerLang);
+                //Заменяем содержание в зависимости от языка
+                let section = document.querySelector('section');
+                let article = document.querySelector('article');
+                xhr.onload = ()=>{
+                        var responseNew = xhr.response;
+                        document.title = responseNew.value_tage_title;
+                        document.getElementById(responseNew.id_h1).innerText = responseNew.value_tage_h1;
+                        document.getElementById(responseNew.id_h3).innerText = responseNew.value_tage_h3;
+                        for (const infoCat of responseNew.blok_cat) {
+                            section.children[infoCat.id_value_tage-1].innerText = infoCat.name_button;
+                            article.children[infoCat.id_value_tage-1].querySelectorAll("p")[0].innerText = infoCat.value_tage;        
+                        }
+                    }     
+            })        
+        }
+        //Формируем язык сайта+создаем элементы
+        function createСontent() {
+            xhr.onload = ()=>{
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    let respon = xhr.response;
+                    //Создаем элементы <h1>, <h3>
+                    const titleSait = document.createElement('h1');
+                    const infoSate = document.createElement('h3');
+                    //Title
+                    document.title = respon.value_tage_title;
+                    //Текст
+                    titleSait.id = respon.id_h1;
+                    titleSait.innerText = respon.value_tage_h1;
+                    infoSate.id = respon.id_h3;
+                    infoSate.innerText = respon.value_tage_h3;
+                    //Блок с котами    
+                    let blokCat = respon.blok_cat;
+                    for (const infoCat of blokCat) {
+                        //Создаем элементы <button>,<div>,<img>,<p>
+                        const button = document.createElement('button');
+                        const infoBloc = document.createElement('div');
+                        const image = document.createElement('img');
+                        const text = document.createElement('p');
+                        //кнопка
+                        button.className = "links";
+                        button.id = "img"+infoCat.id_value_tage;
+                        button.name = "picter"+infoCat.id_value_tage;
+                        button.innerText = infoCat.name_button;  
+                        //Картинки с информацией
+                        if (infoCat.id_value_tage !== 1) {
+                            infoBloc.style = "display:none"; 
+                        } 
+                        infoBloc.className ="content";
+                        infoBloc.id ="picter"+infoCat.id_value_tage;
+                        image.id = infoCat.name_tage_dinamic;
+                        image.src = infoCat.url_page;
+                        text.id = "infoTextPicture"+infoCat.id_value_tage;
+                        text.innerText = infoCat.value_tage;
+                        //Растовляем єлементы по местам <button>,<div>,<img>,<p>
+                        section.appendChild(button);
+                        article.appendChild(infoBloc);
+                        infoBloc.appendChild(image);
+                        infoBloc.appendChild(text); 
+                    }
+                //Растовляем єлементы по местам <h1>, <h3>
+                document.querySelector("header").appendChild(titleSait);
+                document.querySelector("header").appendChild(infoSate);
+                load();
+                }    
+            }
+        }
+        //Открываем закрываем выподаюшее меню
+        let markerLang;
+        let languageSelect = document.getElementById("languageSelect");
+        languageSelect.addEventListener("click",(e)=>{
+            if(e.currentTarget.className == "languageSelect open"){
+                e.currentTarget.setAttribute('class', "languageSelect");
+            }else{
+                e.currentTarget.className += " open";  
+            };
+        })
 
-//Открываем закрываем выподаюшее меню
-let markerLang;
-let languageSelect = document.getElementById("languageSelect");
-languageSelect.addEventListener("click",(e)=>{
-    if(e.currentTarget.className == "languageSelect open"){
-        e.currentTarget.setAttribute('class', "languageSelect");
-    }else{
-        e.currentTarget.className += " open";  
-    };
-})
-
-//Отображение картинок
-let links = document.getElementsByClassName("links");
-let content = document.getElementsByClassName("content");
-for (let i = 0; i < links.length; i++) {
-    links[i].addEventListener("click", (e)=>{
-    content[0].style = "display: none;";
-    content[1].style = "display: none;";
-    content[2].style = "display: none;";
-    document.getElementById(e.currentTarget.name).style = "display: flex;";    
-    })
-}
-
-</script>   
+        //Отображение картинок
+        function load() {
+            let links = document.getElementsByClassName("links");
+            let content = document.getElementsByClassName("content");
+            
+            for (let i = 0; i < links.length; i++) {
+                links[i].addEventListener("click", (e)=>{
+                for(let picturBloc of content){picturBloc.style = "display: none;";}
+                document.getElementById(e.currentTarget.name).style = "display: flex;";    
+                })
+            }
+        }
+        </script>  
+</body>  
 </html>

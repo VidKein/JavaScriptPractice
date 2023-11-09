@@ -156,9 +156,7 @@ let langList =["en","ru","uk"];
     
     for (let i = 0; i < le.length; i++) {
         le[i].addEventListener("click", (e)=>{
-            le[0].removeAttribute("class");
-            le[1].removeAttribute("class");
-            le[2].removeAttribute("class");
+            for(let langBloc of le){langBloc.removeAttribute("class");}
             e.target.className = "active";
             markerLang = e.target.id;
             switch (markerLang) {
@@ -200,12 +198,9 @@ let langList =["en","ru","uk"];
 
 let links = document.getElementsByClassName("links");
 let content = document.getElementsByClassName("content");
-console.log(links.length);
 for (let i = 0; i < links.length; i++) {
     links[i].addEventListener("click", (e)=>{
-    content[0].style = "display: none;";
-    content[1].style = "display: none;";
-    content[2].style = "display: none;";
+    for(let picturBloc of content){picturBloc.style = "display: none;";}
     document.getElementById(e.currentTarget.name).style = "display: flex;";    
     })
 }
