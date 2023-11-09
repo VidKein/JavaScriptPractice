@@ -51,11 +51,9 @@
         cursor: pointer;
         background:#bdb9b4;
         }
-
         .languageSelect.open {
         height: auto;
         }
-
         .languageSelect li.active {
         order: 1;
         pointer-events: none;
@@ -69,41 +67,13 @@
         <li data-lang="en" id="en">ENG</li>
     </ul>
     <header>
-        <h1 id="title_page">Заголовок сайта</h1>
-        <h3 id="info_site">Информация о сайте</h3>
+
     </header>
     <section>
-        <button class="links" id="img1" name="picter1">Картинка 1</button>
-        <button class="links" id="img2" name="picter2">Картинка 2</button>
-        <button class="links" id="img3" name="picter3">Картинка 3</button>
+
     </section>
     <article>
-        <div class="content" id="picter1">
-        <img id="url1" src="./picter1.jpg" alt="">
-        <p id="infoTextPicture1">
-        Красивый пушистый кот с сапфировыми глазами, густой шерстью и белыми лапками — это описание бирманца.
-        История его происхождения овеяна красивыми легендами. До сих пор неизвестно, какие животные были родоначальниками. На фото 
-        видно, что по окрасу бирманец похож на сиама, но по характеру — его полная противоположность. Спокойные, любознательные
-        животные не стесняются выражать свою любовь к хозяевам и в то же время, как истинные аристократы, не будут навязывать своё
-        общество, если люди заняты и не могут уделить им внимания.</p>
-        </div>
-        <div class="content" id="picter2" style="display: none;" >
-        <img id="url2" src="./picter2.jpg" alt="">
-        <p id="infoTextPicture2">
-        Это не всегда можно понять по фото, но мейн-куны — коты-великаны. При этом они считаются одной из лучших пород для домашнего
-         содержания. По-королевски красивая внешность в сочетании с дружелюбным характером — идеальный пример семейного питомца. 
-         Чем старше они становятся, тем ярче в них проявляются царственные привычки. Они прекрасно чувствуют настроение домочадцев: 
-         погружаются в задумчивое созерцание, когда хозяева нуждаются в покое и тишине, активно поддерживают игру, если того требует 
-         ситуация.</p>
-        </div>
-        <div class="content" id="picter3" style="display: none;" >
-        <img id="url3" src="./picter3.jpg" alt="">
-        <p id="infoTextPicture3">
-        Представителей этой породы можно узнать по внушительным размерам, пушистой шерсти и характерному воротнику вокруг шеи.
-        Последние два признака хорошо видны на фото. Во внешности сочетаются черты дикого лесного кота и домашнего животного: густая
-        шерсть, чтобы спасаться от холода, атлетическое сложение и сильные когти, чтобы охотиться, умный внимательный взгляд.
-         Они уравновешены и рассудительны, как настоящие северные жители.</p>
-        </div>   
+          
     </article>
 </body>
 <script>
@@ -133,6 +103,7 @@ let article = document.querySelector('article');
             //Устанавливаем что будем возврашать
             xhr.responseType = "json";
             xhr.send();
+            createСontent();
         }else{
             //меняем локализацию сайта
             currentLocation.setAttribute('class', "en");
@@ -142,6 +113,7 @@ let article = document.querySelector('article');
             //Устанавливаем что будем возврашать
             xhr.responseType = "json";
             xhr.send();
+            createСontent();
         };
         console.log("Язык браузера - "+languageFistTwo);
     }
@@ -158,25 +130,74 @@ for (let i = 0; i < le.length; i++) {
         //Устанавливаем что будем возврашать
         xhr.responseType = "json";
         xhr.send();
+        console.log("Установлен язык - "+markerLang);
+        //Заменяем содержание в зависимости от языка
+        let section = document.querySelector('section');
+        let article = document.querySelector('article');
+        xhr.onload = ()=>{
+                var responseNew = xhr.response;
+                document.getElementById(responseNew.id_h1).innerText = responseNew.value_tage_h1;
+                document.getElementById(responseNew.id_h3).innerText = responseNew.value_tage_h3;
+                for (const infoCat of responseNew.blok_cat) {
+                    section.children[infoCat.id_value_tage-1].innerText = infoCat.name_button;
+                    article.children[infoCat.id_value_tage-1].querySelectorAll("p")[0].innerText = infoCat.value_tage;        
+                    document.getElementById(infoCat.name_tage_dinamic).src = infoCat.url_page;
+                }
+            }     
+          
     })        
 }
-//Формируем язык сайта
-xhr.onreadystatechange = ()=>{
-    if (xhr.readyState === 4 && xhr.status === 200) {
-        let respon = xhr.response;
-        for (var i = 0; i < respon.length; i++) {
-        var product = respon[i];
-        if (product.name_tage == "title") {document.title = product.value_tage;}
-        else if(product.name_tage == "title_page"){document.getElementById("title_page").innerText = product.value_tage;}
-        else if(product.name_tage == "info_site"){document.getElementById("info_site").innerText = product.value_tage;}
-        else if(product.id_value_tage){
-            section.children[product.id_value_tage-1].innerText = product.name_button;
-            article.children[product.id_value_tage-1].querySelectorAll("p")[0].innerText = product.value_tage;
-            document.getElementById(product.name_tage_dinamic).src = product.url_page;
-        }      
-        }
-       }
+//Формируем язык сайта+создаем элементы
+function createСontent() {
+    xhr.onload = ()=>{
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            let respon = xhr.response;
+            //Создаем элементы <h1>, <h3>
+            const titleSait = document.createElement('h1');
+            const infoSate = document.createElement('h3');
+            //Title
+            document.title = respon.value_tage_title;
+            //Текст
+            titleSait.id = respon.id_h1;
+            titleSait.innerText = respon.value_tage_h1;
+            infoSate.id = respon.id_h3;
+            infoSate.innerText = respon.value_tage_h3;
+            //Блок с котами    
+            let blokCat = respon.blok_cat;
+            for (const infoCat of blokCat) {
+                //Создаем элементы <button>,<div>,<img>,<p>
+                const button = document.createElement('button');
+                const infoBloc = document.createElement('div');
+                const image = document.createElement('img');
+                const text = document.createElement('p');
+                //кнопка
+                button.className = "links";
+                button.id = "img"+infoCat.id_value_tage;
+                button.name = "picter"+infoCat.id_value_tage;
+                button.innerText = infoCat.name_button;  
+                //Картинки с информацией
+                if (infoCat.id_value_tage !== 1) {
+                    infoBloc.style = "display:none"; 
+                } 
+                infoBloc.className ="content";
+                infoBloc.id ="picter"+infoCat.id_value_tage;
+                image.id = infoCat.name_tage_dinamic;
+                image.src = infoCat.url_page;
+                text.id = "infoTextPicture"+infoCat.id_value_tage;
+                text.innerText = infoCat.value_tage;
+                //Растовляем єлементы по местам <button>,<div>,<img>,<p>
+                section.appendChild(button);
+                article.appendChild(infoBloc);
+                infoBloc.appendChild(image);
+                infoBloc.appendChild(text); 
+            }
+        //Растовляем єлементы по местам <h1>, <h3>
+        document.querySelector("header").appendChild(titleSait);
+        document.querySelector("header").appendChild(infoSate);
+        }    
+    }
 }
+
 //Открываем закрываем выподаюшее меню
 let markerLang;
 let languageSelect = document.getElementById("languageSelect");
@@ -187,6 +208,7 @@ languageSelect.addEventListener("click",(e)=>{
         e.currentTarget.className += " open";  
     };
 })
+
 //Отображение картинок
 let links = document.getElementsByClassName("links");
 let content = document.getElementsByClassName("content");
@@ -198,5 +220,6 @@ for (let i = 0; i < links.length; i++) {
     document.getElementById(e.currentTarget.name).style = "display: flex;";    
     })
 }
+
 </script>   
 </html>
