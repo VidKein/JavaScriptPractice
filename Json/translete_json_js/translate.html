@@ -95,7 +95,7 @@
                 //Устанавливаем язык переключателя
                 if(langList.some(test => test === languageFistTwo)){
                     //меняем локализацию сайта
-                    currentLocation.setAttribute('class', currentLocation);
+                    currentLocation.setAttribute('class', languageFistTwo);
                     document.getElementById(languageFistTwo).className="active";
                     //запрос на извлечение
                     xhr.open("GET", urlLang+languageFistTwo+".json");
@@ -122,12 +122,16 @@
                 for(let langBloc of le){langBloc.removeAttribute("class");}
                 e.target.className = "active";
                 markerLang = e.target.id;
+                //меняем локализацию сайта ????????
+                currentLocation.setAttribute('class', markerLang);
                 //запрос на извлечение
                 xhr.open("GET", urlLang+markerLang+".json");
                 //Устанавливаем что будем возврашать
                 xhr.responseType = "json";
                 xhr.send();
                 console.log("Установлен язык - "+markerLang);
+                //Изменения адреса, якорь ???????
+                window.history.pushState(null, null, "http://127.0.0.1:5500/Json/translete_json_js/translate.html#"+markerLang);     
                 //Заменяем содержание в зависимости от языка
                 let section = document.querySelector('section');
                 let article = document.querySelector('article');
@@ -213,7 +217,7 @@
             for (let i = 0; i < links.length; i++) {
                 links[i].addEventListener("click", (e)=>{
                 for(let picturBloc of content){picturBloc.style = "display: none;";}
-                document.getElementById(e.currentTarget.name).style = "display: flex;";    
+                document.getElementById(e.currentTarget.name).style = "display: flex;";
                 })
             }
         }
