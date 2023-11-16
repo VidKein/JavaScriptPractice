@@ -1,5 +1,7 @@
-<?php
+<?
+require_once "./connect.php";
 require_once "./lang.php";
+$array_settings = data_page_row($lang, $con);
 ?>
 <!DOCTYPE html>
 <html lang="">
@@ -159,7 +161,7 @@ let langList =["en","ru","uk"];
                      var data = "lang=" + encodeURIComponent(markerLang);
                      xhr.send(data);
                      //Изменения адреса, якорь
-                     window.history.pushState(null, null, "http://javascriptpractice/sql/translate_php/translate.php#en-US");
+                     window.history.pushState(null, null, "http://javascriptpractice/sql/translate_php/index.php#en-US");
                      break;
                  case "ru":
                      console.log("Руский");
@@ -171,7 +173,7 @@ let langList =["en","ru","uk"];
                      var data = "lang=" + encodeURIComponent(markerLang);
                      xhr.send(data);
                      //Изменения адреса, якорь
-                     window.history.pushState(null, null, "http://javascriptpractice/sql/translate_php/translate.php#ru-RU"); 
+                     window.history.pushState(null, null, "http://javascriptpractice/sql/translate_php/index.php#ru-RU"); 
                      break;
                  case "uk":
                      console.log("Украинский");
@@ -183,7 +185,7 @@ let langList =["en","ru","uk"];
                      var data = "lang=" + encodeURIComponent(markerLang);
                      xhr.send(data);
                      //Изменения адреса, якорь
-                     window.history.pushState(null, null, "http://javascriptpractice/sql/translate_php/translate.php#uk-UA"); 
+                     window.history.pushState(null, null, "http://javascriptpractice/sql/translate_php/index.php#uk-UA"); 
                      break;            
                  default: console.log("ничего не выброно");
                      break;

@@ -121,7 +121,7 @@ let langList =["en","ru","uk"];
         //Устанавливаем язык переключателя
         if(langList.some(test => test === languageFistTwo)){
             //меняем локализацию сайта
-            currentLocation.setAttribute('class', currentLocation);
+            currentLocation.setAttribute('class', languageFistTwo);
             document.getElementById(languageFistTwo).className="active";
               //определяем язак для загрузки
         xhr.open("post", "lang.php", true);
@@ -162,6 +162,8 @@ let langList =["en","ru","uk"];
             switch (markerLang) {
                  case "en":
                      console.log("Английский");
+                     //меняем локализацию сайта
+                     currentLocation.setAttribute('class', markerLang);
                      xhr.open("post", "lang.php", true);
                      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                      // Формируем данные для отправки
@@ -172,6 +174,8 @@ let langList =["en","ru","uk"];
                      break;
                  case "ru":
                      console.log("Руский");
+                     //меняем локализацию сайта
+                     currentLocation.setAttribute('class', markerLang);
                      xhr.open("post", "lang.php", true);
                      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                     // Формируем данные для отправки
@@ -182,6 +186,8 @@ let langList =["en","ru","uk"];
                      break;
                  case "uk":
                      console.log("Украинский");
+                     //меняем локализацию сайта
+                     currentLocation.setAttribute('class', markerLang);
                      xhr.open("post", "lang.php", true);
                      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                     // Формируем данные для отправки

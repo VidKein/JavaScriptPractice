@@ -1,5 +1,21 @@
+<p>Информация - как обрабатывать пиксели <button id="text">Открыть текст</button><button id="textExit">Спрятать текст</button></p>
 <p><a href="./blurHL/index.html">Горизонтальное/Вертикальное пиксельное размытие</a></p>
 <p><a href="./examples/index.html">Пример манипуляции</a></p>
 <p><a href="./pixeManipulation/index.html">Пиксельная манипуляция</a></p>
 <p><a href="./rotatedCanvasPixels/index.html">Поворот изображения</a></p>
 <p><a href="./index.html">Назат</a></p>
+<p id = "textInput"></p>
+<script>
+    //Открываем текст
+    let textBox = document.getElementById("text");
+    let xhrText = new XMLHttpRequest();
+    textBox.addEventListener("click", ()=>{
+        xhrText.open("get", "ingoReadColor.txt", false);
+        xhrText.send(null);
+        document.getElementById("textInput").innerText = xhrText.responseText;
+    });
+    let textBoxExit = document.getElementById("textExit");
+    textBoxExit.addEventListener("click", ()=>{
+        document.getElementById("textInput").innerText = "";
+    });
+</script>
