@@ -1,0 +1,77 @@
+<?php
+require_once "./lang.php";
+echo ($lang);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>Script - POST запрос</p>
+    <div id="langPost">
+        <button id="en">en</button>
+        <button id="ru">ru</button>    
+        <button id="uk">uk</button>    
+    </div>
+    
+    <p>Script - GET запрос</p>
+    <div id="langGet">
+        <button id="en">en</button>
+        <button id="ru">ru</button>    
+        <button id="uk">uk</button>    
+    </div>
+
+    <button id="text">Открыть текст</button><button id="textExit">Спрятать текст</button>
+    <p id = "textInput"></p>
+</body>
+<script>
+    
+    //Post
+    let langPost = document.getElementById("langPost");
+    let xhrPost = new XMLHttpRequest();
+    langPost.addEventListener("click", (e)=>{
+        let nameLang = e.target.id;
+        //определяем язак для загрузки
+        xhrPost.open("post", "lang.php", true);
+        xhrPost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        // Формируем данные для отправки
+        var data = "lang=" + encodeURIComponent(nameLang);
+        xhrPost.send(data); 
+    })
+
+    //GET
+    let langGet = document.getElementById("langGet");
+    let xhrGet = new XMLHttpRequest();
+    langGet.addEventListener("click", (e)=>{
+        let nameLang = e.target.id;
+        //определяем язак для загрузки
+        var url = "lang.php?lang=" + encodeURIComponent(nameLang);
+        xhrGet.open("get", url, false);
+        // Формируем данные для отправки
+        xhrGet.send(); 
+    }) 
+
+    //Открываем текст
+    let textBox = document.getElementById("text");
+    let xhrText = new XMLHttpRequest();
+    textBox.addEventListener("click", ()=>{
+        xhrText.open("get", "text.txt", false);
+        xhrText.send(null);
+        //Определяем этап запроса
+        if (xhrText.readyState == 4) {
+            //Проверка статуса и состояния ответа
+            if(xhrText.status >= 200 && xhrText.status < 300 || xhrText.status == 304){
+                document.getElementById("textInput").innerText = xhrText.responseText;    
+            }    
+        }
+    });
+    //Скрыть текст
+    let textBoxExit = document.getElementById("textExit");
+    textBoxExit.addEventListener("click", ()=>{
+        document.getElementById("textInput").innerText = "";
+    });
+</script>
+</html>
