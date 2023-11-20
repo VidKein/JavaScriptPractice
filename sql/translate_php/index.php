@@ -4,7 +4,7 @@ require_once "./lang.php";
 $array_settings = data_page_row($lang, $con);
 ?>
 <!DOCTYPE html>
-<html lang="">
+<html lang="<?php echo $lang;?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +22,7 @@ $array_settings = data_page_row($lang, $con);
         #infoTextPicture{
         margin: 0 15px;
         }
-        button{
+        .links {
         margin: 15px 0;
         }
         .languageSelect {
@@ -65,14 +65,18 @@ $array_settings = data_page_row($lang, $con);
         order: 1;
         pointer-events: none;
         }
+        a{
+            text-decoration: none;
+            color: black;
+        }
     </style>
 </head>
 <body>
-    <ul class="languageSelect" id="languageSelect"> 
-        <li data-lang="uk" id="uk">UA</li>
-        <li data-lang="ru" id="ru">RU</li> 
-        <li data-lang="en" id="en">ENG</li>
-    </ul>
+        <ul class="languageSelect" id="languageSelect"> 
+            <li data-lang="uk" id="uk"><a href="<?php echo "$_SERVER[PHP_SELF]?lang=uk"?>">UA</a></li>
+            <li data-lang="ru" id="ru"><a href="<?php echo "$_SERVER[PHP_SELF]?lang=ru"?>">RU</a></li> 
+            <li data-lang="en" id="en"><a href="<?php echo "$_SERVER[PHP_SELF]?lang=en"?>">ENG</a></li>
+        </ul>
     <header>
         <h1 id="title_page"><?php langSati($array_settings ,"title_page", 0)?></h1>
         <h3 id="info_site"><?php langSati($array_settings ,"info_site", 0)?></h3>
@@ -98,44 +102,13 @@ $array_settings = data_page_row($lang, $con);
     </article>
 </body>
 <script>
-// Выбираем язык браузера пользователя
-let language = window.navigator.language;
-let languageFistTwo = language.substr(0,2); 
-let currentLocation = document.getElementsByTagName('html')[0];
-//создаем XHR обьект
-let xhr = new XMLHttpRequest();
-//Выбираем переключатель языка
-let le = document.getElementsByTagName("li");
-//Список языков которые использует язык
-let langList =["en","ru","uk"];
-    window.onload = ()=>{    
-        //Устанавливаем язык переключателя
-        if(langList.some(test => test === languageFistTwo)){
-            //меняем локализацию сайта
-            currentLocation.setAttribute('class', languageFistTwo);
-            document.getElementById(languageFistTwo).className="active";
-            //определяем язак для загрузки
-            xhr.open("post", "lang.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            // Формируем данные для отправки
-            var data = "lang=" + encodeURIComponent(languageFistTwo);
-            xhr.send(data);
-        }else{
-            //меняем локализацию сайта
-            currentLocation.setAttribute('class', "en");
-            document.getElementById("en").className="active";
-            //определяем язак для загрузки
-            xhr.open("post", "lang.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            // Формируем данные для отправки
-            var data = "lang=" + encodeURIComponent("en");
-            xhr.send(data);
-        };
-        console.log("Язык браузера - "+languageFistTwo);
-      
-    };
- 
-    let markerLang;
+//Управляем изменениями языка сайта
+let currentLocation = document.getElementsByTagName('html')[0].lang;
+window.onload = ()=>{ 
+    document.getElementById(currentLocation).className="active";
+    console.log("Язык - "+currentLocation);
+}
+//Открываем / закрываем меню языка
     let languageSelect = document.getElementById("languageSelect");
     languageSelect.addEventListener("click",(e)=>{
         if(e.currentTarget.className == "languageSelect open"){
@@ -145,54 +118,19 @@ let langList =["en","ru","uk"];
         };
     })
     
-    for (let i = 0; i < le.length; i++) {
+//Выбираем язык
+//Выбираем переключатель языка
+let le = document.getElementsByTagName("li");
+let markerLang;
+for (let i = 0; i < le.length; i++) {
         le[i].addEventListener("click", (e)=>{
             for(let langBloc of le){langBloc.removeAttribute("class");}
             e.target.className = "active";
             markerLang = e.target.id;
-            switch (markerLang) {
-                 case "en":
-                     console.log("Английский");
-                     //меняем локализацию сайта
-                     currentLocation.setAttribute('class', markerLang);
-                     xhr.open("post", "lang.php", true);
-                     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                     // Формируем данные для отправки
-                     var data = "lang=" + encodeURIComponent(markerLang);
-                     xhr.send(data);
-                     //Изменения адреса, якорь
-                     window.history.pushState(null, null, "http://javascriptpractice/sql/translate_php/index.php#en-US");
-                     break;
-                 case "ru":
-                     console.log("Руский");
-                     //меняем локализацию сайта
-                     currentLocation.setAttribute('class', markerLang);
-                     xhr.open("post", "lang.php", true);
-                     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                    // Формируем данные для отправки
-                     var data = "lang=" + encodeURIComponent(markerLang);
-                     xhr.send(data);
-                     //Изменения адреса, якорь
-                     window.history.pushState(null, null, "http://javascriptpractice/sql/translate_php/index.php#ru-RU"); 
-                     break;
-                 case "uk":
-                     console.log("Украинский");
-                     //меняем локализацию сайта
-                     currentLocation.setAttribute('class', markerLang);
-                     xhr.open("post", "lang.php", true);
-                     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                    // Формируем данные для отправки
-                     var data = "lang=" + encodeURIComponent(markerLang);
-                     xhr.send(data);
-                     //Изменения адреса, якорь
-                     window.history.pushState(null, null, "http://javascriptpractice/sql/translate_php/index.php#uk-UA"); 
-                     break;            
-                 default: console.log("ничего не выброно");
-                     break;
-                }
-        })        
-    }
+        })
+}
 
+//Переключение картинок
 let links = document.getElementsByClassName("links");
 let content = document.getElementsByClassName("content");
 for (let i = 0; i < links.length; i++) {
@@ -201,5 +139,6 @@ for (let i = 0; i < links.length; i++) {
     document.getElementById(e.currentTarget.name).style = "display: flex;";    
     })
 }
+
 </script>   
 </html>

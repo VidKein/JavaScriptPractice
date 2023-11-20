@@ -1,9 +1,19 @@
 <?php
+//Определяем локализацию сайта
+$lokal = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"],0,2);
+//Список языков которые использует язык
+$langList =["en","ru","uk"];
+//Перебор массива
+if (in_array($lokal, $langList)) {
+  $lang = $lokal;
+}else{
+  $lang = "en";
+}
+
 //Получаем запрос
-$lang = "ru";
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $lang = $_POST["lang"];
-};
+if (isset($_GET["lang"])) {
+  $lang = $_GET["lang"];
+}
 
 //Заполняем сайт текстом
 function langSati($array_settings, $var, $nam){
@@ -14,7 +24,7 @@ function langSati($array_settings, $var, $nam){
     }
     if ($array_settings[$keys]["id_value_tage"]) {
       if ($array_settings[$keys]["id_value_tage"] == $nam) {
-        echo $array_settings[$keys][$var];
+        echo $array_settings[$keys][$var]; 
       }
     }
   }
