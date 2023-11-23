@@ -1,0 +1,3 @@
+Устанвливаем плагин для MySQL
+https://www.npmjs.com/package/mysql
+$ npm install mysql
