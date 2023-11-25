@@ -1,0 +1,9 @@
+Устанвливаем плагин для MySQL
+
+АСИНХРОННЫЙ ЗАПРОС
+https://www.npmjs.com/package/mysql
+$ npm install mysql
+
+СИНХРОННЫЙ ЗАПРОС
+https://www.npmjs.com/package/sync-mysql
+$ npm install sync-mysql
