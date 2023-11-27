@@ -5,6 +5,8 @@ const PORT = 3500;
 //Функция обрабатывает запро и дает ответ
 //request, response
 http.createServer(function (req, res) {
+    console.log(req);
+    console.log(res);
     console.log(req.url);
     console.log(req.method);
     console.log("Serwer work");

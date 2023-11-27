@@ -5,7 +5,6 @@ let languageFistTwo = language.substr(0,2);
 let langList =["en","ru","uk"];
 //Управляем изменениями языка сайта
 let currentLocation = document.getElementsByTagName('html')[0];
-console.log(currentLocation);
 window.onload = ()=>{ 
     //Устанавливаем язык переключателя
     if(langList.some(test => test === languageFistTwo)){

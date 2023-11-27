@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "async-request": "^1.2.0",
+    "follow-redirects": "^1.15.3",
+    "request": "^2.88.2"
+  }
+}

@@ -1,0 +1,13 @@
+Устанвливаем плагин для POS/GET запросы API скрвису
+
+Follow Redirects
+https://www.npmjs.com/package/follow-redirects
+$ npm i follow-redirects
+
+Request
+https://www.npmjs.com/package/request
+$ npm i request
+
+Async-request
+https://www.npmjs.com/package/async-request
+$ npm i async-request
