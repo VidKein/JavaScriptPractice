@@ -1,0 +1,30 @@
+ {      
+        "value_tage_title": "Website translation",
+        "id_h1": "title_page",
+        "value_tage_h1": "Site title",
+        "id_h3": "info_site",
+        "value_tage_h3": "Information about the site",
+"blok_cat" : [
+        {
+            "id_value_tage": 1,
+            "name_button": "Picture 1",
+            "name_tage_dinamic": "url1",   
+            "url_page": "/img/picter1.jpg",
+            "value_tage": "A beautiful fluffy cat with sapphire eyes, thick fur and white paws is a description of the Burmese. The history of its origin is covered with beautiful legends. It is still unknown which animals were the ancestors. On the picture It is clear that the Burmese is similar in color to the Siamese, but in character it is its complete opposite. Calm, inquisitive animals do not hesitate to express their love for their owners and at the same time, like true aristocrats, will not impose their society if people are busy and cannot pay attention to them."
+        },
+        {
+            "id_value_tage": 2,
+            "name_button": "Picture 2",
+            "name_tage_dinamic": "url2",   
+            "url_page": "/img/picter2.jpg",
+            "value_tage": "It’s not always clear from photos, but Maine Coons are giant cats. At the same time, they are considered one of the best breeds for pets. Royally beautiful appearance combined with a friendly character is the perfect example of a family pet. The older they get, the more royal habits appear in them. They perfectly sense the mood of their household: plunge into thoughtful contemplation when the owners need peace and quiet, actively support the game if required\r\nsituation."
+        },
+        {
+            "id_value_tage": 3,
+            "name_button": "Picture 3",
+            "name_tage_dinamic": "url3",   
+            "url_page": "/img/picter3.jpg",
+            "value_tage":"Representatives of this breed can be recognized by their impressive size, fluffy fur and a characteristic collar around the neck. The last two signs are clearly visible in the photo. The appearance combines the features of a wild forest cat and a domestic animal: thick wool to protect from the cold, athletic build and strong claws to hunt, intelligent, attentive eyes. They are balanced and reasonable, like real northern residents."
+        }
+    ]
+}

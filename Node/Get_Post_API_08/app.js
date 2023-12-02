@@ -29,8 +29,7 @@ function ex_01() {
         res.on(error, (error)=>{console.log(error);})
         res.on('end', ()=>{
             let body = Buffer.concat(chanks);
-            console.log(JSON.parse
-                (body.toString()));
+            console.log(JSON.parse(body.toString()));
         });
     });
     req.end();

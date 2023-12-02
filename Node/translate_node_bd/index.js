@@ -1,3 +1,6 @@
+//Выводим информацию из БД
+const {text} = require("../translate_node_bd/bd");
+
 //создаем метод для работы с адресом
 const http = require('http');
 const PORT = 3500;
@@ -36,8 +39,21 @@ function saticFile(res, filePath, ext) {//респонс от сервера+п�
 //прослушыаем порт 3500
 //Locakhost:3500
 //Функция обрабатывает запро и дает ответ
-//request, response
-http.createServer(function (req, res) {
+//request - хранит информацию о запросе, response - управляет отправкой ответа
+http.createServer((req, res)=>{
+    //Язык!!!!!!!!!!!!!!!!!
+    let languageFistTwo = req.headers["accept-language"].substr(0,2);
+    console.log(languageFistTwo);
+    //Список языков которые использует язык
+    let langList =["en","ru","uk"];
+    
+    if(langList.some(test => test === languageFistTwo)){
+        console.log("Язык - "+languageFistTwo);
+
+    }else{
+        console.log("Язык - eng");
+    }
+
     //следим зв адресом
     const url = req.url;
     console.log(url);  
@@ -59,6 +75,7 @@ http.createServer(function (req, res) {
         case "/en": 
         console.log("en");
         saticFile(res,'/html/translate.html','.html');
+
         break;
         default:
             //считываем расширение
@@ -67,12 +84,7 @@ http.createServer(function (req, res) {
                 saticFile(res, url, extName)
             } else {
                 res.statusCode = 404;
-                res.end();
             }
         break;
     }  
 }).listen(PORT);
-
-//Выводим информацию из БД
-const {text} = require("../translate_node_bd/bd");
-console.log(text());

@@ -1,7 +1,7 @@
 //Синхронный запрос
 const syncMysql        = require("sync-mysql");
-
 const CONFIG        = require("./config");
+
 
 //Синхроное подключение к БД
 module.exports.text = () => {

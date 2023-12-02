@@ -8,7 +8,7 @@ const PORT = 3500;
 //Функция обрабатывает запро и дает ответ
 //request, response
 http.createServer(function (req, res) {
-    //следим зв адресом
+    //следим за адресом
     const url = req.url;
     //Хедер заголовка
     res.setHeader("ContentType","text/html; charset=utf-8;")
