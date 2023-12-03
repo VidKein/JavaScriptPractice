@@ -158,7 +158,6 @@
         function createСontent() {
             xhr.onload = ()=>{
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    console.log(JSON.parse(xhr.response));
                     let respon = JSON.parse(xhr.response);
                     //Создаем элементы <h1>, <h3>
                     const titleSait = document.createElement('h1');
