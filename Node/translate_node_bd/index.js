@@ -1,5 +1,5 @@
-//Выводим информацию из БД
-const {text} = require("../translate_node_bd/bd");
+//Переменная для парсинга боди POST запроса
+const {parse} = require('querystring');
 
 //создаем метод для работы с адресом
 const http = require('http');
@@ -21,11 +21,12 @@ const mimeTypes = {
     '.svg':'image/svg+xml',
     '.eot':'application/vnd.ms-fontobject',
 };
+
 //Функция для подготовки запроса
 function saticFile(res, filePath, ext) {//респонс от сервера+путь к файлу+его расширение
     res.setHeader("Content-Type", mimeTypes[ext]);
     //Асихронная аперация
-    fs.readFile('./Node/translate_node_bd/page'+filePath, (error,data)=>{
+    fs.readFile('./page'+filePath, (error,data)=>{
         if (error) {
             res.statusCode = 404;
             res.end();
@@ -41,42 +42,35 @@ function saticFile(res, filePath, ext) {//респонс от сервера+п�
 //Функция обрабатывает запро и дает ответ
 //request - хранит информацию о запросе, response - управляет отправкой ответа
 http.createServer((req, res)=>{
-    //Язык!!!!!!!!!!!!!!!!!
-    let languageFistTwo = req.headers["accept-language"].substr(0,2);
-    console.log(languageFistTwo);
-    //Список языков которые использует язык
-    let langList =["en","ru","uk"];
-    
-    if(langList.some(test => test === languageFistTwo)){
-        console.log("Язык - "+languageFistTwo);
+let lang;
+//Выводим информацию из БД
+const {text} = require("./bd");
 
-    }else{
-        console.log("Язык - eng");
-    }
+    //Язык!!!!!!!!!!!!!!!!!
+    //let languageFistTwo = req.headers["accept-language"].substr(0,2);
+
+    if (req.method == "POST") {
+        //Создаем переменную через которую будим работать
+        let body = "";
+        req.on("data", chunk =>{
+            body += chunk.toString();
+        });
+        req.on("end",()=>{
+            //Парсим POST запрос
+            let pars = parse(body);
+            res.end(JSON.stringify(text(pars.lang)));
+        });
+    }    
 
     //следим зв адресом
     const url = req.url;
     console.log(url);  
     switch (url) {
+        
         case "/": 
         saticFile(res,'/html/translate.html','.html');
         break;
 
-        case "/ua": 
-        console.log("ua");
-        saticFile(res,'/html/translate.html','.html');
-        break;
-
-        case "/ru": 
-        console.log("ru");
-        saticFile(res,'/html/translate.html','.html');
-        break;
-
-        case "/en": 
-        console.log("en");
-        saticFile(res,'/html/translate.html','.html');
-
-        break;
         default:
             //считываем расширение
             const extName = String(path.extname(url)).toLowerCase();
