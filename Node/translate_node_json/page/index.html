@@ -159,6 +159,7 @@
             xhr.onload = ()=>{
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     let respon = JSON.parse(xhr.response);
+                    console.log(respon);
                     //Создаем элементы <h1>, <h3>
                     const titleSait = document.createElement('h1');
                     const infoSate = document.createElement('h3');

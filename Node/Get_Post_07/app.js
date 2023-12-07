@@ -16,7 +16,9 @@ http.createServer((req, res)=>{
         let urlReq = url.parse(req.url,true);//!!!!!!
         //путь в целом
         console.log(urlReq);
+        //Выводим путь не используя lang 
         //Содержание запроса ?lang=язык
+        console.log(urlReq.path.substr(1,3));
         console.log(urlReq.query.lang);
         switch (urlReq.query.lang) {
             case "ru":
