@@ -57,12 +57,15 @@ for (let i = 0; i < le.length; i++) {
             e.target.className = "active";
             markerLang = e.target.id;
             console.log("Язык - "+markerLang);
+            currentLocation.setAttribute('lang', markerLang);
             //запрос на извлечение
             xhr.open("post", "./index.js", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             // Формируем данные для отправки
             var data = "lang=" + encodeURIComponent(markerLang);
             xhr.send(data);
+            //Изменения адреса, якорь
+            window.history.pushState(null, null, markerLang); 
             xhr.onload = ()=>{
                 var responseNew = JSON.parse(xhr.response);
                         document.title = responseNew[0].resStatik[0].value_tage;

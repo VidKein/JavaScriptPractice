@@ -58,7 +58,7 @@ const {text} = require("./bd");
         req.on("end",()=>{
             //Парсим POST запрос
             let pars = parse(body);
-            res.end(JSON.stringify(text(pars.lang)));
+            res.write(JSON.stringify(text(pars.lang)));
         });
     }    
 
