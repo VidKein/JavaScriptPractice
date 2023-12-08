@@ -3,7 +3,8 @@ const {parse} = require('querystring');
 
 //создаем метод для работы с адресом
 const http = require('http');
-const PORT = 3500;
+//PORT=3001 npm start
+const PORT = process.env.PORT || 3500;
 //создаем метод для работы с файдами
 const fs = require('fs');
 //Работа с портом
