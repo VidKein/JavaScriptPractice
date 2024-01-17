@@ -47,7 +47,7 @@
 img.addEventListener("load", function(){
         canvas.width = img.width;
         canvas.height = img.height;
-
+        ctx.drawImage(img, 0,0); 
     document.getElementById("three").addEventListener("click", function () {
         ctx.reset()
         ctx.drawImage(img, 0, 0);
