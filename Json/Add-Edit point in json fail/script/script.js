@@ -1,7 +1,7 @@
-import { add } from './module/add.js';//add
-import { edit } from './module/edit.js';//edit
+import { adds } from './module/add.js';//add
+import { edits } from './module/edit.js';//edit
 import { planing } from './module/planing.js'//planing
-console.log(add,edit,planing);
+console.log(adds, edits, planing);
     //Нивелирование - начальные точки(базовые)
     //Информацинный блок Нивелирования    
     let pointBaseNiv = document.querySelector("#levelingBasic"); 
