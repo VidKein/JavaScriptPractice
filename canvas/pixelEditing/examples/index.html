@@ -271,6 +271,7 @@ let ctx = canvas.getContext("2d");
 //Определяюшие размер фотоблока
 let pageWidth = document.querySelector(".fotoBlock").offsetWidth-document.querySelector(".histogram").offsetWidth;
 let pageHeight = document.querySelector(".fotoBlock").offsetHeight; 
+console.log(pageWidth, pageHeight );
 //Дополнительная загрузка
 let inputPhoto = document.getElementById("inputPhoto");
 inputPhoto.addEventListener('change', function() {
@@ -329,7 +330,7 @@ function initImg() {
       if(img.width > img.height){//horizontal img
           if (img.height >= pageHeight) {
             canvas.style.width = "auto";
-            canvas.style.height = pageHeight;  
+            canvas.style.height = pageHeight+"px";  
             }else{
               canvas.style.width  = "";
               canvas.style.height = "";
@@ -337,7 +338,7 @@ function initImg() {
         }else{//vertical img
           if (img.height >= pageHeight) {
             canvas.style.width = "auto";
-            canvas.style.height = pageHeight;  
+            canvas.style.height = pageHeight+"px";  
             }else{
               canvas.style.width  = "";
               canvas.style.height = "";
