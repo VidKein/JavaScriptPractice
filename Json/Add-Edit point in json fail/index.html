@@ -37,15 +37,15 @@
             <div class="importBlock">
                 <span class="namePoint" style="color: red; font-weight: 600;"></span>    
                 <div id="importInfo">
-                    <p>position: <input type="text" name="position X" value="700000"> x <input type="text" name="position Y" value="1000000"></p>
-                    <p>vycka: <input type="text" name="vycka" value="100.0000"></p>
-                    <p>date: <input type="date" name="date"></p>
-                    <p>coordinate system: <input type="text" name="coordinateSystem" list="coordinateSystem"></p>
+                    <p>position: <input type="text" id="position X" value="700000"> x <input type="text" id="position Y" value="1000000"></p>
+                    <p>vycka: <input type="text" id="vycka" value="100.0000"></p>
+                    <p>date: <input type="date" id="date"></p>
+                    <p>coordinate system: <input type="text" id="coordinate" list="coordinateSystem"></p>
                     <datalist id="coordinateSystem">
                         <option value="JTSK">
                         <option value="WGS84">
                     </datalist>
-                    <p>position type: <input type="text" name="positionType" list="positionType"></p>
+                    <p>position type: <input type="text" id="position" list="positionType"></p>
                     <datalist id="positionType">
                         <option value="wall">
                         <option value="target cross">
@@ -53,7 +53,7 @@
                         <option value="asphalt"></option>
                     </datalist>
                 </div>  
-                <input type="button" value="OK">
+                <input id="funktionalAddEdit" type="button" value="OK">
             </div>
         </div>
     </div>

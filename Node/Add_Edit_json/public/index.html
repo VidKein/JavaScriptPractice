@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редактирование JSON</title>
+</head>
+<body>
+  <h1>Редактирование JSON файла</h1>
+
+  <h2>Добавить или изменить данные</h2>
+  <form id="updateForm">
+    <label>
+      ID:
+      <input type="text" id="id" required>
+    </label>
+    <br>
+    <label>
+      Позиция (через запятую):
+      <input type="text" id="position" required>
+    </label>
+    <br>
+    <label>
+      Vycka:
+      <input type="number" id="vycka" step="0.0001" required>
+    </label>
+    <br>
+    <label>
+      Дата:
+      <input type="date" id="date" required>
+    </label>
+    <br>
+    <label>
+      Система координат:
+      <input type="text" id="systemCoordinates" required>
+    </label>
+    <br>
+    <label>
+      Тип позиции:
+      <input type="text" id="positionType" required>
+    </label>
+    <br><br>
+    <button type="submit">Отправить</button>
+  </form>
+
+  <h2>Получить данные по ID</h2>
+  <form id="getForm">
+    <label>
+      ID:
+      <input type="text" id="getId" required>
+    </label>
+    <button type="submit">Получить</button>
+  </form>
+
+  <h3>Результат:</h3>
+  <pre id="result"></pre>
+
+  <script>
+    // Форма для добавления или обновления данных
+    const updateForm = document.getElementById('updateForm');
+    updateForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const data = {
+        id: document.getElementById('id').value,
+        position: document.getElementById('position').value.split(',').map(Number),
+        vycka: parseFloat(document.getElementById('vycka').value),
+        date: document.getElementById('date').value,
+        systemCoordinates: document.getElementById('systemCoordinates').value,
+        positionType: document.getElementById('positionType').value,
+      };
+
+      try {
+        const response = await fetch('/update-json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const result = await response.text();
+        document.getElementById('result').textContent = result;
+      } catch (error) {
+        console.error('Ошибка:', error);
+      }
+    });
+
+    // Форма для получения данных
+    const getForm = document.getElementById('getForm');
+    getForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const id = document.getElementById('getId').value;
+
+      try {
+        const response = await fetch(`/get-json/${id}`);
+        const result = await response.json();
+        document.getElementById('result').textContent = JSON.stringify(result, null, 2);
+      } catch (error) {
+        document.getElementById('result').textContent = 'Данные не найдены или ошибка.';
+        console.error('Ошибка:', error);
+      }
+    });
+  </script>
+</body>
+</html>

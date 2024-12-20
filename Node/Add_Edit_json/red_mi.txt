@@ -1,0 +1,8 @@
+Установите Node.js и Express
+npm install express
+
+Запустите сервер
+node server.js
+
+Запуск
+http://localhost:3000
