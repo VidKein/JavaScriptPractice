@@ -1,8 +1,7 @@
-Установите Node.js и Express
+Установите зависимости:
 npm install express
-
-Запустите сервер
-node server.js
+npm install express cors
 
 Запуск
-http://localhost:3000
+node server.js
+http://localhost:4000/

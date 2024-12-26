@@ -42,7 +42,7 @@ http.createServer(function (req, res) {
     const url = req.url;
     console.log(url);  
     switch (url) {
-        case "/": 
+        case "/":
         saticFile(res,'/translate.html','.html');
         break;
 

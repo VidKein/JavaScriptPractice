@@ -7,3 +7,8 @@ $ npm install mysql
 СИНХРОННЫЙ ЗАПРОС
 https://www.npmjs.com/package/sync-mysql
 $ npm install sync-mysql
+
+Запуск
+1. Включить сервер с базой
+2. node index.js - терминал
+2. http://localhost:3500

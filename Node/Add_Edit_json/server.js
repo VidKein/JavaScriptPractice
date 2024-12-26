@@ -1,78 +1,133 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors');
+
 const app = express();
-
-const filePath = 'data.json';
-
-// Middleware для обработки JSON
 app.use(express.json());
-
-// Сервировать статические файлы (HTML и JS)
+app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Обработка POST-запроса для добавления или обновления данных
-app.post('/update-json', (req, res) => {
-  const newData = req.body;
+const jsonFilePath = path.join(__dirname, 'data.json');
 
-  fs.readFile(filePath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Ошибка чтения файла:', err);
-      return res.status(500).send('Ошибка чтения файла.');
-    }
-
-    try {
-      const jsonData = JSON.parse(data);
-
-      jsonData[newData.id] = {
-        position: newData.position,
-        vycka: newData.vycka,
-        date: newData.date,
-        systemCoordinates: newData.systemCoordinates,
-        positionType: newData.positionType,
-      };
-
-      fs.writeFile(filePath, JSON.stringify(jsonData, null, 2), (err) => {
-        if (err) {
-          console.error('Ошибка записи файла:', err);
-          return res.status(500).send('Ошибка записи файла.');
-        }
-        res.send(`Данные для ID ${newData.id} успешно добавлены или обновлены.`);
-      });
-    } catch (parseErr) {
-      console.error('Ошибка парсинга JSON:', parseErr);
-      res.status(500).send('Ошибка парсинга JSON.');
-    }
-  });
-});
-
-// Обработка GET-запроса для получения данных по ID
-app.get('/get-json/:id', (req, res) => {
+// 📖 Получение данных JSON
+app.get('/api/data/:id', (req, res) => {
   const id = req.params.id;
 
-  fs.readFile(filePath, 'utf8', (err, data) => {
+  fs.readFile(jsonFilePath, 'utf8', (err, data) => {
     if (err) {
-      console.error('Ошибка чтения файла:', err);
-      return res.status(500).send('Ошибка чтения файла.');
+      console.error('Ошибка чтения JSON:', err);
+      return res.status(500).json({ error: 'Ошибка чтения JSON-файла' });
     }
 
-    try {
-      const jsonData = JSON.parse(data);
-
-      if (jsonData[id]) {
-        res.json(jsonData[id]);
-      } else {
-        res.status(404).send(`Данные для ID ${id} не найдены.`);
-      }
-    } catch (parseErr) {
-      console.error('Ошибка парсинга JSON:', parseErr);
-      res.status(500).send('Ошибка парсинга JSON.');
+    const jsonData = JSON.parse(data);
+    if (!jsonData[id]) {
+      return res.status(404).json({ error: 'Элемент не найден' });
     }
+
+    res.json(jsonData[id]);
   });
 });
 
-// Запуск сервера
-const PORT = 3000;
+// ✏️ Редактирование данных JSON
+app.put('/api/data/:id', (req, res) => {
+  const id = req.params.id;
+  const { positionX, positionY, vycka, date, systemCoordinates, positionType } = req.body;
+
+  fs.readFile(jsonFilePath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Ошибка чтения JSON:', err);
+      return res.status(500).json({ error: 'Ошибка чтения JSON-файла' });
+    }
+
+    let jsonData = JSON.parse(data);
+
+    if (!jsonData[id]) {
+      return res.status(404).json({ error: 'Элемент не найден' });
+    }
+
+    jsonData[id] = {
+      position:  [positionX,positionY],
+      vycka: Number(vycka),
+      date,
+      systemCoordinates,
+      positionType
+    };
+
+    fs.writeFile(jsonFilePath, JSON.stringify(jsonData, null, 2), (err) => {
+      if (err) {
+        console.error('Ошибка записи JSON:', err);
+        return res.status(500).json({ error: 'Ошибка записи JSON-файла' });
+      }
+      res.json({ success: true, message: `Данные для ID ${id} обновлены.` });
+    });
+  });
+});
+
+// ➕ Добавление новых данных
+app.post('/api/data/', (req, res) => {
+  const { id, positionX, positionY, vycka, date, systemCoordinates, positionType } = req.body;
+
+  fs.readFile(jsonFilePath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Ошибка чтения JSON:', err);
+      return res.status(500).json({ error: 'Ошибка чтения JSON-файла' });
+    }
+
+    let jsonData = JSON.parse(data);
+
+    if (jsonData[id]) {
+      return res.status(400).json({ error: 'Элемент с таким ID уже существует' });
+    }
+
+    jsonData[id] = {
+      position: [positionX,positionY],
+      vycka: Number(vycka),
+      date,
+      systemCoordinates,
+      positionType
+    };
+
+    fs.writeFile(jsonFilePath, JSON.stringify(jsonData, null, 2), (err) => {
+      if (err) {
+        console.error('Ошибка записи JSON:', err);
+        return res.status(500).json({ error: 'Ошибка записи JSON-файла' });
+      }
+      res.json({ success: true, message: `Данные для ID ${id} добавлены.` });
+    });
+  });
+});
+
+// 🗑️ Удаление данных по ID
+app.delete('/api/data/:id', (req, res) => {
+  const id = req.params.id;
+
+  fs.readFile(jsonFilePath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Ошибка чтения JSON:', err);
+      return res.status(500).json({ error: 'Ошибка чтения JSON-файла' });
+    }
+
+    let jsonData = JSON.parse(data);
+
+    if (!jsonData[id]) {
+      return res.status(404).json({ error: 'Элемент не найден' });
+    }
+
+    delete jsonData[id]; // Удаляем элемент по ID
+
+    fs.writeFile(jsonFilePath, JSON.stringify(jsonData, null, 2), (err) => {
+      if (err) {
+        console.error('Ошибка записи JSON:', err);
+        return res.status(500).json({ error: 'Ошибка записи JSON-файла' });
+      }
+      res.json({ success: true, message: `Данные для ID ${id} удалены.` });
+    });
+  });
+});
+
+// 🚀 Запуск сервера
+const PORT = 4000;
 app.listen(PORT, () => {
-  console.log(`Сервер запущен на http://localhost:${PORT}`);
+  console.log(`Сервер запущен: http://localhost:${PORT}`);
 });

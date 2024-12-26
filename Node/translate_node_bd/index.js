@@ -3,7 +3,7 @@ const {parse} = require('querystring');
 
 //создаем метод для работы с адресом
 const http = require('http');
-//PORT=3001 npm start
+//PORT=3500 npm start
 const PORT = process.env.PORT || 3500;
 //создаем метод для работы с файдами
 const fs = require('fs');
@@ -66,6 +66,8 @@ const {text} = require("./bd");
     //следим зв адресом
     const url = req.url;
     console.log(url);  
+
+    
     switch (url) {
         
         case "/": 
@@ -82,4 +84,6 @@ const {text} = require("./bd");
             }
         break;
     }  
-}).listen(PORT);
+}).listen(PORT, () => {
+    console.log(`Управляющий сервер запущен: http://localhost:${PORT}`);
+});

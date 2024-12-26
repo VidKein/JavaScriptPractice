@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление сервером</title>
+</head>
+<body>
+    <h1>Управление сервером Node.js</h1>
+    <button id="start-btn">🚀 СТАРТ</button>
+    <button id="stop-btn">🛑 СТОП</button>
+    <p id="status"></p>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const status = document.getElementById('status');
+
+        startBtn.addEventListener('click', () => {
+            fetch('/start')
+                .then(response => response.text())
+                .then(data => {
+                    status.innerText = data;
+                })
+                .catch(err => {
+                    status.innerText = 'Ошибка: ' + err.message;
+                });
+        });
+
+        stopBtn.addEventListener('click', () => {
+            fetch('/stop')
+                .then(response => response.text())
+                .then(data => {
+                    status.innerText = data;
+                })
+                .catch(err => {
+                    status.innerText = 'Ошибка: ' + err.message;
+                });
+        });
+    </script>
+</body>
+</html>

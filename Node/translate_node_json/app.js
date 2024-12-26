@@ -1,3 +1,4 @@
+//http://localhost:3500/
 const http = require('http');
 const url = require('url');
 //создаем метод для работы с файдами
@@ -50,4 +51,5 @@ http.createServer((req, res)=>{
                     res.end(langEng);
                 });
             }     
-}).listen(3500);
+}).listen(3500, () => {
+    console.log(`Управляющий сервер запущен: http://localhost:3500`);});
