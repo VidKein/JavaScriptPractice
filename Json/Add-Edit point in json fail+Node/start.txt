@@ -1,0 +1,39 @@
+ПОДГОТОВКА:
+- Установите зависимости:
+npm install express
+npm install express cors
+- Запуск
+node server.js
+http://localhost:4000/
+
+НАСТРОЙКА:
+---------------
+Render (Bekend):
+- Содержание package.json
+{
+  "name": "json-api-server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+}
+- Папка node_modules не должна находиться в репозитории.!!!!!!!!!!
+Render автоматически выполнит команду: npm install ---> package.json
+- Перейдите на Render.
+   Создайте новый сервис → Web Service.
+   Подключите GitHub-репозиторий с сервером.
+   В настройках укажите:
+      Build Command: npm install
+      Start Command: npm start
+      Port: 4000 (или любой другой порт, указанный в server.js)
+   Дождитесь завершения деплоя.
+   Получите публичный URL: https://my-node-server.onrender.com
+   ---------------
+   Подключите API к Frontend:
+   Путь к серверу
+   const API_URL = 'https://my-node-server.onrender.com/data';!!!!!!!

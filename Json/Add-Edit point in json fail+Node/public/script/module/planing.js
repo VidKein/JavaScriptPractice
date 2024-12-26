@@ -2,7 +2,7 @@ export const planing = {baseTrig: [], baseNiv: [], niv: [], trig: []};
 
 
 //Загрузка файлов
-const json = './data/koordinats.json'; // json файл Работы
+const json = '../server/data/koordinats.json'; // json файл Работы
 const jsonPlaning = './data/planing.json'; // json файл Плана
 try {
     // Загружаем JSON файл Плана
