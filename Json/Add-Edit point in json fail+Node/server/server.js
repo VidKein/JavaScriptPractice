@@ -4,18 +4,18 @@ npm install express cors*/
 const express = require('express');
 const fs = require('fs');
 const cors = require('cors'); // Для поддержки запросов с других доменов
+const path = require('path');// Абсолютный путь к файлу
 
 const app = express();
-const PORT = 4000;
-// Абсолютный путь к файлу
-const path = require('path');
-const DATA_FILE = path.resolve(__dirname, '../server/data/koordinats.json');
+const PORT = process.env.PORT || 4000; // Используется переменная окружения или 4000 по умолчанию
 //
 app.use(express.json());
 app.use(cors()); // Разрешаем CORS для всех источников
+// Путь к файлу
+const DATA_FILE = path.join(__dirname, 'data', 'koordinats.json');
 
-// Публичный доступ к data.json
-app.get('/public/data.json', (req, res) => {
+// Публичный доступ к data.json для обрашения
+app.get('/data/koordinats.json', (req, res) => {
     fs.readFile(DATA_FILE, 'utf8', (err, data) => {
         if (err) {
             return res.status(500).json({ error: 'Ошибка чтения файла data.json' });

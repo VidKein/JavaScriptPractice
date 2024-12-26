@@ -27,6 +27,8 @@ async function funktionalAdd() {
     });
     const result = await response.json();
     alert(result.message || result.error);
+    // Перезагрузка страницы
+    location.reload();
     //обнуление
     document.querySelector("#import").style.display = "none"; 
     add =[];

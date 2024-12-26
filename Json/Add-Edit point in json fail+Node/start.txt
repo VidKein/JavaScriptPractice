@@ -4,7 +4,6 @@ npm install express
 npm install express cors
 - Запуск
 node server.js
-http://localhost:4000/
 
 НАСТРОЙКА:
 ---------------
@@ -30,7 +29,6 @@ Render автоматически выполнит команду: npm install -
    В настройках укажите:
       Build Command: npm install
       Start Command: npm start
-      Port: 4000 (или любой другой порт, указанный в server.js)
    Дождитесь завершения деплоя.
    Получите публичный URL: https://my-node-server.onrender.com
    ---------------
