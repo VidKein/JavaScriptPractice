@@ -15,4 +15,6 @@ function addTaske(add) {
     }
 };
 addTaske(add);
+addTaske(add);
+addTaske(add);
 export default{add};//Иморт по умолчанию
