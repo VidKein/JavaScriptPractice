@@ -1,0 +1,4 @@
+npm install express express-session bcrypt mysql2
+npm install dotenv
+
+http://localhost:3000/register.html
