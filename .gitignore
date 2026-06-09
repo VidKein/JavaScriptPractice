@@ -1,0 +1,24 @@
+# Node modules (очень важно!)
+node_modules/
+
+# Логи
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ОС мусор
+.DS_Store
+Thumbs.db
+
+# Editor / IDE configs
+.vscode/
+.idea/
+
+# Output folders
+dist/
+build/
+out/
+
+# Electron specific
+*.asar
+*.map

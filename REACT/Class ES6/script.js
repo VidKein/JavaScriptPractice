@@ -65,5 +65,3 @@ header2.render("header2");
 header2.newH1 = `Geo111`;
 //Считываем geter
 console.log(header2.newH1);
-
-

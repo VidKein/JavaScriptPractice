@@ -1,4 +1,12 @@
+Установка базы
 npm install express express-session bcrypt mysql2
 npm install dotenv
 
+Подключение COOKEI
+npm install cookie-parser
+
+Шифрование
+npm install bcrypt
+
+Адресс входа
 http://localhost:3000/register.html

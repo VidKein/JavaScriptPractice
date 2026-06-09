@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const path = require('path');
 const db = require('./db');
 
+const cookieParser = require('cookie-parser');
+
 const app = express();
 const PORT = 3000;
 
@@ -14,6 +16,7 @@ db.query('SELECT 1')
   .catch((err) => console.error('❌ Ошибка подключения к MySQL:', err));
 
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
@@ -30,7 +33,7 @@ app.post('/register', async (req, res) => {
     if (rows.length > 0) {
       return res.send('Пользователь уже существует. <a href="/register.html">Назад</a>');
     }
-
+    //шифрование через hashing
     const hashedPassword = await bcrypt.hash(password, 10);
     await db.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashedPassword]);
     res.redirect('/login.html');
@@ -48,7 +51,7 @@ app.post('/login', async (req, res) => {
     if (rows.length === 0) {
       return res.send('Пользователь не найден. <a href="/login.html">Назад</a>');
     }
-
+    //сравнение hashing
     const user = rows[0];
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {

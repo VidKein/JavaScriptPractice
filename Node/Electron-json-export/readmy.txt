@@ -1,0 +1,4 @@
+Установка Electron
+
+npm init -y
+npm install electron

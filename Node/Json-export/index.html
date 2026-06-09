@@ -1,0 +1,48 @@
+<button id="runExportAplikac">Скачать</button>
+<select id="firstSelectEmport">
+  <option value="Base">Base</option>
+</select>
+<select id="secondSelectEmport">
+  <option value="trig">trig</option>
+  <option value="niv">niv</option>
+</select>
+<select id="tapeFailExport">
+  <option value=".csv">.csv</option>
+  <option value=".txt">.txt</option>
+</select>
+
+<script>
+document.querySelector("#runExportAplikac").addEventListener("click", async function () {
+  const type = document.querySelector("#firstSelectEmport").value;
+  const place = document.querySelector("#secondSelectEmport").value;
+  const tapeFain = document.querySelector("#tapeFailExport").value;
+
+  if (!type || !place || !tapeFain) {
+    alert("Заполните все поля!");
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:4000/exportLispPoint', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, place, tapeFain })
+    });
+
+    if (!response.ok) throw new Error('Ошибка сервера');
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${place}${tapeFain}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    alert('Ошибка: ' + err.message);
+  }
+});
+</script>
