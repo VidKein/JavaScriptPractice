@@ -57,7 +57,7 @@ class Header2 extends Header {
     };
 }
 //Информация
-const header2 = new Header2(img,'GEO','menu', './newImg.jpg');
+const header2 = new Header2(img,'GEO1','menu', './newImg.jpg');
 console.log(header2);
 //Рендерим
 header2.render("header2");
