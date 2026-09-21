@@ -1,12 +1,12 @@
 ### 1 Preparation
- node -v
- npm -v
+* node -v
+* npm -v
 ### 2 start
 npm create vite@latest react-start
-### 3 cedit
- Framework: React
- Variant: JavaScript
- Which linter to use : Oxlint
+### 3 edit
+* Framework: React
+* Variant: JavaScript
+* Which linter to use : Oxlint
 
 Structure
 ```txt
