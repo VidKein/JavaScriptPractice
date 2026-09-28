@@ -17,12 +17,14 @@ react-start
 ├── src/ <-- Здесь будет практически весь наш React-код
 │   ├── assets/ <-- файлы которые являются частью React-приложения и импортируются
 │   │    ├── imagen/
-│   │          ├──logo.png
+│   │          ├──imagen.png
 │   │    ├── icons/
 │   │          ├──logo.png
 │   ├── components/ <-- отдельная часть интерфейса
 │   │      ├── Header.jsx 
-│   │      ├── Button.css <-- новые страницы приложения !!!!
+│   │      ├── Header.css <-- стили !!!!
+│   │      ├── Button.jsx
+│   │      ├── Button.css <-- стили !!!!
 │   ├── pages/ <-- новые страницы приложения !!!!
 │   │      ├── Login.jsx 
 │   │      ├── Help.jsx

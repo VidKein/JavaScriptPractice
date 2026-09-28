@@ -1,10 +1,14 @@
+#header{
+text-align: center;
+}
+
 .counter {
   cursor: pointer;
   font-size: 16px;
   padding: 5px 10px;
   border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
+  color: wheat;
+  background: coral;
   border: 2px solid transparent;
   transition: border-color 0.3s;
   margin-top: 24px;
@@ -18,8 +22,6 @@
   }
 }
 
-.framework{width: 41px;}
-.vite{width: 54px;}
 
 #center {
   display: flex;
@@ -34,4 +36,3 @@
     gap: 18px;
   }
 }
-

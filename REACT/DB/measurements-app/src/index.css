@@ -1,0 +1,42 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+}
+
+.app {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: white;
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+/*Вбор отображения*/
+.filters {
+margin: 8px;
+}
+select {
+  margin-left: 10px;
+  padding: 6px 10px;
+}
+.filters select {
+  margin-left: 10px;
+  padding: 6px 10px;
+}
+/*таблица с точками*/
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+th {
+  background: #eee;
+}
