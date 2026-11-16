@@ -6,6 +6,12 @@ const { getPointMovements } = require('./db/queries');
 const { deletePoints } = require('./db/queries');
 //Удаление по дате
 const { deleteMeasurementsByDates } = require('./db/queries');
+//Добавление точки
+const { getPointOptions } = require('./db/queries');
+const { createPoint } = require('./db/queries');
+//добавляем измерения
+const { getMeasurementOptions } = require('./db/queries');
+const { addMeasurement } = require('./db/queries');
 
 const app = express();
 
@@ -132,6 +138,207 @@ app.delete('/api/measurements/dates', async (req, res) => {
 
         return res.status(500).json({
             error: 'Не удалось удалить измерения из базы данных'
+        });
+    }
+});
+//Добавление
+//загрузка справочников
+app.get('/api/point-options', async (req, res) => {
+    try {
+        const options = await getPointOptions();
+
+        res.json(options);
+    } catch (error) {
+        console.error('Ошибка загрузки справочников:', error);
+
+        res.status(500).json({
+            error: 'Не удалось загрузить справочники'
+        });
+    }
+});
+//добавление точки
+app.post('/api/points', async (req, res) => {
+    try {
+        const {
+            project_id,
+            location_id,
+            mark_type_id,
+            coordinate_system_id,
+            point_number,
+            initial_x,
+            initial_y,
+            initial_z,
+            installed_at,
+            external_key,
+            description
+        } = req.body;
+
+        // Проверяем обязательные поля
+        if (
+            !point_number ||
+            !String(point_number).trim() ||
+            project_id == null ||
+            coordinate_system_id == null ||
+            initial_x == null ||
+            initial_y == null ||
+            initial_z == null
+        ) {
+            return res.status(400).json({
+                error: 'Заполни номер точки, проект, систему координат и координаты X, Y, Z'
+            });
+        }
+
+        // Проверяем координаты
+        const coordinates = [
+            initial_x,
+            initial_y,
+            initial_z
+        ];
+
+        if (
+            coordinates.some(value =>
+                value === '' ||
+                !Number.isFinite(Number(value))
+            )
+        ) {
+            return res.status(400).json({
+                error: 'Координаты должны быть числами'
+            });
+        }
+
+        // Проверяем идентификаторы справочников
+        const ids = [
+            project_id,
+            coordinate_system_id,
+            location_id,
+            mark_type_id
+        ].filter(value => value != null && value !== '');
+
+        if (
+            ids.some(value =>
+                !Number.isSafeInteger(Number(value)) ||
+                Number(value) <= 0
+            )
+        ) {
+            return res.status(400).json({
+                error: 'Некорректный идентификатор справочника'
+            });
+        }
+
+        // Проверяем дату
+        if (
+            installed_at &&
+            !/^\d{4}-\d{2}-\d{2}$/.test(installed_at)
+        ) {
+            return res.status(400).json({
+                error: 'Дата установки должна быть в формате ГГГГ-ММ-ДД'
+            });
+        }
+
+        const point = await createPoint({
+            project_id: Number(project_id),
+            location_id: location_id ? Number(location_id) : null,
+            mark_type_id: mark_type_id ? Number(mark_type_id) : null,
+            coordinate_system_id: Number(coordinate_system_id),
+            point_number: String(point_number).trim(),
+            initial_x,
+            initial_y,
+            initial_z,
+            installed_at: installed_at || null,
+            external_key: external_key || null,
+            description: description || null
+        });
+
+        res.status(201).json({
+            message: 'Точка успешно добавлена',
+            point
+        });
+    } catch (error) {
+        console.error('Ошибка добавления точки:', error);
+
+        if (error.code === '23505') {
+            return res.status(409).json({
+                error: 'Такая точка уже существует. Проверь номер точки и ограничения уникальности.'
+            });
+        }
+
+        if (error.code === '23503') {
+            return res.status(400).json({
+                error: 'Выбранный проект, зона, тип марки или система координат не существует либо не соответствует ограничениям базы.'
+            });
+        }
+
+        res.status(500).json({
+            error: 'Не удалось добавить точку'
+        });
+    }
+});
+//добавляем измерения
+// Получение точек и методов измерения для формы
+app.get('/api/measurement-options', async (req, res) => {
+    try {
+        const options = await getMeasurementOptions();
+        res.json(options);
+    } catch (error) {
+        console.error('Ошибка получения данных для измерения:', error);
+        res.status(500).json({
+            error: 'Не удалось загрузить данные для измерения'
+        });
+    }
+});
+// Добавление нового измерения существующей точки
+app.post('/api/measurements', async (req, res) => {
+    try {
+        const {
+            point_id,
+            measurement_method_id,
+            measured_at,
+            x,
+            y,
+            z
+        } = req.body;
+
+        if (
+            !point_id ||
+            !measured_at ||
+            x === undefined ||
+            x === '' ||
+            y === undefined ||
+            y === '' ||
+            z === undefined ||
+            z === ''
+        ) {
+            return res.status(400).json({
+                error: 'Заполните точку, дату измерения и координаты X, Y, Z'
+            });
+        }
+
+        const values = [x, y, z];
+
+        if (values.some(value => !Number.isFinite(Number(value)))) {
+            return res.status(400).json({
+                error: 'Координаты должны быть числами'
+            });
+        }
+
+        const measurement = await addMeasurement({
+            point_id,
+            measurement_method_id,
+            measured_at,
+            x,
+            y,
+            z
+        });
+
+        res.status(201).json({
+            message: 'Измерение успешно добавлено',
+            measurement
+        });
+    } catch (error) {
+        console.error('Ошибка добавления измерения:', error);
+
+        res.status(500).json({
+            error: 'Не удалось добавить измерение'
         });
     }
 });

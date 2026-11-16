@@ -1,4 +1,8 @@
 import { useEffect, useState, Fragment } from 'react';
+//добавление точек
+import AddPointForm from './AddPointForm.jsx';
+//добавление измерений
+import AddMeasurementForm from './AddMeasurementForm.jsx';
 import './index.css';
 
 function App() {
@@ -51,7 +55,8 @@ function App() {
     return (
         <div className="app">
             <h1>Изменения координат точек</h1>
-
+            <AddMeasurementForm onMeasurementAdded={fetchMeasurements}/>
+            <AddPointForm onPointAdded={fetchMeasurements} />
             <MeasurementsTable
                 data={measurements}
                 setMeasurements={setMeasurements}
@@ -83,7 +88,9 @@ function MeasurementsTable({
     // Даты измерений
     const dates = [
         ...new Set(
-            data.map(item => item.measured_date)
+            data
+                .map(item => item.measured_date)
+                .filter(Boolean)
         )
     ].sort(
         (a, b) => new Date(a) - new Date(b)
