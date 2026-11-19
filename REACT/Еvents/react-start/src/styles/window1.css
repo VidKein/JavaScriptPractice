@@ -1,0 +1,41 @@
+.settingBlock{
+display: none;
+}
+.settingBlock.open{
+  display: block;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.75);
+  z-index: 1001;
+}
+.settingWrapper{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  padding: 0.5em;
+  border: 1px solid #dcdcff;
+  border-radius: 5px;
+  background: #fff;
+  width: auto;
+}
+.closeSetting{
+  position: absolute;
+  top: 5px;
+  right: 5px;;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+.text{
+    margin: 25px;
+}
