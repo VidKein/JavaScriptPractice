@@ -1,0 +1,17 @@
+{
+    "menu": "Menu",
+    "open 1": "Open me 1",
+    "open 2": "Open me 2",
+    "menu_home": "Home",
+    "menu_about": "About",
+    "menu_contact": "Contact",
+    "welcome": "Welcome to Geo Assistant",
+    "input_name": "Enter your name",
+    "button_save": "Save",
+    "text":"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Alias ullam perspiciatis voluptatum ipsam quam optio id sunt beatae quod ea, aliquid totam necessitatibus assumenda aperiam, dolorum repellendus similique officia. Deserunt.",
+    "title": {
+             "menu": "Menu",
+             "open1": "Open me 1",
+             "open 2": "Open me 2",
+             "exet" : "Exet"  }
+}

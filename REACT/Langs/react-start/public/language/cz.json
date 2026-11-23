@@ -1,0 +1,17 @@
+{
+    "menu": "Menu",
+    "open 1": "Otevřy me 1",
+    "open 2": "Otevřy me 2",
+    "menu_home": "Home",
+    "menu_about": "About",
+    "menu_contact": "Contact",
+    "welcome": "Welcome to Geo Assistant",
+    "input_name": "Enter your name",
+    "button_save": "Save",
+    "text":"Bolest sama je vyhledávána a milována; je žádána a toužebně očekávána. Přesto se člověk může – ať už volbou určitých požitků, či snad nutností přijmout to, čemu nelze uniknout – ocitnout v situaci, kdy bolest odmítá, zatímco jindy zase přijímá povinnosti, které ji s sebou přinášejí. Opouštějí ji.",
+    "title": {
+             "menu": "Menu",
+             "open1": "Otevřy me 1",
+             "open 2": "Otevřy me 2",
+             "exet" : "vychod"                       }
+}
