@@ -1,10 +1,12 @@
 CREATE DATABASE "RegistrationDB";
 
-CREATE TABLE users_geo (
-    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    access INTEGER NOT NULL,
-    username VARCHAR(255) UNIQUE NOT NULL,
-    email_username VARCHAR(255) NOT NULL,
-    password_username VARCHAR(255) NOT NULL
+CREATE TABLE IF NOT EXISTS public.users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    role VARCHAR(30) NOT NULL DEFAULT 'user',
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-INSERT INTO users_geo (access, username, email_username, password_username) VALUES (0, 'admin', 'vidkein75@gmail.com', '$2b$10$tNY5gR2C27nrWRIfbmkkBOgQWqCYmfCiSBtdpHWhOkE65ANhFcI6m');
+INSERT INTO users (username, email, password_hash) VALUES ('admin', 'vidkein75@gmail.com', '$2b$10$tNY5gR2C27nrWRIfbmkkBOgQWqCYmfCiSBtdpHWhOkE65ANhFcI6m');
